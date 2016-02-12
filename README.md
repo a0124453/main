@@ -56,7 +56,7 @@ will work too.
 
 | Command | Description |
 | ------- | ----------- |
-|[add] &lt;task&gt; | Adds a floating task, with the name as specified in $lt;task&gt;|
+|[add] &lt;task&gt; | Adds a floating task, with the name as specified in &lt;task&gt;|
 | [add] &lt;task&gt; by [date] [time] | <p>Adds a deadline task, by the name specified.</p><p>If no date is given, it is set to the next date where [time] is still in the future.</p><p>If no time is given, it is set to 2359.</p><p>If nothing is entered after the “by” keyword, deadline defaults to the day itself at 2359.</p> |
 | [add] &lt;event&gt; from [start_date] &lt;start_time&gt; to [end_date] [end_time] | <p>Add a task with specific beginning time and end time.</p><p>The default date when neither is provided is the next closest date where the end time is in the future.</p><p>The default end_date if start_date is provided is the closest date based on the end_time such that the event ends after it starts.</p><p>The default end_time is 1hr after the start time.</p> |
 | [add] &lt;cmd&gt; every &lt;interval&gt; | <p>Make the event/task recurring.</p><p>&lt;cmd&gt; can be either a event or a deadline task command, as above.</p><p>The event/task will repeat itself every interval starting from the time stated in &lt;cmd&gt;.</p><p>Entering a floating task as &lt;cmd&gt; will cause the task to be transformed into a deadline task.</p> |
