@@ -2,6 +2,7 @@ package lifetracker.calendar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.*;
 
 public interface CalendarList {
 
@@ -10,7 +11,11 @@ public interface CalendarList {
 	
 	List<Event> getEventList();
 	
-	void addEvent(String name, Date startDate, Date endDate, Time startTime, Time endTime);
+	void addEvent(String name, LocalDateTime start, LocalDateTime end);
+
+	void addEvent(Event event);
 	
-	void addTask(String name, Date deadlineDate, Time deadlineTime);
+	void addTask(String name, LocalDateTime deadline);
+
+	void addTask(Task task);
 }
