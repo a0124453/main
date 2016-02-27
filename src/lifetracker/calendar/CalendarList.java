@@ -1,18 +1,18 @@
-package lifeTracker_calendar;
+package lifetracker.calendar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class calendarList {
+public class CalendarList {
 
 	//variables
 	private static List<task> taskList = new ArrayList<task>();
-	private static List<event> eventList = new ArrayList<event>();
+	private static List<NamedEvent> eventList = new ArrayList<NamedEvent>();
 	
 	//constructor
-	public calendarList(List<task> taskList, List<event> eventList){
-		calendarList.setTaskList(taskList);
-		calendarList.setEventList(eventList);
+	public CalendarList(List<task> taskList, List<NamedEvent> eventList){
+		CalendarList.setTaskList(taskList);
+		CalendarList.setEventList(eventList);
 	}
 
 	//get() and set() functions for variables
@@ -20,22 +20,22 @@ public class calendarList {
 		return taskList;
 	}
 	public static void setTaskList(List<task> taskList) {
-		calendarList.taskList = taskList;
+		CalendarList.taskList = taskList;
 	}
-	public static List<event> getEventList() {
+	public static List<NamedEvent> getEventList() {
 		return eventList;
 	}
-	public static void setEventList(List<event> eventList) {
-		calendarList.eventList = eventList;
+	public static void setEventList(List<NamedEvent> eventList) {
+		CalendarList.eventList = eventList;
 	}
 	
 	//functions
-	private static void addEvent(String name, date startDate, date endDate, time startTime, time endTime){
-		event e = new event(name, startDate, endDate, startTime, endTime);
+	private static void addEvent(String name, Date startDate, Date endDate, Time startTime, Time endTime){
+		NamedEvent e = new NamedEvent(name, startDate, endDate, startTime, endTime);
 		eventList.add(e);
 	}
 	
-	private static void addTask(String name, date deadlineDate, time deadlineTime){
+	private static void addTask(String name, Date deadlineDate, Time deadlineTime){
 		task t = new task(name, deadlineDate, deadlineTime);
 		taskList.add(t);
 	}
@@ -58,7 +58,7 @@ public class calendarList {
 		}
 		
 		else{
-			for(event events: eventList){
+			for(NamedEvent events: eventList){
 				events.printEvent();
 			}
 		}

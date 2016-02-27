@@ -1,6 +1,6 @@
-package lifeTracker_calendar;
+package lifetracker.calendar;
 
-public class date {
+public class Date {
 
 	//variables
 	private int year;
@@ -8,7 +8,7 @@ public class date {
 	private int day;
 
 	//constructor
-	public date(int year, int month, int day) {
+	public Date(int year, int month, int day) {
 	    this.setYear(year);
 	    this.setMonth(month);
 	    this.setDay(day);

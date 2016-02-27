@@ -1,13 +1,13 @@
-package lifeTracker_calendar;
+package lifetracker.calendar;
 
-public class time {
+public class Time {
 
 	//variables
 	private int hour;
 	private int minute;
 	
 	//constructor
-	public time(int hour, int minute){
+	public Time(int hour, int minute){
 		this.setHour(hour);
 		this.setMinute(minute);
 	}

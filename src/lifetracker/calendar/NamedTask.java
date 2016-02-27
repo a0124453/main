@@ -1,14 +1,14 @@
-package lifeTracker_calendar;
+package lifetracker.calendar;
 
-public class task {
+public class NamedTask {
 
 	//variables
 	private String name;
-	private date deadlineDate;
-	private time deadlineTime;
+	private Date deadlineDate;
+	private Time deadlineTime;
 	
 	//constructor
-	public task(String name, date deadlineDate, time deadlineTime){
+	public NamedTask(String name, Date deadlineDate, Time deadlineTime){
 		this.setName(name);
 		this.setDeadlineDate(deadlineDate);
 		this.setDeadlineTime(deadlineTime);
@@ -29,16 +29,16 @@ public class task {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public date getDeadlineDate() {
+	public Date getDeadlineDate() {
 		return deadlineDate;
 	}
-	public void setDeadlineDate(date deadlineDate) {
+	public void setDeadlineDate(Date deadlineDate) {
 		this.deadlineDate = deadlineDate;
 	}
-	public time getDeadlineTime() {
+	public Time getDeadlineTime() {
 		return deadlineTime;
 	}
-	public void setDeadlineTime(time deadlineTime) {
+	public void setDeadlineTime(Time deadlineTime) {
 		this.deadlineTime = deadlineTime;
 	}
 }

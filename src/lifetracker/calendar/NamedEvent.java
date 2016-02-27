@@ -1,16 +1,16 @@
-package lifeTracker_calendar;
+package lifetracker.calendar;
 
-public class event {
+public class NamedEvent {
 
 	//variables
 	private String name;
-	private date startDate;
-	private date endDate;
-	private time startTime;
-	private time endTime;
+	private Date startDate;
+	private Date endDate;
+	private Time startTime;
+	private Time endTime;
 	
 	//constructor
-	public event(String name, date startDate, date endDate, time startTime, time endTime){
+	public NamedEvent(String name, Date startDate, Date endDate, Time startTime, Time endTime){
 		this.setName(name);
 		this.setStartDate(startDate);
 		this.setEndDate(endDate);
@@ -38,35 +38,35 @@ public class event {
 		this.name = name;
 	}
 
-	public date getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(date startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	public date getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(date endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
-	public time getStartTime() {
+	public Time getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(time startTime) {
+	public void setStartTime(Time startTime) {
 		this.startTime = startTime;
 	}
 
-	public time getEndTime() {
+	public Time getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(time endTime) {
+	public void setEndTime(Time endTime) {
 		this.endTime = endTime;
 	}
 }
