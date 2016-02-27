@@ -2,6 +2,7 @@ package lifetracker.calendar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.*;
 
 public class NamedCalendarList implements CalendarList{
 
@@ -26,22 +27,38 @@ public class NamedCalendarList implements CalendarList{
 	public List<Event> getEventList() {
 		return eventList;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see lifetracker.calendar.CalenderList#addEvent()
+	 * @see lifetracker.calendar.CalenderList#addEvent(lifetracker.calendar.Event)
 	 */
 	@Override
-	public void addEvent(String name, Date startDate, Date endDate, Time startTime, Time endTime){
-		Event e = new NamedEvent(name, startDate, endDate, startTime, endTime);
-		eventList.add(e);
+	public void addEvent(Event event) {
+		eventList.add(event);
 	}
 	
 	/* (non-Javadoc)
-	 * @see lifetracker.calendar.CalenderList#addTask()
+	 * @see lifetracker.calendar.CalenderList#addEvent(java.lang.String, java.time.LocalDateTime, java.time.LocalDateTime)
 	 */
 	@Override
-	public void addTask(String name, Date deadlineDate, Time deadlineTime){
-		Task t = new NamedTask(name, deadlineDate, deadlineTime);
+	public void addEvent(String name, LocalDateTime start, LocalDateTime end){
+		Event e = new NamedEvent(name, start, end);
+		eventList.add(e);
+	}
+
+	/* (non-Javadoc)
+	 * @see lifetracker.calendar.CalenderList#addTask(lifetracker.calendar.Task)
+	 */
+	@Override
+	public void addTask(Task task) {
+		taskList.add(task);
+	}
+	
+	/* (non-Javadoc)
+	 * @see lifetracker.calendar.CalenderList#addTask(java.lang.String, java.time.LocalDateTime)
+	 */
+	@Override
+	public void addTask(String name, LocalDateTime deadline){
+		Task t = new NamedTask(name, deadline);
 		taskList.add(t);
 	}
 }
