@@ -1,25 +1,28 @@
 package lifetracker.calendar;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class NamedTask implements Task {
 
 	//variables
 	private String name;
-	private Date deadlineDate;
-	private Time deadlineTime;
+	private LocalDateTime deadline;
 	
 	//constructor
-	public NamedTask(String name, Date deadlineDate, Time deadlineTime){
+	public NamedTask(String name, LocalDateTime deadline) {
 		this.setName(name);
-		this.setDeadlineDate(deadlineDate);
-		this.setDeadlineTime(deadlineTime);
+		this.setDeadline(deadline);
 	}
 	
 	//functions
-	public void printTask(){
+	public void printTask() {
 		System.out.printf("%s by ", name);
-		deadlineDate.printDate();
-		deadlineTime.printTime();
+		this.printDeadline();
 		System.out.printf("\n");
+	}
+
+	public void printDeadline() {
+		System.out.println(deadline.format(DateTimeFormatter.ofPattern("EEE dd/MM/uu h:mm a")));
 	}
 	
 	//get() and set() functions for variables
@@ -30,6 +33,7 @@ public class NamedTask implements Task {
 	public String getName() {
 		return name;
 	}
+
 	/* (non-Javadoc)
 	 * @see lifetracker.calendar.Task#setName(java.lang.String)
 	 */
@@ -37,32 +41,32 @@ public class NamedTask implements Task {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	/* (non-Javadoc)
-	 * @see lifetracker.calendar.Task#getDeadlineDate()
+	 * @see lifetracker.calendar.Task#getDeadline()
 	 */
 	@Override
-	public Date getDeadlineDate() {
-		return deadlineDate;
+	public LocalDateTime getDeadline() {
+		return deadline;
 	}
+
 	/* (non-Javadoc)
-	 * @see lifetracker.calendar.Task#setDeadlineDate(lifetracker.calendar.Date)
+	 * @see lifetracker.calendar.Task#setDeadline(java.time.LocalDateTime)
 	 */
 	@Override
-	public void setDeadlineDate(Date deadlineDate) {
-		this.deadlineDate = deadlineDate;
+	public void setDeadline(LocalDateTime deadline) {
+		this.deadline = deadline;
 	}
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.Task#getDeadlineTime()
-	 */
-	@Override
-	public Time getDeadlineTime() {
-		return deadlineTime;
+
+	public boolean isDueToday() {
+		LocalDate today = LocalDate.now();
+		LocalDate dueDate = deadline.toLocalDate();
+		return dueDate.equals(today);
 	}
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.Task#setDeadlineTime(lifetracker.calendar.Time)
-	 */
-	@Override
-	public void setDeadlineTime(Time deadlineTime) {
-		this.deadlineTime = deadlineTime;
+
+	public boolean isOverdue() {
+		LocalDateTime now = LocalDateTime.now();
+		return now.isAfter(deadline)
 	}
+
 }
