@@ -1,4 +1,5 @@
 package lifetracker.calendar;
+import java.time.*;
 
 public interface Event {
 
@@ -7,20 +8,22 @@ public interface Event {
 
 	void setName(String name);
 
-	Date getStartDate();
+	LocalDateTime getStart();
 
-	void setStartDate(Date startDate);
+	void setStart(LocalDateTime start);
 
-	Date getEndDate();
+	LocalDateTime getEnd();
 
-	void setEndDate(Date endDate);
+	void setEnd(LocalDateTime end);
 
-	Time getStartTime();
+	LocalTime getStartTime();
 
-	void setStartTime(Time startTime);
+	LocalTime getEndTime();
 
-	Time getEndTime();
+	boolean isToday();
 
-	void setEndTime(Time endTime);
+	boolean isOngoing();
+
+	boolean isOver();
 
 }
