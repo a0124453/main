@@ -1,4 +1,5 @@
 package lifetracker.calendar;
+import java.time.*;
 
 public interface Task {
 
@@ -7,12 +8,8 @@ public interface Task {
 
 	void setName(String name);
 
-	Date getDeadlineDate();
+	LocalDateTime getDeadline();
 
-	void setDeadlineDate(Date deadlineDate);
-
-	Time getDeadlineTime();
-
-	void setDeadlineTime(Time deadlineTime);
+	void setDeadline(LocalDateTime deadline);
 
 }
