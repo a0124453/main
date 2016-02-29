@@ -9,6 +9,8 @@ public class Parser {
     public String endTime;
     public String endDate;
     public String feedback;
+    public String startTime;
+    public String startDate;
 
     public Parser(String userInput) {
 
@@ -38,6 +40,20 @@ public class Parser {
 
                 feedback = "\"" + task.trim() + "\" is added! It is due on " + endDate + " at " + endTime + ".";
 
+            } else if (userInput.contains(" from ")) {
+                Pattern pattern = Pattern.compile("^(.+) from(\\s?([a-zA-Z]+))?(\\s?(\\d+))? to(\\s?([a-zA-Z]+))?(\\s?(\\d+))?$");
+                Matcher matcher = pattern.matcher(userInput);
+                matcher.find();
+                task = matcher.group(1);
+                startDate = matcher.group(3);
+                startTime = matcher.group(5);
+                endDate = matcher.group(7);
+                endTime = matcher.group(9);
+                
+                feedback = String.format("\"%s\" is added! It is scheduled from %s at %s to %s at %s.",
+                        task, startDate, startTime, endDate, endTime);
+                
+                
             } else {
                 task = userInput;
                 feedback = "\"" + task.trim() + "\" is added!";
