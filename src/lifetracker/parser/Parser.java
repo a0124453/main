@@ -15,10 +15,9 @@ public class Parser {
         if (userInput.isEmpty()) {
             feedback = "invalid command!";
         } else {
-            task = userInput;
 
             if (userInput.startsWith("add")) {
-                task = userInput.replaceFirst("add", "");
+                userInput = userInput.replaceFirst("add ", "");
             }
 
             if (userInput.contains(" by ")) {
@@ -38,6 +37,7 @@ public class Parser {
                 }
                 
             } else {
+                task = userInput;
                 feedback = "\"" + task.trim() + "\" is added!";
 
             }
