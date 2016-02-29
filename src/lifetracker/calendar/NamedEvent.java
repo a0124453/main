@@ -98,7 +98,7 @@ public class NamedEvent implements Event {
 	 * @see lifetracker.calendar.EventI#isToday()
 	 */
 	@Override
-	public isToday() {
+	public boolean isToday() {
 		LocalDate eventStartDay = startDateTime.toLocalDate();
 		LocalDate today = LocalDate.now();
 		return eventStartDay.equals(today);
@@ -108,7 +108,7 @@ public class NamedEvent implements Event {
 	 * @see lifetracker.calendar.EventI#isOngoing()
 	 */
 	@Override
-	public isOngoing() {
+	public boolean isOngoing() {
 		LocalDateTime now = LocalDateTime.now();
 		boolean hasStarted = now.isAfter(startDateTime);
 		return (hasStarted && !isOver());
@@ -118,7 +118,7 @@ public class NamedEvent implements Event {
 	 * @see lifetracker.calendar.EventI#isOver()
 	 */
 	@Override
-	public isOver() {
+	public boolean isOver() {
 		LocalDateTime now = LocalDateTime.now();
 		return now.isAfter(endDateTime);
 	}
