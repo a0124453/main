@@ -15,6 +15,9 @@ public class AddParserTest {
         
         feedback = Parser.parse("add task");
         assertEquals("\"task\" is added!", feedback);
+        
+        feedback = Parser.parse("task");
+        assertEquals("\"task\" is added!", feedback);
     }
 
 }
