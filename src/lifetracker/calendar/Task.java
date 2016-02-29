@@ -1,5 +1,5 @@
 package lifetracker.calendar;
-import java.time.*;
+import java.time.LocalDateTime;
 
 public interface Task {
 
@@ -11,5 +11,9 @@ public interface Task {
 	LocalDateTime getDeadline();
 
 	void setDeadline(LocalDateTime deadline);
+	
+	boolean isDueToday();
+	
+	boolean isOverdue();
 
 }

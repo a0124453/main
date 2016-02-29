@@ -1,5 +1,6 @@
 package lifetracker.calendar;
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class NamedTask implements Task {
@@ -57,16 +58,22 @@ public class NamedTask implements Task {
 	public void setDeadline(LocalDateTime deadline) {
 		this.deadline = deadline;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see lifetracker.calendar.Task#isDueToday()
+	 */
 	public boolean isDueToday() {
 		LocalDate today = LocalDate.now();
 		LocalDate dueDate = deadline.toLocalDate();
 		return dueDate.equals(today);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see lifetracker.calendar.Task#isOverdue()
+	 */
 	public boolean isOverdue() {
 		LocalDateTime now = LocalDateTime.now();
-		return now.isAfter(deadline)
+		return now.isAfter(deadline);
 	}
 
 }
