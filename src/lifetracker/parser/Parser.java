@@ -6,6 +6,9 @@ public class Parser {
         
         if(userInput.isEmpty()) {
             feedback = "invalid command!";
+        } else {
+            String task = userInput.replaceFirst("add","");
+            feedback = "\"" + task.trim() + "\" is added!";
         }
         
         return feedback;
