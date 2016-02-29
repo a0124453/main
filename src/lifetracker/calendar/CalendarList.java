@@ -6,16 +6,16 @@ import java.time.LocalDateTime;
 
 public interface CalendarList {
 
-	//get() and set() functions for variables
-	List<Task> getTaskList();
-	
-	List<Event> getEventList();
-	
-	void addEvent(String name, LocalDateTime start, LocalDateTime end);
+    // get() and set() functions for variables
+    List<Task> getTaskList();
 
-	void addEvent(Event event);
-	
-	void addTask(String name, LocalDateTime deadline);
+    List<Event> getEventList();
 
-	void addTask(Task task);
+    void addEvent(String name, LocalDateTime start, LocalDateTime end);
+
+    void addEvent(Event event);
+
+    void addTask(String name, LocalDateTime deadline);
+
+    void addTask(Task task);
 }

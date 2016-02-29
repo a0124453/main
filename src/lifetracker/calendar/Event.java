@@ -1,29 +1,30 @@
 package lifetracker.calendar;
+
 import java.time.*;
 
 public interface Event {
 
-	//get() and set() functions for variables
-	String getName();
+    // get() and set() functions for variables
+    String getName();
 
-	void setName(String name);
+    void setName(String name);
 
-	LocalDateTime getStart();
+    LocalDateTime getStart();
 
-	void setStart(LocalDateTime start);
+    void setStart(LocalDateTime start);
 
-	LocalDateTime getEnd();
+    LocalDateTime getEnd();
 
-	void setEnd(LocalDateTime end);
+    void setEnd(LocalDateTime end);
 
-	LocalTime getStartTime();
+    LocalTime getStartTime();
 
-	LocalTime getEndTime();
+    LocalTime getEndTime();
 
-	boolean isToday();
+    boolean isToday();
 
-	boolean isOngoing();
+    boolean isOngoing();
 
-	boolean isOver();
+    boolean isOver();
 
 }
