@@ -30,6 +30,9 @@ public class AddParserTest {
         parse = new Parser("add task by 1200");
         assertEquals("\"task\" is added! It is due on today at 1200.", parse.feedback);
         
+        parse  = new Parser("event from monday 1200 to sunday 1300");
+        assertEquals("\"event\" is added! It is scheduled from monday at 1200 to sunday at 1300.", parse.feedback);
+        
     }
 
 }
