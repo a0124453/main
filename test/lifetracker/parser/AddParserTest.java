@@ -10,14 +10,23 @@ public class AddParserTest {
 
     @Test
     public void addParserTest() {
-        String feedback = Parser.parse("");
-        assertEquals("invalid command!", feedback);
+        Parser parse;
+        parse = new Parser("");
+        assertEquals("invalid command!", parse.feedback);
         
-        feedback = Parser.parse("add task");
-        assertEquals("\"task\" is added!", feedback);
+        parse = new Parser("add task");
+        assertEquals("\"task\" is added!", parse.feedback);
         
-        feedback = Parser.parse("task");
-        assertEquals("\"task\" is added!", feedback);
+        parse = new Parser("task");
+        assertEquals("\"task\" is added!", parse.feedback);
+
+        parse = new Parser("task by Sunday 1200");
+        assertEquals("\"task\" is added! It is due on Sunday 1200.", parse.feedback);
+        
+        
+        parse = new Parser("task by 1200");
+        assertEquals("\"task\" is added! It is due on 1200.", parse.feedback);
+        
     }
 
 }
