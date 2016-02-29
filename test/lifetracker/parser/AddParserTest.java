@@ -21,18 +21,14 @@ public class AddParserTest {
         assertEquals("\"task\" is added!", parse.feedback);
 
         parse = new Parser("task by Sunday 1200");
-        assertEquals("\"task\" is added! It is due on Sunday 1200.", parse.feedback);
-        
-        
+        assertEquals("\"task\" is added! It is due on Sunday at 1200.", parse.feedback);   
         parse = new Parser("task by 1200");
-        assertEquals("\"task\" is added! It is due on 1200.", parse.feedback);
+        assertEquals("\"task\" is added! It is due on today at 1200.", parse.feedback);
         
-        parse = new Parser("add task by Sunday 1200");
-        assertEquals("\"task\" is added! It is due on Sunday 1200.", parse.feedback);
-        
-        
+        parse = new Parser("add task by Sunday");
+        assertEquals("\"task\" is added! It is due on Sunday at 2359.", parse.feedback);
         parse = new Parser("add task by 1200");
-        assertEquals("\"task\" is added! It is due on 1200.", parse.feedback);
+        assertEquals("\"task\" is added! It is due on today at 1200.", parse.feedback);
         
     }
 

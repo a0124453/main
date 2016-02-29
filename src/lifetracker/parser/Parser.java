@@ -29,13 +29,15 @@ public class Parser {
                 endTime = matcher.group(5);
 
                 if (endDate == null) {
-                    feedback = "\"" + task.trim() + "\" is added! It is due on " + endTime + ".";
-                } else if (endTime == null) {
-                    feedback = "\"" + task.trim() + "\" is added! It is due on " + endDate + ".";
-                } else {
-                    feedback = "\"" + task.trim() + "\" is added! It is due on " + endDate + " " + endTime + ".";
+                    endDate = "today";
                 }
-                
+
+                if (endTime == null) {
+                    endTime = "2359";
+                }
+
+                feedback = "\"" + task.trim() + "\" is added! It is due on " + endDate + " at " + endTime + ".";
+
             } else {
                 task = userInput;
                 feedback = "\"" + task.trim() + "\" is added!";
