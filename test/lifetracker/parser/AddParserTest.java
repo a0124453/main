@@ -27,6 +27,13 @@ public class AddParserTest {
         parse = new Parser("task by 1200");
         assertEquals("\"task\" is added! It is due on 1200.", parse.feedback);
         
+        parse = new Parser("add task by Sunday 1200");
+        assertEquals("\"task\" is added! It is due on Sunday 1200.", parse.feedback);
+        
+        
+        parse = new Parser("add task by 1200");
+        assertEquals("\"task\" is added! It is due on 1200.", parse.feedback);
+        
     }
 
 }
