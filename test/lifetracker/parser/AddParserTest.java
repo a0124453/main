@@ -12,8 +12,9 @@ public class AddParserTest {
     public void addParserTest() {
         String feedback = Parser.parse("");
         assertEquals("invalid command!", feedback);
-        // String feedback = Parser.parse("add task");
-        // assertEquals("\"task\" is added!", feedback);
+        
+        feedback = Parser.parse("add task");
+        assertEquals("\"task\" is added!", feedback);
     }
 
 }
