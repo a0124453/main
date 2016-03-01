@@ -1,18 +1,20 @@
 package lifetracker.calendar;
 
+import java.time.LocalDateTime;
+
 public interface Task {
 
-	//get() and set() functions for variables
-	String getName();
+    // get() and set() functions for variables
+    String getName();
 
-	void setName(String name);
+    void setName(String name);
 
-	Date getDeadlineDate();
+    LocalDateTime getDeadline();
 
-	void setDeadlineDate(Date deadlineDate);
+    void setDeadline(LocalDateTime deadline);
 
-	Time getDeadlineTime();
+    boolean isDueToday();
 
-	void setDeadlineTime(Time deadlineTime);
+    boolean isOverdue();
 
 }

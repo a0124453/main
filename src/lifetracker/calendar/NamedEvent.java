@@ -1,112 +1,151 @@
 package lifetracker.calendar;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class NamedEvent implements Event {
 
-	//variables
-	private String name;
-	private Date startDate;
-	private Date endDate;
-	private Time startTime;
-	private Time endTime;
-	
-	//constructor
-	public NamedEvent(String name, Date startDate, Date endDate, Time startTime, Time endTime){
-		this.setName(name);
-		this.setStartDate(startDate);
-		this.setEndDate(endDate);
-		this.setStartTime(startTime);
-		this.setEndTime(endTime);
-	}
-	
-	//functions
-	public void printEvent(){
-		System.out.printf("%s ", name);
-		startDate.printDate();
-		startTime.printTime();
-		System.out.printf("to ");
-		endDate.printDate();
-		endTime.printTime();
-		System.out.printf("\n");
-	}
+    // variables
+    private String name;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
-	//get() and set() functions for variables
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#getName()
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
+    // constructor
+    public NamedEvent(String name, LocalDateTime start, LocalDateTime end) {
+        this.setName(name);
+        this.setStart(start);
+        this.setEnd(end);
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
+    // functions
+    public void printEvent() {
+        System.out.printf("%s ", name);
+        this.printDateTime(startDateTime);
+        System.out.printf("to ");
+        this.printDateTime(endDateTime);
+        System.out.printf("\n");
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#getStartDate()
-	 */
-	@Override
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void printDateTime(LocalDateTime dateTime) {
+        System.out.println(dateTime.format(DateTimeFormatter.ofPattern("EEE dd/MM/uu h:mm a")));
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#setStartDate(lifetracker.calendar.Date)
-	 */
-	@Override
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    // get() and set() functions for variables
+    /*
+     * (non-Javadoc)
+     * 
+     * @see lifetracker.calendar.EventI#getName()
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#getEndDate()
-	 */
-	@Override
-	public Date getEndDate() {
-		return endDate;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#setName(java.lang.String)
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#setEndDate(lifetracker.calendar.Date)
-	 */
-	@Override
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#getStart()
+     */
+    @Override
+    public LocalDateTime getStart() {
+        return startDateTime;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#getStartTime()
-	 */
-	@Override
-	public Time getStartTime() {
-		return startTime;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#setStar(java.time.LocalDateTime)
+     */
+    @Override
+    public void setStart(LocalDateTime start) {
+        this.startDateTime = start;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#setStartTime(lifetracker.calendar.Time)
-	 */
-	@Override
-	public void setStartTime(Time startTime) {
-		this.startTime = startTime;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#getEnd()
+     */
+    @Override
+    public LocalDateTime getEnd() {
+        return endDateTime;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#getEndTime()
-	 */
-	@Override
-	public Time getEndTime() {
-		return endTime;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#setEnd(java.time.LocalDateTime)
+     */
+    @Override
+    public void setEnd(LocalDateTime end) {
+        this.endDateTime = end;
+    }
 
-	/* (non-Javadoc)
-	 * @see lifetracker.calendar.EventI#setEndTime(lifetracker.calendar.Time)
-	 */
-	@Override
-	public void setEndTime(Time endTime) {
-		this.endTime = endTime;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#getStartTime()
+     */
+    @Override
+    public LocalTime getStartTime() {
+        return startDateTime.toLocalTime();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#getEndTime()
+     */
+    @Override
+    public LocalTime getEndTime() {
+        return endDateTime.toLocalTime();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#isToday()
+     */
+    @Override
+    public boolean isToday() {
+        LocalDate eventStartDay = startDateTime.toLocalDate();
+        LocalDate today = LocalDate.now();
+        return eventStartDay.equals(today);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#isOngoing()
+     */
+    @Override
+    public boolean isOngoing() {
+        LocalDateTime now = LocalDateTime.now();
+        boolean hasStarted = now.isAfter(startDateTime);
+        return (hasStarted && !isOver());
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.EventI#isOver()
+     */
+    @Override
+    public boolean isOver() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(endDateTime);
+    }
+
 }
