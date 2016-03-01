@@ -1,6 +1,8 @@
 package lifetracker.storage;
 
+import lifetracker.calendar.CalendarList;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,11 +13,14 @@ public class ThreadedFileStorageTest {
     public static final String TEST_FILE_NAME = "test.dat";
     public static final String ALT_TEST_FILE_NAME = "alt_test.dat";
 
-    public ThreadedFileStorage storageTest;
+    public ThreadedFileStorage storage;
+
+    public CalendarList testCalendarStub;
 
     @Before
     public void setUp() throws Exception {
-        storageTest = new ThreadedFileStorage(TEST_FILE_NAME);
+        storage = new ThreadedFileStorage(TEST_FILE_NAME);
+        testCalendarStub = new StorageCalendarStub();
     }
 
     @After
@@ -23,18 +28,20 @@ public class ThreadedFileStorageTest {
         File testFile = new File(TEST_FILE_NAME);
         File altTestFile = new File(ALT_TEST_FILE_NAME);
 
-        if(testFile.exists()){
+        if (testFile.exists()) {
             testFile.delete();
         }
 
-        if(altTestFile.exists()){
+        if (altTestFile.exists()) {
             testFile.delete();
         }
     }
 
     @Test
     public void testSetStore() throws Exception {
+        storage.setStore(ALT_TEST_FILE_NAME);
 
+        Assert.assertEquals(true, new File(ALT_TEST_FILE_NAME).exists());
     }
 
     @Test
