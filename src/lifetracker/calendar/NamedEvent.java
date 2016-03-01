@@ -1,7 +1,7 @@
 package lifetracker.calendar;
 
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -45,7 +45,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#setName(java.lang.String)
      */
     @Override
@@ -55,7 +55,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#getStart()
      */
     @Override
@@ -65,7 +65,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#setStar(java.time.LocalDateTime)
      */
     @Override
@@ -75,7 +75,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#getEnd()
      */
     @Override
@@ -85,7 +85,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#setEnd(java.time.LocalDateTime)
      */
     @Override
@@ -95,7 +95,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#getStartTime()
      */
     @Override
@@ -105,7 +105,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#getEndTime()
      */
     @Override
@@ -115,7 +115,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#isToday()
      */
     @Override
@@ -127,7 +127,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#isOngoing()
      */
     @Override
@@ -139,7 +139,7 @@ public class NamedEvent implements Event {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see lifetracker.calendar.EventI#isOver()
      */
     @Override
