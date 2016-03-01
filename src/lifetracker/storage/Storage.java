@@ -2,6 +2,8 @@ package lifetracker.storage;
 
 import lifetracker.calendar.CalendarList;
 
+import java.io.IOException;
+
 /**
  * A storage mechanism for storing calendars.
  */
@@ -12,7 +14,7 @@ public interface Storage {
      *
      * @param destination The destination string.
      */
-    void setStore(String destination);
+    void setStore(String destination) throws IOException;
 
     void store(CalendarList calendar);
 
