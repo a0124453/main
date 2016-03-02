@@ -73,10 +73,14 @@ public class TaskImpl implements Task {
      * 
      * @see lifetracker.calendar.Task#isDueToday()
      */
+    @Override
     public boolean isDueToday() {
         LocalDate today = LocalDate.now();
-        LocalDate dueDate = deadline.toLocalDate();
-        return dueDate.equals(today);
+        if (!isFloating()) {
+            LocalDate dueDate = deadline.toLocalDate();
+            return dueDate.equals(today);
+        }
+        return false;
     }
 
     /*
@@ -84,9 +88,23 @@ public class TaskImpl implements Task {
      * 
      * @see lifetracker.calendar.Task#isOverdue()
      */
+    @Override
     public boolean isOverdue() {
         LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(deadline);
+        if (!isFloating()) {
+            return now.isAfter(deadline);
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see lifetracker.calendar.Task#isFloating()
+     */
+    @Override
+    public boolean isFloating() {
+        return deadline == null;
     }
 
 }
