@@ -18,7 +18,7 @@ public class CalendarListTest {
     private static List<Task> expectedTaskList = new ArrayList<Task>();
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         // add tasks to testCalendar using overloaded addTask methods
         for (int i = 0; i < listSize; i++) {
             if (i < listSize / 2) {
