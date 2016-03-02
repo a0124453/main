@@ -9,9 +9,9 @@ import java.io.IOException;
 
 public class LogicImpl implements Logic {
 
-    private static Parser commandParser;
-    private static Storage calendarStorage;
-    private static CalendarList calendar;
+    private Parser commandParser;
+    private Storage calendarStorage;
+    private CalendarList calendar;
 
     public LogicImpl(Parser parser, Storage storage) {
         commandParser = parser;
