@@ -18,11 +18,11 @@ public class NamedUI implements UI {
 		executeUntilExit(l);
 	}
 	
-	private static void welcomeMessage() {
+	public void welcomeMessage() {
 		System.out.printf(MESSAGE_WELCOME);
 	}
 	
-	private static void executeUntilExit(Logic l) {
+	public void executeUntilExit(Logic l) {
 		while(true) {
 			System.out.printf(MESSAGE_INPUT);
 			String input = scanner.nextLine();
