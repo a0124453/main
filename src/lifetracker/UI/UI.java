@@ -18,7 +18,7 @@ public class UI {
     }
 
     public void welcomeMessage() {
-        System.out.printf(MESSAGE_WELCOME);
+        System.out.println(MESSAGE_WELCOME);
     }
 
     public void executeUntilExit(Logic l) {
