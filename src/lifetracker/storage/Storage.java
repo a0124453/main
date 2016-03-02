@@ -16,8 +16,8 @@ public interface Storage {
      */
     void setStore(String destination) throws IOException;
 
-    void store(CalendarList calendar);
+    void store(CalendarList calendar) throws IOException;
 
-    CalendarList load();
+    CalendarList load() throws IOException;
 
 }

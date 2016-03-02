@@ -5,7 +5,7 @@ import java.util.List;
 public interface ExecuteResult {
     String getComment();
 
-    void setComment();
+    void setComment(String comment);
 
     List<String> getResultLines();
 
