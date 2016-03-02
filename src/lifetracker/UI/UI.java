@@ -1,5 +1,6 @@
 package lifetracker.UI;
 
+import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 
 import java.util.Scanner;
@@ -26,7 +27,13 @@ public class UI {
 		while(true) {
 			System.out.printf(MESSAGE_INPUT);
 			String input = scanner.nextLine();
-			for (String resultLine: l.executeCommand(input).getResultLines()) {
+
+			ExecuteResult result = l.executeCommand(input);
+
+			System.out.println(result.getComment());
+			System.out.println();
+
+			for (String resultLine: result.getResultLines()) {
 				System.out.println(resultLine);
 			}
 		}
