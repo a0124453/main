@@ -76,7 +76,7 @@ public class TaskImpl implements Task {
     @Override
     public boolean isDueToday() {
         LocalDate today = LocalDate.now();
-        if (isFloating()) {
+        if (!isFloating()) {
             LocalDate dueDate = deadline.toLocalDate();
             return dueDate.equals(today);
         }
@@ -91,7 +91,7 @@ public class TaskImpl implements Task {
     @Override
     public boolean isOverdue() {
         LocalDateTime now = LocalDateTime.now();
-        if (isFloating()) {
+        if (!isFloating()) {
             return now.isAfter(deadline);
         }
         return false;
