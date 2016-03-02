@@ -1,8 +1,7 @@
 package lifetracker.calendar;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CalendarList {
 
