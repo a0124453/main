@@ -4,47 +4,47 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import lifetracker.parser.Parser;
+import lifetracker.parser.ParserImpl;
 
 public class AddParserTest {
 
     @Test
     public void addParserTest() {
-        Parser parse;
-        parse = new Parser("");
+        ParserImpl parse;
+        parse = new ParserImpl("");
         assertEquals("invalid command!", parse.feedback);
         
-        parse = new Parser("add task");
+        parse = new ParserImpl("add task");
         assertEquals("\"task\" is added!", parse.feedback);
         
-        parse = new Parser("task");
+        parse = new ParserImpl("task");
         assertEquals("\"task\" is added!", parse.feedback);
 
-        parse = new Parser("task by Sunday 1200");
+        parse = new ParserImpl("task by Sunday 1200");
         assertEquals("\"task\" is added! It is due on Sunday at 1200.", parse.feedback);   
-        parse = new Parser("task by 1200");
+        parse = new ParserImpl("task by 1200");
         assertEquals("\"task\" is added! It is due on today at 1200.", parse.feedback);
         
-        parse = new Parser("add task by Sunday");
+        parse = new ParserImpl("add task by Sunday");
         assertEquals("\"task\" is added! It is due on Sunday at 2359.", parse.feedback);
-        parse = new Parser("add task by 1200");
+        parse = new ParserImpl("add task by 1200");
         assertEquals("\"task\" is added! It is due on today at 1200.", parse.feedback);
         
-        parse  = new Parser("event from monday 1200 to sunday 1300");
+        parse  = new ParserImpl("event from monday 1200 to sunday 1300");
         assertEquals("\"event\" is added! It is scheduled from monday at 1200 to sunday at 1300.", parse.feedback);
-        parse  = new Parser("event from monday 1200 to sunday");
+        parse  = new ParserImpl("event from monday 1200 to sunday");
         assertEquals("\"event\" is added! It is scheduled from monday at 1200 to sunday at 2359.", parse.feedback);      
-        parse  = new Parser("event from monday 1200 to 1400");
+        parse  = new ParserImpl("event from monday 1200 to 1400");
         assertEquals("\"event\" is added! It is scheduled from monday at 1200 to 1400.", parse.feedback);
-        parse  = new Parser("event from monday 1200");
+        parse  = new ParserImpl("event from monday 1200");
         assertEquals("\"event\" is added! It is scheduled from monday at 1200 to 1300.", parse.feedback);
         
         // no start time
-        parse  = new Parser("event from monday to sunday 1300");
+        parse  = new ParserImpl("event from monday to sunday 1300");
         assertEquals("\"event\" is added! It is scheduled from monday at currenttime to sunday at 1300.", parse.feedback);
-        parse  = new Parser("event from monday to sunday");
+        parse  = new ParserImpl("event from monday to sunday");
         assertEquals("\"event\" is added! It is scheduled from monday at currenttime to sunday at 2359.", parse.feedback);
-        parse  = new Parser("event from monday to 1300");
+        parse  = new ParserImpl("event from monday to 1300");
         assertEquals("\"event\" is added! It is scheduled from monday at currenttime to 1300.", parse.feedback);
         
         // this fail since current time is cant be convert to integer
@@ -54,13 +54,13 @@ public class AddParserTest {
         */
         
         // no start date
-        parse  = new Parser("event from 1200 to sunday 1300");
+        parse  = new ParserImpl("event from 1200 to sunday 1300");
         assertEquals("\"event\" is added! It is scheduled from today at 1200 to sunday at 1300.", parse.feedback);
-        parse  = new Parser("event from 1200");
+        parse  = new ParserImpl("event from 1200");
         assertEquals("\"event\" is added! It is scheduled from today at 1200 to 1300.", parse.feedback);
-        parse  = new Parser("event from 1200 to sunday");
+        parse  = new ParserImpl("event from 1200 to sunday");
         assertEquals("\"event\" is added! It is scheduled from today at 1200 to sunday at 2359.", parse.feedback);
-        parse  = new Parser("event from 1200 to 1400");
+        parse  = new ParserImpl("event from 1200 to 1400");
         assertEquals("\"event\" is added! It is scheduled from today at 1200 to 1400.", parse.feedback);
         
         
