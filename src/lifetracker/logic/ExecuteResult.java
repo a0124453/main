@@ -1,5 +1,13 @@
 package lifetracker.logic;
 
-public interface ExecuteResult {
+import java.util.List;
 
+public interface ExecuteResult {
+    String getComment();
+
+    void setComment();
+
+    List<String> getResultLines();
+
+    void addResultLine(String resultLine);
 }
