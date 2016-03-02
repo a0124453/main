@@ -51,11 +51,7 @@ public class CalendarListTest {
         }
         // compare deadlines of all tasks in both lists
         for (int i = 0; i < listSize; i++) {
-            if (expectedTaskList.get(i).getDeadline() == null) {
-                assertEquals(null, testCalendar.getTaskList().get(i).getDeadline());
-            } else {
-                assertEquals(expectedTaskList.get(i).getDeadline(), testCalendar.getTaskList().get(i).getDeadline());
-            }
+            assertEquals(expectedTaskList.get(i).getDeadline(), testCalendar.getTaskList().get(i).getDeadline());
         }
     }
 
