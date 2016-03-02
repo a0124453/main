@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class NamedTask implements Task {
+public class TaskImpl implements Task {
 
     // variables
     private String name;
     private LocalDateTime deadline;
 
     // constructor
-    public NamedTask(String name, LocalDateTime deadline) {
+    public TaskImpl(String name, LocalDateTime deadline) {
         this.setName(name);
         this.setDeadline(deadline);
     }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class NamedEvent implements Event {
+public class EventImpl implements Event {
 
     // variables
     private String name;
@@ -13,7 +13,7 @@ public class NamedEvent implements Event {
     private LocalDateTime endDateTime;
 
     // constructor
-    public NamedEvent(String name, LocalDateTime start, LocalDateTime end) {
+    public EventImpl(String name, LocalDateTime start, LocalDateTime end) {
         this.setName(name);
         this.setStart(start);
         this.setEnd(end);
