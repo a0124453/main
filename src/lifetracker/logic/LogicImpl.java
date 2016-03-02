@@ -22,14 +22,18 @@ public class LogicImpl implements Logic {
 
     @Override
     public ExecuteResult executeCommand(String commandString) {
-        commandParser.parse(commandString);
+        String parsedComment = commandParser.parse(commandString);
 
         try {
             calendarStorage.store(calendar);
-        } catch (IOException ex){
+            calendarStorage.store(calendar);
+        } catch (IOException ex) {
             //TODO add exception handling
         }
 
-        return null;
+        ExecuteResult runResult = new CommandLineResult();
+        runResult.setComment(parsedComment);
+
+        return runResult;
     }
 }
