@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NamedCalendarList implements CalendarList {
+public class CalendarListImpl implements CalendarList {
 
     // variables
     private List<Task> taskList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class NamedCalendarList implements CalendarList {
      */
     @Override
     public void addEvent(String name, LocalDateTime start, LocalDateTime end) {
-        Event e = new NamedEvent(name, start, end);
+        Event e = new EventImpl(name, start, end);
         eventList.add(e);
     }
 
@@ -73,7 +73,7 @@ public class NamedCalendarList implements CalendarList {
      */
     @Override
     public void addTask(String name, LocalDateTime deadline) {
-        Task t = new NamedTask(name, deadline);
+        Task t = new TaskImpl(name, deadline);
         taskList.add(t);
     }
 }

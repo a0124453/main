@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class NamedTask implements Task {
+public class TaskImpl implements Task {
 
     // variables
     private String name;
     private LocalDateTime deadline;
 
     // constructor
-    public NamedTask(String name, LocalDateTime deadline) {
+    public TaskImpl(String name, LocalDateTime deadline) {
         this.setName(name);
         this.setDeadline(deadline);
     }
@@ -73,10 +73,14 @@ public class NamedTask implements Task {
      * 
      * @see lifetracker.calendar.Task#isDueToday()
      */
+    @Override
     public boolean isDueToday() {
         LocalDate today = LocalDate.now();
-        LocalDate dueDate = deadline.toLocalDate();
-        return dueDate.equals(today);
+        if (!isFloating()) {
+            LocalDate dueDate = deadline.toLocalDate();
+            return dueDate.equals(today);
+        }
+        return false;
     }
 
     /*
@@ -84,9 +88,23 @@ public class NamedTask implements Task {
      * 
      * @see lifetracker.calendar.Task#isOverdue()
      */
+    @Override
     public boolean isOverdue() {
         LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(deadline);
+        if (!isFloating()) {
+            return now.isAfter(deadline);
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see lifetracker.calendar.Task#isFloating()
+     */
+    @Override
+    public boolean isFloating() {
+        return deadline == null;
     }
 
 }
