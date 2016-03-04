@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TaskImpl implements Task {
+public class TaskImpl implements CalendarEntry {
 
     // variables
     private String name;
