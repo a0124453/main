@@ -1,10 +1,9 @@
 package lifetracker.parser;
 
-<<<<<<< HEAD
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Parser {
+public class ParserImpl implements Parser {
     public String command;
     public String task;
     public String endTime;
@@ -13,8 +12,12 @@ public class Parser {
     public String startTime;
     public String startDate;
 
-    public Parser(String userInput) {
+    public ParserImpl(String userInput) {
+        parse(userInput);
 
+    }
+
+    public void parse(String userInput) {
         if (userInput.isEmpty()) {
             feedback = "invalid command!";
         } else {
@@ -85,10 +88,5 @@ public class Parser {
             }
 
         }
-
     }
-=======
-public interface Parser {
-    public void parse(String userInput);
->>>>>>> parser-branch
 }
