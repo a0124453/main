@@ -6,15 +6,14 @@ import java.util.List;
 public interface CalendarList {
 
     // get() and set() functions for variables
-    List<Task> getTaskList();
+    List<CalendarEntryImpl> getTaskList();
 
-    List<Event> getEventList();
+    List<CalendarEntryImpl> getEventList();
 
-    void addEvent(String name, LocalDateTime start, LocalDateTime end);
+    void add(String name); // floating task
 
-    void addEvent(Event event);
+    void add(String name, LocalDateTime due); // deadline task
 
-    void addTask(String name, LocalDateTime deadline);
+    void add(String name, LocalDateTime start, LocalDateTime end); // event
 
-    void addTask(Task task);
 }

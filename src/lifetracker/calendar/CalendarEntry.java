@@ -27,10 +27,10 @@ public interface CalendarEntry {
     boolean isOngoing();
 
     boolean isOver();
-    
+
     boolean isFloating();
-    
+
     boolean isEvent();
-    
+
     boolean isDeadline();
 }
