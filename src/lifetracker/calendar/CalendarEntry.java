@@ -3,7 +3,7 @@ package lifetracker.calendar;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public interface Event {
+public interface CalendarEntry {
 
     // get() and set() functions for variables
     String getName();
@@ -27,5 +27,10 @@ public interface Event {
     boolean isOngoing();
 
     boolean isOver();
-
+    
+    boolean isFloating();
+    
+    boolean isEvent();
+    
+    boolean isDeadline();
 }
