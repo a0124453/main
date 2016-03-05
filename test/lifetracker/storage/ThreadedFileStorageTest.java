@@ -4,9 +4,12 @@ import lifetracker.calendar.CalendarList;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,9 +20,22 @@ public class ThreadedFileStorageTest {
     public static final String TEST_FILE_NAME = "test.dat";
     public static final String ALT_TEST_FILE_NAME = "alt_test.dat";
 
+    public static final List<String> expectedFileContent = new ArrayList<>();
+
     public ThreadedFileStorage storage;
 
     public CalendarList testCalendarStub;
+
+    @BeforeClass
+    public static void setUpTestData() throws Exception {
+        expectedFileContent.clear();
+        expectedFileContent.add("2");
+        expectedFileContent.add("Test Task 1");
+        expectedFileContent.add("Test Task 2 2007-12-03T10:15:30 2016-03-14T23:59:59");
+        expectedFileContent.add("2");
+        expectedFileContent.add("Test Event 1 2016-03-14T23:59:59 2016-03-15T23:59:59");
+        expectedFileContent.add("Test Event 2 2016-03-14T11:59:59 2016-03-14T23:59:59");
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -66,26 +82,18 @@ public class ThreadedFileStorageTest {
         storage.store(emptyCalendar);
         storage.flush();
 
-        List<String> expectedFileContent = new ArrayList<>();
-        expectedEmptyFileContent.add("0");
-        expectedEmptyFileContent.add("0");
+        List<String> emptyFileContent = new ArrayList<>();
+        emptyFileContent.add("0");
+        emptyFileContent.add("0");
 
         List<String> actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
 
-        Assert.assertEquals(expectedFileContent, actualFileContent);
+        Assert.assertEquals(emptyFileContent, actualFileContent);
 
         CalendarList populatedCalendar = new StorageCalendarStub(true);
 
         storage.store(populatedCalendar);
         storage.flush();
-
-        expectedFileContent.clear();
-        expectedFileContent.add("2");
-        expectedFileContent.add("Test Task 1");
-        expectedFileContent.add("Test Task 2 2007-12-03T10:15:30 2016-03-14T23:59:59");
-        expectedFileContent.add("2");
-        expectedFileContent.add("Test Event 1 2016-03-14T23:59:59 2016-03-15T23:59:59");
-        expectedFileContent.add("Test Event 2 2016-03-14T11:59:59 2016-03-14T23:59:59");
 
         actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
 
@@ -94,6 +102,15 @@ public class ThreadedFileStorageTest {
 
     @Test
     public void testLoad() throws Exception {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(TEST_FILE_NAME))) {
+            for (String line : expectedFileContent) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
 
+        CalendarList readCalendar = storage.load(new StorageCalendarStub(false));
+
+        Assert.assertEquals(testCalendarStub, readCalendar);
     }
 }
