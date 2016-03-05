@@ -47,31 +47,41 @@ public class FileStoreThread implements Runnable {
     @Override
     public void run() {
 
+        long latestWrittenNodeNum = Long.MIN_VALUE;
+
         try {
             WriteNode currentNode = writeQueue.take();
 
             while (currentNode != WriteNode.END_NODE) {
-                List<String> writeLineList = currentNode.getContent();
 
-                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storeFile))) {
-                    for (String line : writeLineList) {
-                        fileWriter.write(line);
-                        fileWriter.newLine();
-                    }
+                if (currentNode.getSequenceNum() > latestWrittenNodeNum) {
+
+                    latestWrittenNodeNum = currentNode.getSequenceNum();
+
+                    writeNodeToFile(currentNode);
                 }
 
                 currentNode = writeQueue.take();
             }
-
         } catch (InterruptedException | IOException e) {
             System.err.println(e.getMessage());
         }
+    }
 
+    private void writeNodeToFile(WriteNode currentNode) throws IOException {
+        List<String> writeLineList = currentNode.getContent();
+
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storeFile))) {
+            for (String line : writeLineList) {
+                fileWriter.write(line);
+                fileWriter.newLine();
+            }
+        }
     }
 
     private static class WriteNode implements Comparable<WriteNode> {
 
-        private static final WriteNode END_NODE = new WriteNode(-0, null);
+        private static final WriteNode END_NODE = new WriteNode(-2, null);
 
         private static int nextSequenceNum = 0;
 
@@ -88,6 +98,10 @@ public class FileStoreThread implements Runnable {
         private WriteNode(int sequenceNum, List<String> content) {
             this.sequenceNum = sequenceNum;
             this.content = content;
+        }
+
+        public long getSequenceNum() {
+            return sequenceNum;
         }
 
         private List<String> getContent() {
