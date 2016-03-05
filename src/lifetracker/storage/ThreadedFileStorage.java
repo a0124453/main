@@ -1,16 +1,16 @@
 package lifetracker.storage;
 
+import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.Event;
-import lifetracker.calendar.Task;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.List;
 
-public class ThreadedFileStorage implements Storage {
+public class ThreadedFileStorage implements Storage, Flushable {
 
     public static final String DEFAULT_FILENAME = "lifetracker.dat";
 
@@ -31,6 +31,8 @@ public class ThreadedFileStorage implements Storage {
 
     @Override
     public void setStore(String destination) throws IOException {
+        flush();
+
         storageFile = new File(destination);
 
         if (!storageFile.exists()) {
@@ -49,14 +51,24 @@ public class ThreadedFileStorage implements Storage {
     }
 
     @Override
-    public CalendarList load() {
+    public CalendarList load(CalendarList calendar) {
         return null;
     }
 
-    private void writeEvents(BufferedWriter writer, List<Event> eventList) throws IOException {
+    @Override
+    public void flush() throws IOException {
+
+    }
+
+    @Override
+    public void close() throws Exception {
+        flush();
+    }
+
+    private void writeEvents(BufferedWriter writer, List<CalendarEntry> eventList) throws IOException {
         writer.write(String.valueOf(eventList.size()));
 
-        for (Event event : eventList) {
+        for (CalendarEntry event : eventList) {
             writer.newLine();
             writer.write(event.getStart().toString());
             writer.write(FIELD_SEPARATOR);
@@ -66,16 +78,16 @@ public class ThreadedFileStorage implements Storage {
         }
     }
 
-    private void writeTasks(BufferedWriter writer, List<Task> taskList) throws IOException {
+    private void writeTasks(BufferedWriter writer, List<CalendarEntry> taskList) throws IOException {
         writer.write(String.valueOf(taskList.size()));
 
-        for (Task task : taskList) {
+        for (CalendarEntry task : taskList) {
             writer.newLine();
 
-            if (task.getDeadline() == null) {
+            if (task.getEndTime() == null) {
                 writer.write(NULL_DATETIME_MARKER);
             } else {
-                writer.write(task.getDeadline().toString());
+                writer.write(task.getEndTime().toString());
             }
             writer.write(FIELD_SEPARATOR);
             writer.write(task.getName());
