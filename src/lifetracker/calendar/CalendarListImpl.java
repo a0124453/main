@@ -3,12 +3,13 @@ package lifetracker.calendar;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class CalendarListImpl implements CalendarList {
 
     // variables
-    private List<CalendarEntry> taskList = new ArrayList<>();
-    private List<CalendarEntry> eventList = new ArrayList<>();
+    private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
 
     // get() and set() functions for variables
 
@@ -19,7 +20,8 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getTaskList() {
-        return taskList;
+        List<CalendarEntry> list = new ArrayList<CalendarEntry>(taskList.values());
+        return list;
     }
 
     /*
@@ -29,19 +31,21 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getEventList() {
-        return eventList;
+        List<CalendarEntry> list = new ArrayList<CalendarEntry>(eventList.values());
+        return list;
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see lifetracker.calendar.CalenderList#add(java.lang.String,
-     * java.time.LocalDateTime)
+     * @see lifetracker.calendar.CalenderList#add(java.lang.String)
      */
     @Override
     public void add(String name) {
-        CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null);
-        taskList.add(ft);
+        int idToSet = taskList.lastKey() + 1;
+        CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
+        taskList.put(idToSet, ft);
+
     }
 
     /*
@@ -52,8 +56,9 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public void add(String name, LocalDateTime deadline) {
-        CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline);
-        taskList.add(dt);
+        int idToSet = taskList.lastKey() + 1;
+        CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
+        taskList.put(idToSet, dt);
     }
 
     /*
@@ -64,8 +69,39 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public void add(String name, LocalDateTime start, LocalDateTime end) {
-        CalendarEntryImpl e = new CalendarEntryImpl(name, start, end);
-        eventList.add(e);
+        int idToSet = eventList.lastKey() + 1;
+        CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
+        eventList.put(idToSet, e);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.CalenderList#delete(int)
+     */
+    @Override
+    public void delete(int id) {
+
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
+     */
+    @Override
+    public void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.CalenderList#list(String)
+     */
+    @Override
+    public void list(String toSearch) {
+
     }
 
 }

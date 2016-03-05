@@ -15,12 +15,14 @@ public class CalendarEntryImpl implements CalendarEntry {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private EntryType entryType;
+    private int id;
 
     // constructor
-    public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end) {
+    public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end, int id) {
         this.setName(name);
         this.setStart(start);
         this.setEnd(end);
+        this.id = id;
         if (start == null && end == null) {
             this.entryType = EntryType.FLOATING;
         } else if (start == null && end != null) {
@@ -31,6 +33,11 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     // get() and set() functions for variables
+    @Override
+    public int getId() {
+        return id;
+    }
+
     @Override
     public String getName() {
         return name;
