@@ -3,8 +3,8 @@ package lifetracker.command;
 import lifetracker.calendar.CalendarList;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class AddCommand implements CommandObject {
     private String comment;
@@ -15,17 +15,20 @@ public class AddCommand implements CommandObject {
     private LocalDate endDate;
     private LocalDateTime endDateTime;
 
+    @Override
     public CalendarList execute(CalendarList calendar) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public CalendarList undo(CalendarList calendar) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public String getComments() {
+    @Override
+    public String getComment() {
         return this.comment;
     }
 

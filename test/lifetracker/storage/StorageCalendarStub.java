@@ -1,8 +1,7 @@
 package lifetracker.storage;
 
+import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.Event;
-import lifetracker.calendar.Task;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,61 +10,89 @@ import java.util.List;
 
 public class StorageCalendarStub implements CalendarList {
 
-    private List<Task> taskList = new ArrayList<>();
-    private List<Event> eventList = new ArrayList<>();
+    private List<CalendarEntry> taskList = new ArrayList<>();
+    private List<CalendarEntry> eventList = new ArrayList<>();
 
-    public StorageCalendarStub(){
-        taskList.add(new StorageTaskStub("Test Task 1"));
-        taskList.add(new StorageTaskStub("Test Task 2 2007-12-03T10:15:30", LocalDateTime.parse("2016-03-14T23:59:59")));
-
-        eventList.add(new StorageEventStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"), LocalDateTime.parse("2016-03-15T23:59:59")));
-        eventList.add(new StorageEventStub("Test Event 2", LocalDateTime.parse("2016-03-14T11:59:59"), LocalDateTime.parse("2016-03-14T23:59:59")));
+    /**
+     * Creates a new StorageCalendarStub, populating with data only if {@code populate} is {@code true}.
+     *
+     * @param populate If the stub should be populated with dummy data.
+     */
+    public StorageCalendarStub(boolean populate) {
+        if (populate) {
+            populateData();
+        }
     }
 
     @Override
-    public List<Task> getTaskList() {
+    public List<CalendarEntry> getTaskList() {
         return taskList;
     }
 
     @Override
-    public List<Event> getEventList() {
+    public List<CalendarEntry> getEventList() {
         return eventList;
     }
 
     @Override
-    public void addEvent(String name, LocalDateTime start, LocalDateTime end) {
-
-        throw new UnsupportedOperationException();
+    public void add(String name) {
+        taskList.add(new CalendarEntryStub(name, null, null));
     }
 
     @Override
-    public void addEvent(Event event) {
-
-        throw new UnsupportedOperationException();
+    public void add(String name, LocalDateTime due) {
+        taskList.add(new CalendarEntryStub(name, null, due));
     }
 
     @Override
-    public void addTask(String name, LocalDateTime deadline) {
-
-        throw new UnsupportedOperationException();
+    public void add(String name, LocalDateTime start, LocalDateTime end) {
+        eventList.add(new CalendarEntryStub(name, start, end));
     }
 
     @Override
-    public void addTask(Task task) {
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof StorageCalendarStub))
+            return false;
 
-        throw new UnsupportedOperationException();
+        StorageCalendarStub that = (StorageCalendarStub) o;
+
+        if (!getTaskList().equals(that.getTaskList()))
+            return false;
+        return getEventList().equals(that.getEventList());
+
     }
 
-    class StorageEventStub implements Event {
+    @Override
+    public int hashCode() {
+        int result = getTaskList().hashCode();
+        result = 31 * result + getEventList().hashCode();
+        return result;
+    }
+
+    private void populateData() {
+        taskList.add(new CalendarEntryStub("Test Task 1", null, null));
+        taskList.add(
+                new CalendarEntryStub("Test Task 2", null,
+                        LocalDateTime.parse("2016-03-14T23:59:59")));
+
+        eventList.add(new CalendarEntryStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"),
+                LocalDateTime.parse("2016-03-15T23:59:59")));
+        eventList.add(new CalendarEntryStub("Test Event 2", LocalDateTime.parse("2016-03-14T11:59:59"),
+                LocalDateTime.parse("2016-03-14T23:59:59")));
+    }
+
+    class CalendarEntryStub implements CalendarEntry {
 
         private String name;
-        private LocalDateTime start;
-        private LocalDateTime end;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
 
-        public StorageEventStub(String name, LocalDateTime start, LocalDateTime end) {
+        public CalendarEntryStub(String name, LocalDateTime startTime, LocalDateTime endTime) {
             this.name = name;
-            this.start = start;
-            this.end = end;
+            this.startTime = startTime;
+            this.endTime = endTime;
         }
 
         @Override
@@ -75,98 +102,77 @@ public class StorageCalendarStub implements CalendarList {
 
         @Override
         public void setName(String name) {
-            throw new UnsupportedOperationException();
+
         }
 
         @Override
         public LocalDateTime getStart() {
-            return start;
+            return startTime;
         }
 
         @Override
         public void setStart(LocalDateTime start) {
-            throw new UnsupportedOperationException();
+
         }
 
         @Override
         public LocalDateTime getEnd() {
-            return end;
+            return endTime;
         }
 
         @Override
         public void setEnd(LocalDateTime end) {
-            throw new UnsupportedOperationException();
+
         }
 
         @Override
         public LocalTime getStartTime() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override
         public LocalTime getEndTime() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override
         public boolean isToday() {
-            throw new UnsupportedOperationException();
+            return false;
         }
 
         @Override
         public boolean isOngoing() {
-            throw new UnsupportedOperationException();
+            return false;
         }
 
         @Override
         public boolean isOver() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    class StorageTaskStub implements Task {
-
-        private String name;
-        private LocalDateTime due;
-
-        public StorageTaskStub(String name, LocalDateTime due) {
-            this.name = name;
-            this.due = due;
-        }
-
-        public StorageTaskStub(String name) {
-            this.name = name;
+            return false;
         }
 
         @Override
-        public String getName() {
-            return name;
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof CalendarEntryStub))
+                return false;
+
+            CalendarEntryStub that = (CalendarEntryStub) o;
+
+            if (!getName().equals(that.getName()))
+                return false;
+            if (getStartTime() != null ? !getStartTime().equals(that.getStartTime()) : that.getStartTime() != null)
+                return false;
+            return getEndTime() != null ? getEndTime().equals(that.getEndTime()) : that.getEndTime() == null;
+
         }
 
         @Override
-        public void setName(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public LocalDateTime getDeadline() {
-            return due;
-        }
-
-        @Override
-        public void setDeadline(LocalDateTime deadline) {
-
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isDueToday() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isOverdue() {
-            throw new UnsupportedOperationException();
+        public int hashCode() {
+            int result = getName().hashCode();
+            result = 31 * result + (getStartTime() != null ? getStartTime().hashCode() : 0);
+            result = 31 * result + (getEndTime() != null ? getEndTime().hashCode() : 0);
+            return result;
         }
     }
 }
