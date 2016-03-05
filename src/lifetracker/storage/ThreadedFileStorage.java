@@ -6,8 +6,11 @@ import lifetracker.calendar.CalendarList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class ThreadedFileStorage implements Storage {
 
@@ -19,6 +22,7 @@ public class ThreadedFileStorage implements Storage {
     private static final String NULL_DATETIME_MARKER = "NA";
     private static final String FIELD_SEPARATOR = " ";
 
+    private File storageFile;
     private Thread fileStoreThread;
     private FileStoreProcess fileStoreProcess;
 
@@ -27,7 +31,8 @@ public class ThreadedFileStorage implements Storage {
     }
 
     public ThreadedFileStorage(String fileName) throws IOException {
-        startThread(prepareFile(fileName));
+        storageFile = prepareFile(fileName);
+        startThread(storageFile);
     }
 
     @Override
@@ -38,9 +43,9 @@ public class ThreadedFileStorage implements Storage {
             System.err.println(ERROR_INTERRUPTED_CLOSE);
         }
 
-        File newStorageFile = prepareFile(destination);
+        storageFile = prepareFile(destination);
 
-        startThread(newStorageFile);
+        startThread(storageFile);
     }
 
     @Override
@@ -49,8 +54,30 @@ public class ThreadedFileStorage implements Storage {
     }
 
     @Override
-    public CalendarList load(CalendarList calendar) {
-        return null;
+    public CalendarList load(CalendarList calendar) throws IOException {
+
+        try (Scanner storageFileScanner = new Scanner(storageFile)) {
+
+            int numEvents = storageFileScanner.nextInt();
+            storageFileScanner.nextLine();
+
+            for (int i = 0; i < numEvents; i++) {
+                String eventLine = storageFileScanner.nextLine();
+
+                addEvent(calendar, eventLine);
+            }
+
+            int numTasks = storageFileScanner.nextInt();
+            storageFileScanner.nextLine();
+
+            for (int i = 0; i < numTasks; i++) {
+                String taskLine = storageFileScanner.nextLine();
+
+                addTask(calendar, taskLine);
+            }
+        }
+
+        return calendar;
     }
 
     @Override
@@ -125,5 +152,41 @@ public class ThreadedFileStorage implements Storage {
         }
 
         return processedLines;
+    }
+
+    private void addTask(CalendarList calendar, String taskLine) {
+        StringTokenizer tokenizer = new StringTokenizer(taskLine);
+
+        String dueDateString = tokenizer.nextToken();
+
+        StringBuilder name = new StringBuilder();
+
+        while (tokenizer.hasMoreElements()) {
+            name.append(tokenizer.nextToken());
+            name.append(" ");
+        }
+
+        if (dueDateString.equals(NULL_DATETIME_MARKER)) {
+            calendar.add(name.toString().trim());
+        } else {
+            calendar.add(name.toString().trim(), LocalDateTime.parse(dueDateString));
+        }
+
+    }
+
+    private void addEvent(CalendarList calendar, String eventLine) {
+        StringTokenizer tokenizer = new StringTokenizer(eventLine);
+
+        LocalDateTime start = LocalDateTime.parse(tokenizer.nextToken());
+        LocalDateTime end = LocalDateTime.parse(tokenizer.nextToken());
+
+        StringBuilder name = new StringBuilder();
+
+        while (tokenizer.hasMoreElements()) {
+            name.append(tokenizer.nextToken());
+            name.append(" ");
+        }
+
+        calendar.add(name.toString().trim(), start, end);
     }
 }
