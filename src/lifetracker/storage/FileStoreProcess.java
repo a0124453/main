@@ -15,16 +15,16 @@ import java.util.concurrent.PriorityBlockingQueue;
  * <p>
  * This class is designed to be run by a single thread. Running it on multiple threads might cause concurrency issues.
  */
-public class FileStoreThread implements Runnable {
+public class FileStoreProcess implements Runnable {
 
     private static final String ERROR_INVALID_FILE = "File is null or is invalid!";
-    private static final String ERROR_WAIT_INTERRUPTED = "FileStoreThread was interrupted while waiting for data to write.";
+    private static final String ERROR_WAIT_INTERRUPTED = "FileStoreProcess was interrupted while waiting for data to write.";
     private static final String ERROR_FILE_WRITE = "Error writing to file!";
 
     private final BlockingQueue<WriteNode> writeQueue = new PriorityBlockingQueue<>();
     private File storeFile;
 
-    FileStoreThread(File storeFile) throws FileNotFoundException {
+    FileStoreProcess(File storeFile) throws FileNotFoundException {
         if (storeFile == null || storeFile.isDirectory() || !storeFile.exists()) {
             throw new FileNotFoundException(ERROR_INVALID_FILE);
         }
