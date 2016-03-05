@@ -67,7 +67,7 @@ public class ThreadedFileStorageTest {
         Assert.assertEquals(true, new File(ALT_TEST_FILE_NAME).exists());
 
         storage.store(testCalendarStub);
-        storage.flush();
+        storage.close();
 
         List<String> originalFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
         List<String> altFileContent = Files.readAllLines(Paths.get(ALT_TEST_FILE_NAME));
@@ -77,10 +77,23 @@ public class ThreadedFileStorageTest {
 
     @Test
     public void testStore() throws Exception {
+        CalendarList populatedCalendar = new StorageCalendarStub(true);
+
+        storage.store(populatedCalendar);
+        storage.close();
+
+        List<String> actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
+
+        Assert.assertEquals(expectedFileContent, actualFileContent);
+
+    }
+
+    @Test
+    public void testStoreEmpty() throws Exception {
         CalendarList emptyCalendar = new StorageCalendarStub(false);
 
         storage.store(emptyCalendar);
-        storage.flush();
+        storage.close();
 
         List<String> emptyFileContent = new ArrayList<>();
         emptyFileContent.add("0");
@@ -89,15 +102,6 @@ public class ThreadedFileStorageTest {
         List<String> actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
 
         Assert.assertEquals(emptyFileContent, actualFileContent);
-
-        CalendarList populatedCalendar = new StorageCalendarStub(true);
-
-        storage.store(populatedCalendar);
-        storage.flush();
-
-        actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
-
-        Assert.assertEquals(expectedFileContent, actualFileContent);
     }
 
     @Test
