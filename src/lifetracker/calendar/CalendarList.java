@@ -6,9 +6,9 @@ import java.util.List;
 public interface CalendarList {
 
     // get() and set() functions for variables
-    List<CalendarEntryImpl> getTaskList();
+    List<CalendarEntry> getTaskList();
 
-    List<CalendarEntryImpl> getEventList();
+    List<CalendarEntry> getEventList();
 
     void add(String name); // floating task
 
