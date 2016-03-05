@@ -1,5 +1,7 @@
 package lifetracker.parser;
 
+import lifetracker.command.CommandObject;
+
 public interface Parser {
-    public void parse(String userInput);
+    public CommandObject parse(String userInput);
 }

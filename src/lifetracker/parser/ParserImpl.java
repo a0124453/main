@@ -1,5 +1,7 @@
 package lifetracker.parser;
 
+import lifetracker.command.CommandObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,12 +14,11 @@ public class ParserImpl implements Parser {
     public String startTime;
     public String startDate;
 
-    public ParserImpl(String userInput) {
-        parse(userInput);
-
+    public ParserImpl() {
     }
 
-    public void parse(String userInput) {
+    @Override
+    public CommandObject parse(String userInput) {
         if (userInput.isEmpty()) {
             feedback = "invalid command!";
         } else {
@@ -59,15 +60,15 @@ public class ParserImpl implements Parser {
                 if (endTime == null) {
                     endTime = "2359";
                 }
-                
+
                 if (startTime == null) {
                     startTime = "currenttime";
                 }
-                
+
                 if (startDate == null) {
                     startDate = "today";
                 }
-                
+
                 if (toParam == null) {
                     int time = Integer.parseInt(startTime);
                     endTime = Integer.toString(time + 100);
