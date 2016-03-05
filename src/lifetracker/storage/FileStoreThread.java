@@ -1,7 +1,10 @@
 package lifetracker.storage;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -11,6 +14,8 @@ public class FileStoreThread implements Runnable {
 
     private static final String ERROR_INVALID_FILE = "File is null or is invalid!";
     private static final String ERROR_UNINITIALIZED = "Thread is not initialized with init()!";
+    private static final String ERROR_WAIT_INTERRUPTED = "FileStoreThread was interrupted while waiting for data to write.";
+    private static final String ERROR_FILE_WRITE = "Error writing to file!";
 
     private static final WriteNode END_NODE = new WriteNode(-1, null);
 
@@ -68,6 +73,26 @@ public class FileStoreThread implements Runnable {
     @Override
     public void run() {
 
+        try {
+            WriteNode currentNode = writeQueue.take();
+
+            while (currentNode != END_NODE) {
+                List<String> writeLineList = currentNode.getContent();
+
+                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storeFile))) {
+                    for (String line : writeLineList) {
+                        fileWriter.write(line);
+                        fileWriter.newLine();
+                    }
+                }
+
+                currentNode = writeQueue.take();
+            }
+
+        } catch (InterruptedException | IOException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
     private static class WriteNode implements Comparable<WriteNode> {
@@ -87,6 +112,10 @@ public class FileStoreThread implements Runnable {
         private WriteNode(int sequenceNum, List<String> content) {
             this.sequenceNum = sequenceNum;
             this.content = content;
+        }
+
+        private List<String> getContent() {
+            return content;
         }
 
         @Override
