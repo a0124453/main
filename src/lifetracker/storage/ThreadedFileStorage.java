@@ -4,48 +4,43 @@ import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
 import java.io.File;
-import java.io.Flushable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadedFileStorage implements Storage, Flushable {
+public class ThreadedFileStorage implements Storage {
 
-    public static final String DEFAULT_FILENAME = "lifetracker.dat";
+    private static final String DEFAULT_FILENAME = "lifetracker.dat";
 
-    public static final String FILE_IS_DIRECTORY_ERROR = "Filename provided is actually a directory!";
+    private static final String ERROR_FILE_IS_DIRECTORY = "Filename provided is actually a directory!";
+    private static final String ERROR_INTERRUPTED_CLOSE = "Thread was interrupted while finishing up requests!";
 
-    public static final String NULL_DATETIME_MARKER = "NA";
-    public static final String FIELD_SEPARATOR = " ";
+    private static final String NULL_DATETIME_MARKER = "NA";
+    private static final String FIELD_SEPARATOR = " ";
 
-    private final Thread fileStoreThread;
-    private final FileStoreProcess fileStoreProcess;
-    private File storageFile;
+    private Thread fileStoreThread;
+    private FileStoreProcess fileStoreProcess;
 
     public ThreadedFileStorage() throws IOException {
         this(DEFAULT_FILENAME);
     }
 
     public ThreadedFileStorage(String fileName) throws IOException {
-        setStore(fileName);
-
-        fileStoreProcess = new FileStoreProcess(storageFile);
-
-        fileStoreThread = new Thread(fileStoreProcess);
-        fileStoreThread.start();
+        startThread(prepareFile(fileName));
     }
 
     @Override
     public void setStore(String destination) throws IOException {
-        flush();
-
-        storageFile = new File(destination);
-
-        if (!storageFile.exists()) {
-            storageFile.createNewFile();
-        } else if (storageFile.isDirectory()) {
-            throw new IOException(FILE_IS_DIRECTORY_ERROR);
+        try {
+            stopThread();
+        } catch (InterruptedException e) {
+            System.err.println(ERROR_INTERRUPTED_CLOSE);
         }
+
+        File newStorageFile = prepareFile(destination);
+
+        startThread(newStorageFile);
     }
 
     @Override
@@ -59,15 +54,32 @@ public class ThreadedFileStorage implements Storage, Flushable {
     }
 
     @Override
-    public void flush() throws IOException {
-
+    public void close() throws Exception {
+        stopThread();
     }
 
-    @Override
-    public void close() throws Exception {
+    private void startThread(File storageFile) throws FileNotFoundException {
+        fileStoreProcess = new FileStoreProcess(storageFile);
+
+        fileStoreThread = new Thread(fileStoreProcess);
+        fileStoreThread.start();
+    }
+
+    private void stopThread() throws InterruptedException {
         fileStoreProcess.submitClose();
 
         fileStoreThread.join();
+    }
+
+    private File prepareFile(String destination) throws IOException {
+        File storageFile = new File(destination);
+
+        if (!storageFile.exists()) {
+            storageFile.createNewFile();
+        } else if (storageFile.isDirectory()) {
+            throw new IOException(ERROR_FILE_IS_DIRECTORY);
+        }
+        return storageFile;
     }
 
     private List<String> processCalendar(CalendarList calendar) {
