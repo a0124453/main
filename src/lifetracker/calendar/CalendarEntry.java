@@ -28,9 +28,4 @@ public interface CalendarEntry {
 
     boolean isOver();
 
-    boolean isFloating();
-
-    boolean isEvent();
-
-    boolean isDeadline();
 }

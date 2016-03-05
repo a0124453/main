@@ -7,15 +7,27 @@ import java.time.LocalTime;
 public class CalendarEntryImpl implements CalendarEntry {
 
     // variables
+    public enum EntryType {
+        FLOATING, DEADLINE, EVENT
+    };
+
     private String name;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
+    private EntryType entryType;
 
     // constructor
     public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end) {
         this.setName(name);
         this.setStart(start);
         this.setEnd(end);
+        if (start == null && end == null) {
+            this.entryType = EntryType.FLOATING;
+        } else if (start == null && end != null) {
+            this.entryType = EntryType.DEADLINE;
+        } else if (start != null && end != null) {
+            this.entryType = EntryType.EVENT;
+        }
     }
 
     // get() and set() functions for variables
@@ -61,21 +73,23 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public boolean isToday() {
-        if (isEvent()) {
+        if (entryType.equals(EntryType.EVENT)) {
             LocalDate eventStartDay = startDateTime.toLocalDate();
             LocalDate eventEndDay = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
-            return (today.isAfter(eventStartDay) && today.isBefore(eventEndDay));
+            boolean result = today.isEqual(eventStartDay);
+            result = result || (today.isAfter(eventStartDay) && today.isBefore(eventEndDay));
+            return result;
         }
 
-        if (isFloating()) {
+        if (entryType.equals(EntryType.FLOATING)) {
             return false;
         }
 
-        if (isDeadline()) {
+        if (entryType.equals(EntryType.DEADLINE)) {
             LocalDate eventStartDay = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
-            return eventStartDay.equals(today);
+            return eventStartDay.isEqual(today);
         }
 
         return false;
@@ -83,17 +97,17 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public boolean isOngoing() {
-        if (isFloating()) {
+        if (entryType.equals(EntryType.FLOATING)) {
             return true;
         }
 
-        if (isEvent()) {
+        if (entryType.equals(EntryType.EVENT)) {
             LocalDateTime now = LocalDateTime.now();
             boolean hasStarted = now.isAfter(startDateTime);
             return (hasStarted && !isOver());
         }
 
-        if (isDeadline()) {
+        if (entryType.equals(EntryType.DEADLINE)) {
             return (!isOver());
         }
 
@@ -102,7 +116,7 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public boolean isOver() {
-        if (isFloating())
+        if (entryType.equals(EntryType.FLOATING))
             return false;
 
         else {
@@ -111,18 +125,4 @@ public class CalendarEntryImpl implements CalendarEntry {
         }
     }
 
-    @Override
-    public boolean isFloating() {
-        return (startDateTime == null && endDateTime == null);
-    }
-
-    @Override
-    public boolean isEvent() {
-        return (startDateTime != null && endDateTime != null);
-    }
-
-    @Override
-    public boolean isDeadline() {
-        return (startDateTime == null && endDateTime != null);
-    }
 }
