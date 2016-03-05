@@ -1,4 +1,4 @@
-package CommandObject;
+package lifetracker.command;
 import lifetracker.calendar.CalendarList;
 
 
