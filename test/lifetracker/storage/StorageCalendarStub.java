@@ -49,10 +49,32 @@ public class StorageCalendarStub implements CalendarList {
         eventList.add(new CalendarEntryStub(name, start, end));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof StorageCalendarStub))
+            return false;
+
+        StorageCalendarStub that = (StorageCalendarStub) o;
+
+        if (!getTaskList().equals(that.getTaskList()))
+            return false;
+        return getEventList().equals(that.getEventList());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTaskList().hashCode();
+        result = 31 * result + getEventList().hashCode();
+        return result;
+    }
+
     private void populateData() {
         taskList.add(new CalendarEntryStub("Test Task 1", null, null));
         taskList.add(
-                new CalendarEntryStub("Test Task 2 2007-12-03T10:15:30", null,
+                new CalendarEntryStub("Test Task 2", null,
                         LocalDateTime.parse("2016-03-14T23:59:59")));
 
         eventList.add(new CalendarEntryStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"),
@@ -128,5 +150,29 @@ public class StorageCalendarStub implements CalendarList {
             return false;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof CalendarEntryStub))
+                return false;
+
+            CalendarEntryStub that = (CalendarEntryStub) o;
+
+            if (!getName().equals(that.getName()))
+                return false;
+            if (getStartTime() != null ? !getStartTime().equals(that.getStartTime()) : that.getStartTime() != null)
+                return false;
+            return getEndTime() != null ? getEndTime().equals(that.getEndTime()) : that.getEndTime() == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = getName().hashCode();
+            result = 31 * result + (getStartTime() != null ? getStartTime().hashCode() : 0);
+            result = 31 * result + (getEndTime() != null ? getEndTime().hashCode() : 0);
+            return result;
+        }
     }
 }

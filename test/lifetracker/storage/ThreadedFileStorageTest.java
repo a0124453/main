@@ -30,11 +30,11 @@ public class ThreadedFileStorageTest {
     public static void setUpTestData() throws Exception {
         expectedFileContent.clear();
         expectedFileContent.add("2");
-        expectedFileContent.add("Test Task 1");
-        expectedFileContent.add("Test Task 2 2007-12-03T10:15:30 2016-03-14T23:59:59");
+        expectedFileContent.add("2016-03-14T23:59:59 2016-03-15T23:59:59 Test Event 1");
+        expectedFileContent.add("2016-03-14T11:59:59 2016-03-14T23:59:59 Test Event 2");
         expectedFileContent.add("2");
-        expectedFileContent.add("Test Event 1 2016-03-14T23:59:59 2016-03-15T23:59:59");
-        expectedFileContent.add("Test Event 2 2016-03-14T11:59:59 2016-03-14T23:59:59");
+        expectedFileContent.add("NA Test Task 1");
+        expectedFileContent.add("2016-03-14T23:59:59 Test Task 2");
     }
 
     @Before
