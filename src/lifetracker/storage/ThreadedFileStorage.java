@@ -3,11 +3,10 @@ package lifetracker.storage;
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadedFileStorage implements Storage, Flushable {
@@ -19,6 +18,8 @@ public class ThreadedFileStorage implements Storage, Flushable {
     public static final String NULL_DATETIME_MARKER = "NA";
     public static final String FIELD_SEPARATOR = " ";
 
+    private final Thread fileStoreThread;
+    private final FileStoreProcess fileStoreProcess;
     private File storageFile;
 
     public ThreadedFileStorage() throws IOException {
@@ -27,6 +28,11 @@ public class ThreadedFileStorage implements Storage, Flushable {
 
     public ThreadedFileStorage(String fileName) throws IOException {
         setStore(fileName);
+
+        fileStoreProcess = new FileStoreProcess(storageFile);
+
+        fileStoreThread = new Thread(fileStoreProcess);
+        fileStoreThread.start();
     }
 
     @Override
@@ -44,10 +50,7 @@ public class ThreadedFileStorage implements Storage, Flushable {
 
     @Override
     public void store(CalendarList calendar) throws IOException {
-        try (BufferedWriter fileWrite = new BufferedWriter(new FileWriter(storageFile))) {
-            writeEvents(fileWrite, calendar.getEventList());
-            writeTasks(fileWrite, calendar.getTaskList());
-        }
+        fileStoreProcess.submitSaveList(processCalendar(calendar));
     }
 
     @Override
@@ -62,35 +65,53 @@ public class ThreadedFileStorage implements Storage, Flushable {
 
     @Override
     public void close() throws Exception {
-        flush();
+        fileStoreProcess.submitClose();
+
+        fileStoreThread.join();
     }
 
-    private void writeEvents(BufferedWriter writer, List<CalendarEntry> eventList) throws IOException {
-        writer.write(String.valueOf(eventList.size()));
+    private List<String> processCalendar(CalendarList calendar) {
+        List<String> results = new ArrayList<>();
+
+        results.addAll(processEvents(calendar.getEventList()));
+        results.addAll(processTasks(calendar.getTaskList()));
+
+        return results;
+    }
+
+    private List<String> processEvents(List<CalendarEntry> eventList) {
+        List<String> processedLines = new ArrayList<>();
+
+        processedLines.add(String.valueOf(eventList.size()));
 
         for (CalendarEntry event : eventList) {
-            writer.newLine();
-            writer.write(event.getStart().toString());
-            writer.write(FIELD_SEPARATOR);
-            writer.write(event.getEnd().toString());
-            writer.write(FIELD_SEPARATOR);
-            writer.write(event.getName());
+
+            String processedLine = event.getStart().toString()
+                    + FIELD_SEPARATOR
+                    + event.getEnd().toString()
+                    + FIELD_SEPARATOR
+                    + event.getName();
+
+            processedLines.add(processedLine);
         }
+
+        return processedLines;
     }
 
-    private void writeTasks(BufferedWriter writer, List<CalendarEntry> taskList) throws IOException {
-        writer.write(String.valueOf(taskList.size()));
+    private List<String> processTasks(List<CalendarEntry> taskList) throws IOException {
+        List<String> processedLines = new ArrayList<>();
+
+        processedLines.add(String.valueOf(taskList.size()));
 
         for (CalendarEntry task : taskList) {
-            writer.newLine();
 
-            if (task.getEndTime() == null) {
-                writer.write(NULL_DATETIME_MARKER);
-            } else {
-                writer.write(task.getEndTime().toString());
-            }
-            writer.write(FIELD_SEPARATOR);
-            writer.write(task.getName());
+            String processedLine = (task.getEnd() == null ? NULL_DATETIME_MARKER : task.getEnd().toString())
+                    + FIELD_SEPARATOR
+                    + task.getName();
+
+            processedLines.add(processedLine);
         }
+
+        return processedLines;
     }
 }
