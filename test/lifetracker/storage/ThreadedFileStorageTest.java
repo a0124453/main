@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class ThreadedFileStorageTest {
 
@@ -20,7 +23,7 @@ public class ThreadedFileStorageTest {
     @Before
     public void setUp() throws Exception {
         storage = new ThreadedFileStorage(TEST_FILE_NAME);
-        testCalendarStub = new StorageCalendarStub();
+        testCalendarStub = new StorageCalendarStub(true);
     }
 
     @After
@@ -39,9 +42,20 @@ public class ThreadedFileStorageTest {
 
     @Test
     public void testSetStore() throws Exception {
+
+        storage.store(testCalendarStub);
+
         storage.setStore(ALT_TEST_FILE_NAME);
 
         Assert.assertEquals(true, new File(ALT_TEST_FILE_NAME).exists());
+
+        storage.store(testCalendarStub);
+        storage.flush();
+
+        List<String> originalFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
+        List<String> altFileContent = Files.readAllLines(Paths.get(ALT_TEST_FILE_NAME));
+
+        Assert.assertEquals(originalFileContent, altFileContent);
     }
 
     @Test
