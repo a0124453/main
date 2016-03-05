@@ -36,23 +36,24 @@ public class StorageCalendarStub implements CalendarList {
 
     @Override
     public void add(String name) {
-
+        taskList.add(new CalendarEntryStub(name, null, null));
     }
 
     @Override
     public void add(String name, LocalDateTime due) {
-
+        taskList.add(new CalendarEntryStub(name, null, due));
     }
 
     @Override
     public void add(String name, LocalDateTime start, LocalDateTime end) {
-
+        eventList.add(new CalendarEntryStub(name, start, end));
     }
 
     private void populateData() {
         taskList.add(new CalendarEntryStub("Test Task 1", null, null));
         taskList.add(
-                new CalendarEntryStub("Test Task 2 2007-12-03T10:15:30", null, LocalDateTime.parse("2016-03-14T23:59:59")));
+                new CalendarEntryStub("Test Task 2 2007-12-03T10:15:30", null,
+                        LocalDateTime.parse("2016-03-14T23:59:59")));
 
         eventList.add(new CalendarEntryStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"),
                 LocalDateTime.parse("2016-03-15T23:59:59")));
