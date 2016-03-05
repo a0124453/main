@@ -45,22 +45,6 @@ public class FileStoreProcess implements Runnable {
     }
 
     /**
-     * A method that blocks till all write requests, including ones submitted after calling this method, has been
-     * fulfilled.
-     */
-    public void waitTillWritten() {
-        synchronized (writeQueue) {
-            writeQueue.add(WriteNode.CLEAR_NODE);
-
-            try {
-                writeQueue.wait();
-            } catch (InterruptedException e) {
-                System.err.println(ERROR_WAIT_INTERRUPTED);
-            }
-        }
-    }
-
-    /**
      * Submits a request to close the thread.
      * <p>
      * The thread will join after all write requests, including the ones added after this close request, are fulfilled.
@@ -79,11 +63,7 @@ public class FileStoreProcess implements Runnable {
 
             while (currentNode != WriteNode.END_NODE) {
 
-                if (currentNode == WriteNode.CLEAR_NODE) {
-                    synchronized (writeQueue) {
-                        writeQueue.notify();
-                    }
-                } else if (currentNode.getSequenceNum() > latestWrittenNodeNum) {
+                if (currentNode.getSequenceNum() > latestWrittenNodeNum) {
 
                     latestWrittenNodeNum = currentNode.getSequenceNum();
 
@@ -112,8 +92,7 @@ public class FileStoreProcess implements Runnable {
 
     private static class WriteNode implements Comparable<WriteNode> {
 
-        private static final WriteNode CLEAR_NODE = new WriteNode(-1, null);
-        private static final WriteNode END_NODE = new WriteNode(-2, null);
+        private static final WriteNode END_NODE = new WriteNode(-1, null);
 
         private static int nextSequenceNum = 0;
 
