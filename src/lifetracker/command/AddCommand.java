@@ -1,4 +1,4 @@
-package CommandObject;
+package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
@@ -27,10 +27,6 @@ public class AddCommand implements CommandObject {
 
     public String getComments() {
         return this.comment;
-    }
-
-    public void setComments(String comments) {
-        this.comment = comments;
     }
 
 }
