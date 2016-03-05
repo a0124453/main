@@ -1,13 +1,13 @@
 package lifetracker.calendar;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class CalendarListTest {
 
@@ -15,28 +15,27 @@ public class CalendarListTest {
     public static final LocalDateTime now = LocalDateTime.now();
 
     private static CalendarListImpl testCalendar = new CalendarListImpl();
-    private static List<Task> expectedTaskList = new ArrayList<Task>();
+    private static List<CalendarEntry> expectedTaskList = new ArrayList<>();
 
     @BeforeClass
     public static void setUpBeforeClass() {
         // add tasks to testCalendar using overloaded addTask methods
         for (int i = 0; i < listSize; i++) {
             if (i < listSize / 2) {
-                // addTask(String, LocalDateTime)
-                testCalendar.addTask(Integer.toString(i), null);
+                // addTask(String)
+                testCalendar.add(Integer.toString(i));
             } else {
-                // addTask(TaskImpl)
-                TaskImpl task = new TaskImpl(Integer.toString(i), now);
-                testCalendar.addTask(task);
+                // addTask(String, LocalDateTime)
+                testCalendar.add(Integer.toString(i), now);
             }
         }
         // set up testTaskList for comparison with task list in testCalendar
         for (int i = 0; i < listSize; i++) {
             if (i < listSize / 2) {
-                TaskImpl task = new TaskImpl(Integer.toString(i), null);
+                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i), null, null);
                 expectedTaskList.add(task);
             } else {
-                TaskImpl task = new TaskImpl(Integer.toString(i), now);
+                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i),null ,now);
                 expectedTaskList.add(task);
             }
         }
@@ -51,7 +50,7 @@ public class CalendarListTest {
         }
         // compare deadlines of all tasks in both lists
         for (int i = 0; i < listSize; i++) {
-            assertEquals(expectedTaskList.get(i).getDeadline(), testCalendar.getTaskList().get(i).getDeadline());
+            assertEquals(expectedTaskList.get(i).getEnd(), testCalendar.getTaskList().get(i).getEnd());
         }
     }
 
