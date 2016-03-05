@@ -98,7 +98,7 @@ public class ThreadedFileStorage implements Storage, Flushable {
         return processedLines;
     }
 
-    private List<String> processTasks(List<CalendarEntry> taskList) throws IOException {
+    private List<String> processTasks(List<CalendarEntry> taskList) {
         List<String> processedLines = new ArrayList<>();
 
         processedLines.add(String.valueOf(taskList.size()));
