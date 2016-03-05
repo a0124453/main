@@ -50,13 +50,13 @@ public class StorageCalendarStub implements CalendarList {
     }
 
     private void populateData() {
-        taskList.add(new StorageTaskStub("Test Task 1"));
+        taskList.add(new CalendarEntryStub("Test Task 1", null, null));
         taskList.add(
-                new StorageTaskStub("Test Task 2 2007-12-03T10:15:30", LocalDateTime.parse("2016-03-14T23:59:59")));
+                new CalendarEntryStub("Test Task 2 2007-12-03T10:15:30", null, LocalDateTime.parse("2016-03-14T23:59:59")));
 
-        eventList.add(new StorageEventStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"),
+        eventList.add(new CalendarEntryStub("Test Event 1", LocalDateTime.parse("2016-03-14T23:59:59"),
                 LocalDateTime.parse("2016-03-15T23:59:59")));
-        eventList.add(new StorageEventStub("Test Event 2", LocalDateTime.parse("2016-03-14T11:59:59"),
+        eventList.add(new CalendarEntryStub("Test Event 2", LocalDateTime.parse("2016-03-14T11:59:59"),
                 LocalDateTime.parse("2016-03-14T23:59:59")));
     }
 
@@ -127,19 +127,5 @@ public class StorageCalendarStub implements CalendarList {
             return false;
         }
 
-        @Override
-        public boolean isFloating() {
-            return false;
-        }
-
-        @Override
-        public boolean isEvent() {
-            return false;
-        }
-
-        @Override
-        public boolean isDeadline() {
-            return false;
-        }
     }
 }
