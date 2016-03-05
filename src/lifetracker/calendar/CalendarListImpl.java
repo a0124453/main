@@ -7,8 +7,8 @@ import java.util.List;
 public class CalendarListImpl implements CalendarList {
 
     // variables
-    private List<CalendarEntryImpl> taskList = new ArrayList<>();
-    private List<CalendarEntryImpl> eventList = new ArrayList<>();
+    private List<CalendarEntry> taskList = new ArrayList<>();
+    private List<CalendarEntry> eventList = new ArrayList<>();
 
     // get() and set() functions for variables
 
@@ -18,7 +18,7 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#getTaskList()
      */
     @Override
-    public List<CalendarEntryImpl> getTaskList() {
+    public List<CalendarEntry> getTaskList() {
         return taskList;
     }
 
@@ -28,7 +28,7 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#getEventList()
      */
     @Override
-    public List<CalendarEntryImpl> getEventList() {
+    public List<CalendarEntry> getEventList() {
         return eventList;
     }
 
