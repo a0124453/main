@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+/**
+ * A class that writes lines to a file.
+ * <p>
+ * This class is designed to be run by a single thread. Running it on multiple threads might cause concurrency issues.
+ */
 public class FileStoreThread implements Runnable {
 
     private static final String ERROR_INVALID_FILE = "File is null or is invalid!";
@@ -17,46 +22,15 @@ public class FileStoreThread implements Runnable {
     private static final String ERROR_WAIT_INTERRUPTED = "FileStoreThread was interrupted while waiting for data to write.";
     private static final String ERROR_FILE_WRITE = "Error writing to file!";
 
-    private static final WriteNode END_NODE = new WriteNode(-1, null);
-
-    private static FileStoreThread storeThreadInstance = new FileStoreThread();
-
-    private static BlockingQueue<WriteNode> writeQueue = new PriorityBlockingQueue<>();
-
+    private BlockingQueue<WriteNode> writeQueue = new PriorityBlockingQueue<>();
     private File storeFile;
 
-    private boolean initialized = false;
-
-    private FileStoreThread() {
-    }
-
-    public static void init(File storeFile) throws FileNotFoundException {
-
-        if (storeFile == null
-                || storeThreadInstance.storeFile.isDirectory()
-                || !storeThreadInstance.storeFile.exists()) {
+    FileStoreThread(File storeFile) throws FileNotFoundException {
+        if (storeFile == null || storeFile.isDirectory() || !storeFile.exists()) {
             throw new FileNotFoundException(ERROR_INVALID_FILE);
         }
 
-        storeThreadInstance.initialized = true;
-
-        storeThreadInstance.storeFile = storeFile;
-    }
-
-    /**
-     * Gets the thread store instance.
-     * <p>
-     * {@code init()} must be called prior to obtaining an instance, or an Exception will be thrown.
-     *
-     * @return The FileStoreThread instance
-     */
-    public static FileStoreThread getInstance() {
-
-        if (!storeThreadInstance.initialized) {
-            throw new IllegalStateException(ERROR_UNINITIALIZED);
-        }
-
-        return storeThreadInstance;
+        this.storeFile = storeFile;
     }
 
     /**
@@ -66,7 +40,7 @@ public class FileStoreThread implements Runnable {
      *
      * @param saveList The list to write to the save file.
      */
-    public static void submitSaveList(List<String> saveList) {
+    public void submitSaveList(List<String> saveList) {
         writeQueue.add(new WriteNode(new ArrayList<>(saveList)));
     }
 
@@ -76,7 +50,7 @@ public class FileStoreThread implements Runnable {
         try {
             WriteNode currentNode = writeQueue.take();
 
-            while (currentNode != END_NODE) {
+            while (currentNode != WriteNode.END_NODE) {
                 List<String> writeLineList = currentNode.getContent();
 
                 try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storeFile))) {
@@ -96,6 +70,8 @@ public class FileStoreThread implements Runnable {
     }
 
     private static class WriteNode implements Comparable<WriteNode> {
+
+        private static final WriteNode END_NODE = new WriteNode(-0, null);
 
         private static int nextSequenceNum = 0;
 
