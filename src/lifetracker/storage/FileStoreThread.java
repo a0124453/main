@@ -18,11 +18,10 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class FileStoreThread implements Runnable {
 
     private static final String ERROR_INVALID_FILE = "File is null or is invalid!";
-    private static final String ERROR_UNINITIALIZED = "Thread is not initialized with init()!";
     private static final String ERROR_WAIT_INTERRUPTED = "FileStoreThread was interrupted while waiting for data to write.";
     private static final String ERROR_FILE_WRITE = "Error writing to file!";
 
-    private BlockingQueue<WriteNode> writeQueue = new PriorityBlockingQueue<>();
+    private final BlockingQueue<WriteNode> writeQueue = new PriorityBlockingQueue<>();
     private File storeFile;
 
     FileStoreThread(File storeFile) throws FileNotFoundException {
@@ -36,12 +35,38 @@ public class FileStoreThread implements Runnable {
     /**
      * Takes a list of strings, duplicates it, and adds it to the queue to be written.
      * <p>
-     * Note that this function repects the order in which the lists are submitted, and a list submitted later will effectively override a list submitted earlier.
+     * Note that this function repects the order in which the lists are submitted, and a list submitted later will
+     * effectively override a list submitted earlier.
      *
      * @param saveList The list to write to the save file.
      */
     public void submitSaveList(List<String> saveList) {
         writeQueue.add(new WriteNode(new ArrayList<>(saveList)));
+    }
+
+    /**
+     * A method that blocks till all write requests, including ones submitted after calling this method, has been
+     * fulfilled.
+     */
+    public void waitTillWritten() {
+        synchronized (writeQueue) {
+            writeQueue.add(WriteNode.CLEAR_NODE);
+
+            try {
+                writeQueue.wait();
+            } catch (InterruptedException e) {
+                System.err.println(ERROR_WAIT_INTERRUPTED);
+            }
+        }
+    }
+
+    /**
+     * Submits a request to close the thread.
+     * <p>
+     * The thread will join after all write requests, including the ones added after this close request, are fulfilled.
+     */
+    public void submitClose() {
+        writeQueue.add(WriteNode.END_NODE);
     }
 
     @Override
@@ -54,7 +79,11 @@ public class FileStoreThread implements Runnable {
 
             while (currentNode != WriteNode.END_NODE) {
 
-                if (currentNode.getSequenceNum() > latestWrittenNodeNum) {
+                if (currentNode == WriteNode.CLEAR_NODE) {
+                    synchronized (writeQueue) {
+                        writeQueue.notify();
+                    }
+                } else if (currentNode.getSequenceNum() > latestWrittenNodeNum) {
 
                     latestWrittenNodeNum = currentNode.getSequenceNum();
 
@@ -63,8 +92,10 @@ public class FileStoreThread implements Runnable {
 
                 currentNode = writeQueue.take();
             }
-        } catch (InterruptedException | IOException e) {
-            System.err.println(e.getMessage());
+        } catch (InterruptedException e) {
+            System.err.println(ERROR_WAIT_INTERRUPTED);
+        } catch (IOException e) {
+            System.err.println(ERROR_FILE_WRITE);
         }
     }
 
@@ -81,6 +112,7 @@ public class FileStoreThread implements Runnable {
 
     private static class WriteNode implements Comparable<WriteNode> {
 
+        private static final WriteNode CLEAR_NODE = new WriteNode(-1, null);
         private static final WriteNode END_NODE = new WriteNode(-2, null);
 
         private static int nextSequenceNum = 0;
