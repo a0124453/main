@@ -4,6 +4,7 @@ import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,5 +58,88 @@ public class StorageCalendarStub implements CalendarList {
                 LocalDateTime.parse("2016-03-15T23:59:59")));
         eventList.add(new StorageEventStub("Test Event 2", LocalDateTime.parse("2016-03-14T11:59:59"),
                 LocalDateTime.parse("2016-03-14T23:59:59")));
+    }
+
+    class CalendarEntryStub implements CalendarEntry {
+
+        private String name;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+        public CalendarEntryStub(String name, LocalDateTime startTime, LocalDateTime endTime) {
+            this.name = name;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public void setName(String name) {
+
+        }
+
+        @Override
+        public LocalDateTime getStart() {
+            return startTime;
+        }
+
+        @Override
+        public void setStart(LocalDateTime start) {
+
+        }
+
+        @Override
+        public LocalDateTime getEnd() {
+            return endTime;
+        }
+
+        @Override
+        public void setEnd(LocalDateTime end) {
+
+        }
+
+        @Override
+        public LocalTime getStartTime() {
+            return null;
+        }
+
+        @Override
+        public LocalTime getEndTime() {
+            return null;
+        }
+
+        @Override
+        public boolean isToday() {
+            return false;
+        }
+
+        @Override
+        public boolean isOngoing() {
+            return false;
+        }
+
+        @Override
+        public boolean isOver() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloating() {
+            return false;
+        }
+
+        @Override
+        public boolean isEvent() {
+            return false;
+        }
+
+        @Override
+        public boolean isDeadline() {
+            return false;
+        }
     }
 }
