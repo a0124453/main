@@ -29,13 +29,17 @@ public class ParserImpl implements Parser {
 
             if (userInput.contains(" by ")) {
                 String dayRegex = "[a-zA-Z]+|[a-zA-Z]+ [a-zA-Z]+";
-                String dateMonthRegex = "\\d+ [a-zA-Z]+";
+                String dateMonthRegex = "\\d+ (?:[a-zA-Z]+&&^(?:am|AM|pm|PM))";
                 String dateMonthYearRegex = "\\d+ [a-zA-Z]+ \\d+";
-                String dateMonthYearIntRegex = "\\d{2,}+";
-                String timeRegex = "\\d+\\s?(am|AM|pm|PM)?";
-                Pattern pattern = Pattern.compile(String.format("^(.+) by\\s?(%s|%s|%s|%s)?\\s?(%s)?$" 
-                        ,dayRegex, dateMonthRegex, dateMonthYearRegex, dateMonthYearIntRegex, timeRegex));
-                Matcher matcher = pattern.matcher(userInput);
+                String dateIntRegex = "\\d{2,}+";
+                String dateMonthIntRegex = "\\d+(?:/|-)\\d+";
+                String dateMonthYearIntRegex = "\\d+(?:/|-)\\d+(?:/|-)\\d{2,}+";
+                String timeRegex = "\\d+(?::\\d+)?\\s?(?:am|AM|pm|PM)?";
+                Pattern pattern = Pattern.compile(String.format("^(.+) by\\s?(%s|%s|%s|%s|%s|%s)?\\s?(%s)?$", 
+                        dayRegex, dateMonthRegex, dateMonthYearRegex, 
+                        dateIntRegex, dateMonthIntRegex, dateMonthYearIntRegex, timeRegex));
+                
+                Matcher matcher = pattern.matcher("task by 12/02 1200pm");
                 matcher.find();
                 task = matcher.group(1);
                 endDate = matcher.group(2);

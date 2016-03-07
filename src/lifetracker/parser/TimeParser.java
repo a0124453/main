@@ -14,6 +14,13 @@ public class TimeParser {
         LocalTime time = null;
         createPossibleTimeFormats();
         createPossibleTimeFormatters();
+        time = getTime(timeInput);
+        
+        return time;
+    }
+
+    private static LocalTime getTime(String timeInput) {
+        LocalTime time = null;
         int i = 0;
         while (i < possibleTimeFormatters.size()) {
             try {
@@ -23,7 +30,6 @@ public class TimeParser {
                 i++;
             }
         }
-        
         return time;
     }
 
