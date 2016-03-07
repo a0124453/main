@@ -28,12 +28,18 @@ public class ParserImpl implements Parser {
             }
 
             if (userInput.contains(" by ")) {
-                Pattern pattern = Pattern.compile("^(.+) by(\\s?([a-zA-Z]+))?(\\s?(\\d+))?$");
+                String dayRegex = "[a-zA-Z]+|[a-zA-Z]+ [a-zA-Z]+";
+                String dateMonthRegex = "\\d+ [a-zA-Z]+";
+                String dateMonthYearRegex = "\\d+ [a-zA-Z]+ \\d+";
+                String dateMonthYearIntRegex = "\\d{2,}+";
+                String timeRegex = "\\d+\\s?(am|AM|pm|PM)?";
+                Pattern pattern = Pattern.compile(String.format("^(.+) by\\s?(%s|%s|%s|%s)?\\s?(%s)?$" 
+                        ,dayRegex, dateMonthRegex, dateMonthYearRegex, dateMonthYearIntRegex, timeRegex));
                 Matcher matcher = pattern.matcher(userInput);
                 matcher.find();
                 task = matcher.group(1);
-                endDate = matcher.group(3);
-                endTime = matcher.group(5);
+                endDate = matcher.group(2);
+                endTime = matcher.group(3);
 
                 if (endDate == null) {
                     endDate = "today";
