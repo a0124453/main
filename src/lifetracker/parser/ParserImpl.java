@@ -2,6 +2,8 @@ package lifetracker.parser;
 
 import lifetracker.command.CommandObject;
 
+import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,9 +15,6 @@ public class ParserImpl implements Parser {
     public String feedback;
     public String startTime;
     public String startDate;
-
-    public ParserImpl() {
-    }
 
     @Override
     public CommandObject parse(String userInput) {
@@ -72,7 +71,9 @@ public class ParserImpl implements Parser {
                 }
 
                 if (startTime == null) {
-                    startTime = "currenttime";
+                    String hour = Integer.toString(LocalTime.now().getHour());
+                    String minute = Integer.toBinaryString(LocalTime.now().getMinute());
+                    startTime = new String(hour + minute);
                 }
 
                 if (startDate == null) {
