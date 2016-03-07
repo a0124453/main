@@ -8,6 +8,7 @@ import java.time.LocalTime;
 
 public class AddCommand implements CommandObject {
     private String comment;
+    private String task;
     private LocalDate startDate;
     private LocalTime startTime;
     private LocalDateTime startDateTime;
