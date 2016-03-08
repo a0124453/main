@@ -2,9 +2,14 @@ package lifetracker.parser;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.time.LocalDate;
 
 public class DateTimeParser {
+    private static final String END_TIME_DEFAULT = "2359";
+    private static final String START_TIME_DEFAULT = "0900";
     private static final String DATE_PATTERN0 = "[a-zA-Z]+|[a-zA-Z]+ [a-zA-Z]+";
     private static final String DATE_PATTERN1 = "\\d+ (?:[a-zA-Z]+&&^(?:am|AM|pm|PM))";
     private static final String DATE_PATTERN2 = "\\d+ [a-zA-Z]+ \\d+";
@@ -24,23 +29,153 @@ public class DateTimeParser {
         } else {
             isValidDAteTime = false;
         }
+        
         return isValidDAteTime;
     }
+    
     LocalDateTime parse(String endDateTimeString) {
-        LocalDateTime endDateTime;
+
+        String endDateString = null;
+        String endTimeString = null;
         
-        String endDateString;
-        String endTimeString;
-        LocalDate endDate;
-        LocalTime endTime;
+        Pattern pattern = Pattern.compile(DATE_TIME_PATTERN);
+        Matcher matcher = pattern.matcher(endDateTimeString);
+        
+        matcher.find();
+        endDateString = matcher.group(1);
+        endTimeString = matcher.group(2);
+        
+        
+        if (endDateString == null) {
+            endDateString = "today";
+        }
+
+        if (endTimeString == null) {
+            endTimeString = END_TIME_DEFAULT;
+        }
+        
+        LocalDate endDate = DateParser.parse(endDateString);
+        LocalTime endTime = TimeParser.parse(endTimeString);
+        
+        LocalDateTime endDateTime = endDate.atTime(endTime);
+        
+        if (endDateTime.isBefore(LocalDateTime.now())) {
+            endDateTime = endDateTime.plusDays(1);
+        }
         
         return endDateTime;
     }
     
     //start date before end date
-    LocalDateTime[] parse(String startDate, String endDate) {
-        return null;
+    LocalDateTime[] parse(String startDateTimeString, String endDateTimeString) {
+        LocalDateTime[] dates = new LocalDateTime[2];
+        String startDateString = null;
+        String startTimeString = null;
+        String endDateString = null;
+        String endTimeString = null;
+        
+        Pattern pattern = Pattern.compile(DATE_TIME_PATTERN);
+        
+        Matcher matcher = pattern.matcher(startDateTimeString);
+        matcher.find();
+        startDateString = matcher.group(1);
+        startTimeString = matcher.group(2);
+        
+        matcher = pattern.matcher(endDateTimeString);
+        matcher.find();
+        endDateString = matcher.group(1);
+        endTimeString = matcher.group(2);
+        
+        if (startDateString == null) {
+            startDateString = processNullStartDate(endDateString);
+        }
+        
+        if (startDateString.equals("now")) {
+            startTimeString = getCurrentTime();
+        }
+        
+        if (endDateString == null) {
+            endDateString = startDateString;
+        }
+        
+        if (startTimeString == null) {
+            startTimeString = processNullStartTime(startDateString);
+        }
+        
+        if (endTimeString == null) {
+            endTimeString = processNullEndTime(startDateString, endDateString, startTimeString);
+         }
+        
+        LocalDate startDate = DateParser.parse(startDateString);
+        LocalTime startTime = TimeParser.parse(startTimeString);
+        LocalDateTime startDateTime = startDate.atTime(startTime);
+        
+        LocalDate endDate = DateParser.parse(endDateString);
+        LocalTime endTime = TimeParser.parse(endTimeString);
+        LocalDateTime endDateTime = endDate.atTime(endTime);
+
+        dates[0] = startDateTime;
+        dates[1] = endDateTime;  
+        
+        return dates;
     }
+    
+    private String processNullEndTime(String startDateString, String endDateString, String startTimeString) {
+        String endTimeString;
+        
+        if (startDateString.equals(endDateString)) {
+            endTimeString = addOneHourTo(startTimeString);
+        } else {
+            endTimeString = END_TIME_DEFAULT;
+        }
+        
+        return endTimeString;
+        
+    }
+
+    private String addOneHourTo(String startTimeString) {
+        LocalTime startTime = TimeParser.parse(startTimeString);
+        startTime = startTime.plusHours(1);
+        
+        String hour = Integer.toString(startTime.getHour());
+        String minute = Integer.toString(startTime.getMinute());
+        String endTimeString = new String(hour + minute);
+       
+        return endTimeString;
+    }
+
+    private String processNullStartTime(String startDateString) {
+        String startTimeString;
+        if (startDateString.equals("today")) {
+            startTimeString = getCurrentTime();
+        } else {
+            startTimeString = START_TIME_DEFAULT;
+        }
+        return startTimeString;
+    }
+
+    private String getCurrentTime() {
+        String hour = Integer.toString(LocalTime.now().getHour());
+        String minute = Integer.toString(LocalTime.now().getMinute());
+        String currentTimeString = new String(hour + minute);
+        return currentTimeString;
+    }
+
+    private String processNullStartDate (String endDateString) {
+        String startDateString;
+        
+        if (endDateString == null) {
+            startDateString = new String("today");
+        } else {
+            startDateString = endDateString;
+        }
+        
+        return startDateString;
+        
+    }
+    
+    
+    
     
 
 }
