@@ -26,7 +26,7 @@ public class DateParser {
     
     static LocalDate date;
 
-    public static LocalDate parseDate(String inputDate) {
+    public static LocalDate parse(String inputDate) {
         createPossibleDatePatterns();
         int pattern = matchDateToPatterns(inputDate);
 
