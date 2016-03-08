@@ -8,13 +8,14 @@ import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public class LogicImpl implements Logic {
 
     private static final String ENTRY_COMMON_FORMAT = "%1$d: %2$s ";
-    private static final String DUAL_DATE_FORMAT = "%1$s - %2$s";
+    private static final String DUAL_DATE_TIME_FORMAT = "%1$s - %2$s";
 
     private static final String TASK_HEADER = "Tasks:";
     private static final String EVENT_HEADER = "Events:";
@@ -53,10 +54,10 @@ public class LogicImpl implements Logic {
             executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
         }
 
-        if(!executedState.getEventList().isEmpty()){
+        if (!executedState.getEventList().isEmpty()) {
             runResult.addResultLine(EVENT_HEADER);
 
-            executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+            executedState.getTaskList().forEach(event -> runResult.addResultLine(eventSummary(event)));
         }
 
         return runResult;
@@ -73,7 +74,25 @@ public class LogicImpl implements Logic {
         return returnString;
     }
 
-    private static String eventSummary(CalendarEntry event){
-        return null;
+    private static String eventSummary(CalendarEntry event) {
+
+        String returnString = String.format(ENTRY_COMMON_FORMAT, event.getId(), event.getName());
+
+        LocalDateTime start = event.getStart();
+        LocalDateTime end = event.getEnd();
+
+        if (start.toLocalDate().equals(end.toLocalDate())) {
+            returnString += start.toLocalDate().format(DateTimeFormatter.ofLocalizedDate(DATE_STYLE));
+            returnString += " ";
+            returnString += String.format(DUAL_DATE_TIME_FORMAT,
+                    start.toLocalTime().format(DateTimeFormatter.ofLocalizedTime(TIME_STYLE)),
+                    end.toLocalTime().format(DateTimeFormatter.ofLocalizedTime(TIME_STYLE)));
+        } else {
+            returnString += String.format(DUAL_DATE_TIME_FORMAT,
+                    start.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)),
+                    end.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        }
+
+        return returnString;
     }
 }
