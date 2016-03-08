@@ -17,6 +17,8 @@ import java.util.function.Predicate;
  */
 public class CommandParser {
 
+    public static final String COMMAND_BODY_NAME_FIELD_KEY = "name";
+
     private static final String COMMAND_BODY_SEPARATOR = " ";
 
     private final Set<String> commands;
@@ -77,23 +79,23 @@ public class CommandParser {
         Stack<String> processStack = commandBodyToReverseStack(commandBody);
         Stack<String> intermediateStack = new Stack<>();
 
-        while (!processStack.isEmpty()){
+        while (!processStack.isEmpty()) {
             String element = processStack.pop();
 
-            if(keywordsWithVerifications.containsKey(element)){
+            if (keywordsWithVerifications.containsKey(element)) {
                 String argument = collapseList(intermediateStack);
                 intermediateStack.clear();
 
-                if(keywordsWithVerifications.get(element).test(argument)){
+                if (keywordsWithVerifications.get(element).test(argument) && !keyWordArgumentMap.containsKey(element)) {
                     keyWordArgumentMap.put(element, argument);
-                } else{
+                } else {
                     processStack.push(element);
                     processStack.push(argument);
 
-                    keyWordArgumentMap.put("name", collapseList(processStack));
+                    keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseList(processStack));
                     processStack.clear();
                 }
-            } else{
+            } else {
                 intermediateStack.push(element);
             }
         }
@@ -114,25 +116,26 @@ public class CommandParser {
 
     /**
      * Creates a stack from the command body, split into elements and pops from the back.
+     *
      * @param commandBody The command body
      * @return The reverse stack
      */
-    private static Stack<String> commandBodyToReverseStack(String commandBody){
+    private static Stack<String> commandBodyToReverseStack(String commandBody) {
         String[] splitCommand = commandBody.split(COMMAND_BODY_SEPARATOR);
 
         Stack<String> processStack = new Stack<>();
 
-        for(String elem: splitCommand){
+        for (String elem : splitCommand) {
             processStack.push(elem);
         }
 
         return processStack;
     }
 
-    private static String collapseList(List<String> list){
+    private static String collapseList(List<String> list) {
         StringBuilder collateString = new StringBuilder();
 
-        for(String elem: list){
+        for (String elem : list) {
             collateString.append(elem);
             collateString.append(" ");
         }
