@@ -21,16 +21,23 @@ public class CommandParser {
      * A map of keywords, together with their respective format verification predicates.
      */
     private final Map<String, Predicate<String>> keywordsWithVerifications;
+    private final String defaultCommand;
+    private final String bodySeperator;
 
     public CommandParser(Set<String> commands,
-            Map<String, Predicate<String>> keywordsWithVerifications) {
+            Map<String, Predicate<String>> keywordsWithVerifications,
+            String defaultCommand,
+            String bodySeperator) {
+
         this.commands = commands;
         this.keywordsWithVerifications = keywordsWithVerifications;
+        this.defaultCommand = defaultCommand;
+        this.bodySeperator = bodySeperator;
     }
 
-    public List<String> parseFullCommand(String fullCommand, String defaultCommand, String bodySeperator) {
+    public List<String> parseFullCommand(String fullCommand) {
 
-        fullCommand = augmentDefaultToFullCommand(fullCommand, defaultCommand);
+        fullCommand = augmentDefaultToFullCommand(fullCommand);
 
         String command = getFirstWord(fullCommand);
         String body = fullCommand.replaceFirst(command, "").trim();
@@ -39,11 +46,7 @@ public class CommandParser {
 
         parsedComponents.add(command);
 
-        if (bodySeperator == null || !bodySeperator.isEmpty()) {
-            parsedComponents.add(body);
-        } else {
-            parsedComponents.addAll(Arrays.asList(body.split(bodySeperator)));
-        }
+        parsedComponents.addAll(Arrays.asList(body.split(bodySeperator)));
 
         return parsedComponents;
 
@@ -53,7 +56,7 @@ public class CommandParser {
         return null;
     }
 
-    private String augmentDefaultToFullCommand(String fullCommand, String defaultCommand) {
+    private String augmentDefaultToFullCommand(String fullCommand) {
         String command = getFirstWord(fullCommand);
 
         if (commands.contains(command)) {
