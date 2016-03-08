@@ -16,6 +16,9 @@ public class LogicImpl implements Logic {
     private static final String ENTRY_COMMON_FORMAT = "%1$d: %2$s ";
     private static final String DUAL_DATE_FORMAT = "%1$s - %2$s";
 
+    private static final String TASK_HEADER = "Tasks:";
+    private static final String EVENT_HEADER = "Events:";
+
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
     private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
 
@@ -45,7 +48,16 @@ public class LogicImpl implements Logic {
         ExecuteResult runResult = new CommandLineResult();
         runResult.setComment(commandToExecute.getComment());
 
-        executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+        if (!executedState.getTaskList().isEmpty()) {
+            runResult.addResultLine(TASK_HEADER);
+            executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+        }
+
+        if(!executedState.getEventList().isEmpty()){
+            runResult.addResultLine(EVENT_HEADER);
+
+            executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+        }
 
         return runResult;
     }
@@ -59,5 +71,9 @@ public class LogicImpl implements Logic {
         }
 
         return returnString;
+    }
+
+    private static String eventSummary(CalendarEntry event){
+        return null;
     }
 }
