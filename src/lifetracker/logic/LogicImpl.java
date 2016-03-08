@@ -20,6 +20,8 @@ public class LogicImpl implements Logic {
     private static final String TASK_HEADER = "Tasks:";
     private static final String EVENT_HEADER = "Events:";
 
+    private static final String ERROR_SAVE = "There was an error saving to the save file!";
+
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
     private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
 
@@ -43,7 +45,7 @@ public class LogicImpl implements Logic {
         try {
             calendarStorage.store(calendar);
         } catch (IOException ex) {
-            //TODO add exception handling
+            System.err.println(ERROR_SAVE);
         }
 
         ExecuteResult runResult = new CommandLineResult();
