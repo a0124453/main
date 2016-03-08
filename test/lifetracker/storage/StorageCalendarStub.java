@@ -50,6 +50,21 @@ public class StorageCalendarStub implements CalendarList {
     }
 
     @Override
+    public void delete(int id) {
+
+    }
+
+    @Override
+    public void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+
+    }
+
+    @Override
+    public void list(String toSearch) {
+
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -93,6 +108,11 @@ public class StorageCalendarStub implements CalendarList {
             this.name = name;
             this.startTime = startTime;
             this.endTime = endTime;
+        }
+
+        @Override
+        public int getId() {
+            return 0;
         }
 
         @Override
