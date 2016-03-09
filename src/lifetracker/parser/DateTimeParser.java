@@ -67,7 +67,7 @@ public class DateTimeParser {
     }
     
     //start date before end date
-    LocalDateTime[] parse(String startDateTimeString, String endDateTimeString) {
+    static LocalDateTime[] parse(String startDateTimeString, String endDateTimeString) {
         LocalDateTime[] dates = new LocalDateTime[2];
         String startDateString = null;
         String startTimeString = null;
@@ -120,7 +120,7 @@ public class DateTimeParser {
         return dates;
     }
     
-    private String processNullEndTime(String startDateString, String endDateString, String startTimeString) {
+    private static String processNullEndTime(String startDateString, String endDateString, String startTimeString) {
         String endTimeString;
         
         if (startDateString.equals(endDateString)) {
@@ -133,7 +133,7 @@ public class DateTimeParser {
         
     }
 
-    private String addOneHourTo(String startTimeString) {
+    private static String addOneHourTo(String startTimeString) {
         LocalTime startTime = TimeParser.parse(startTimeString);
         startTime = startTime.plusHours(1);
         
@@ -144,7 +144,7 @@ public class DateTimeParser {
         return endTimeString;
     }
 
-    private String processNullStartTime(String startDateString) {
+    private static String processNullStartTime(String startDateString) {
         String startTimeString;
         if (startDateString.equals("today")) {
             startTimeString = getCurrentTime();
@@ -154,14 +154,14 @@ public class DateTimeParser {
         return startTimeString;
     }
 
-    private String getCurrentTime() {
+    private static String getCurrentTime() {
         String hour = Integer.toString(LocalTime.now().getHour());
         String minute = Integer.toString(LocalTime.now().getMinute());
         String currentTimeString = new String(hour + minute);
         return currentTimeString;
     }
 
-    private String processNullStartDate (String endDateString) {
+    private static String processNullStartDate (String endDateString) {
         String startDateString;
         
         if (endDateString == null) {

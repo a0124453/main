@@ -3,6 +3,7 @@ package lifetracker.parser;
 import lifetracker.command.AddCommand;
 import lifetracker.command.CommandObject;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,44 @@ public class ParserImpl implements Parser {
 
         Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
 
-        return new AddCommand();
+        return detectAddMethod(commandBodySectionsMap);
+    }
+
+    private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
+        if (validAddEventMap(commandBodySectionsMap)) {
+
+            LocalDateTime[] startEndDateTime =
+                    DateTimeParser.parse(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
+
+            return new AddCommand(commandBodySectionsMap.get("name"), startEndDateTime[0], startEndDateTime[1]);
+
+        } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
+
+            LocalDateTime dueDate = DateTimeParser.parse(commandBodySectionsMap.get("by"));
+
+            return new AddCommand(commandBodySectionsMap.get("name"), dueDate);
+
+        } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
+
+            return new AddCommand(commandBodySectionsMap.get("name"));
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean validAddEventMap(Map<String, String> commandBodySectionMap) {
+        return commandBodySectionMap.containsKey("from") && !commandBodySectionMap.containsKey("by");
+    }
+
+    private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
+        return commandBodySectionMap.containsKey("by")
+                && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
+    }
+
+    private boolean validAddFloatingTaskMap(Map<String, String> commandBodySectionMap) {
+        return !(commandBodySectionMap.containsKey("by")
+                || commandBodySectionMap.containsKey("from")
+                || commandBodySectionMap.containsKey("to"));
     }
 
     private CommandObject processList(List<String> commandBody) {
