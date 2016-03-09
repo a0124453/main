@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -41,11 +42,11 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#add(java.lang.String)
      */
     @Override
-    public void add(String name) {
+    public int add(String name) {
         int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
-
+        return idToSet;
     }
 
     /*
@@ -55,10 +56,13 @@ public class CalendarListImpl implements CalendarList {
      * java.time.LocalDateTime)
      */
     @Override
-    public void add(String name, LocalDateTime deadline) {
-        int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
+    public int add(String name, LocalDateTime deadline) {
+        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
+        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
+        int idToSet = Math.max(taskMax, eventMax) + 1;
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
+        return idToSet;
     }
 
     /*
@@ -68,10 +72,11 @@ public class CalendarListImpl implements CalendarList {
      * java.time.LocalDateTime, java.time.LocalDateTime)
      */
     @Override
-    public void add(String name, LocalDateTime start, LocalDateTime end) {
+    public int add(String name, LocalDateTime start, LocalDateTime end) {
         int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
         CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, e);
+        return idToSet;
     }
 
     /*
@@ -80,8 +85,15 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#delete(int)
      */
     @Override
-    public void delete(int id) {
-
+    public boolean delete(int id) {
+        if (taskList.containsKey(id)) {
+            taskList.remove(id);
+            return true;
+        } else if (eventList.containsKey(id)) {
+            eventList.remove(id);
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -90,8 +102,19 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
      */
     @Override
-    public void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
-
+    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+        if (taskList.containsKey(id)) {
+            taskList.get(id).setName(newName);
+            taskList.get(id).setStart(newStart);
+            taskList.get(id).setEnd(newEnd);
+            return true;
+        } else if (eventList.containsKey(id)) {
+            eventList.get(id).setName(newName);
+            eventList.get(id).setStart(newStart);
+            eventList.get(id).setEnd(newEnd);
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -100,8 +123,13 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#list(String)
      */
     @Override
-    public void list(String toSearch) {
-
+    public List<CalendarEntry> list(String toSearch) {
+        List<CalendarEntry> result = new ArrayList<CalendarEntry>();
+        result.addAll(getTaskList());
+        result.addAll(getEventList());
+        Predicate<CalendarEntry> p = (entry) -> entry.getName().contains(toSearch);
+        result.removeIf(p);
+        return result;
     }
 
 }

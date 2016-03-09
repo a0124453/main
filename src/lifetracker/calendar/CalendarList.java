@@ -10,16 +10,16 @@ public interface CalendarList {
 
     List<CalendarEntry> getEventList();
 
-    void add(String name); // floating task
+    int add(String name); // floating task
 
-    void add(String name, LocalDateTime due); // deadline task
+    int add(String name, LocalDateTime due); // deadline task
 
-    void add(String name, LocalDateTime start, LocalDateTime end); // event
+    int add(String name, LocalDateTime start, LocalDateTime end); // event
 
-    void delete(int id);
+    boolean delete(int id);
 
-    void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
+    boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
 
-    void list(String toSearch);
+    List<CalendarEntry> list(String toSearch);
 
 }
