@@ -2,43 +2,56 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class AddCommand implements CommandObject {
-    private String comment;
-    private String task;
-    private LocalDate startDate;
-    private LocalTime startTime;
+
+    private static final String MESSAGE_ADDED = "\"%1$s\" is added.";
+    private static final String MESSAGE_ERROR = "Error: Command was not executed.";
+
+    private String comment = MESSAGE_ERROR;
+    private String name;
     private LocalDateTime startDateTime;
-    private LocalTime endTime;
-    private LocalDate endDate;
     private LocalDateTime endDateTime;
+
+    public AddCommand(String name) {
+        this.name = name;
+    }
+
+    public AddCommand(String name, LocalDateTime dueDateTime) {
+        this.name = name;
+        this.endDateTime = dueDateTime;
+    }
+
+    public AddCommand(String name, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.name = name;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
 
     @Override
     public CalendarList execute(CalendarList calendar) {
-        // TODO Auto-generated method stub
+
+        if (endDateTime == null) {
+            calendar.add(name);
+        } else if (startDateTime == null) {
+            calendar.add(name, endDateTime);
+        } else {
+            calendar.add(name, startDateTime, endDateTime);
+        }
+
+        comment = String.format(MESSAGE_ADDED, name);
+
         return null;
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getComment() {
         return this.comment;
     }
-
-    public String getTask() {
-        return task;
-    }
-
-    public void setTask(String task) {
-        this.task = task;
-    }
-
 }
