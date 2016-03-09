@@ -24,9 +24,37 @@ public class DateParser {
     
     static ArrayList<String> possibleDatePatterns = new ArrayList<String>();
     
-    static LocalDate date;
+    static final String[] KEYWORDS = {"today", "now", "tomorrow", "tmrw", "tmr",
+            "monday", "mon", "m", "tuesday", "tues", "t", "wednesday", "wed", "w",
+            "thursday", "thur", "th", "friday", "fri", "f", "saturday", "sat", "s",
+            "sunday", "sun", "su"};
+    
+    public static boolean isValidDay(String input) {
+        boolean isValidDayString = false;
+        if (input.matches(PATTERN_0_REGEX)) {
+            if (input.startsWith("next ")) {
+                input = input.replace("next ", "");
+            }
+            isValidDayString = isContainKeywords(input);
+        }
+
+        return isValidDayString;
+    }
+
+    private static boolean isContainKeywords(String input) {
+        boolean isContainKeyword = false;
+
+        for (String keyword : KEYWORDS) {
+            if (input.equals(keyword)) {
+                isContainKeyword = true;
+                break;
+            }
+        }
+        return isContainKeyword;
+    }
 
     public static LocalDate parse(String inputDate) {
+        LocalDate date = null;
         createPossibleDatePatterns();
         int pattern = matchDateToPatterns(inputDate);
 
@@ -175,6 +203,7 @@ public class DateParser {
         
         switch (inputDate) {
             case "today":
+            case "now":
                 date = LocalDate.now();
                 break;
             case "tomorrow":
