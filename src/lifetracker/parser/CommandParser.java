@@ -1,7 +1,6 @@
 package lifetracker.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
@@ -45,16 +44,27 @@ public class CommandParser {
 
     public List<String> parseFullCommand(String fullCommand) {
 
-        fullCommand = augmentDefaultToFullCommand(fullCommand);
+        String[] components = fullCommand.split(fullCommandSeparator);
 
-        String command = getFirstWord(fullCommand);
-        String body = fullCommand.replaceFirst(command, "").trim();
+        components[0] = augmentDefaultToFullCommand(components[0]);
+
+        String command = getFirstWord(components[0]);
+        components[0] = components[0].replaceFirst(command + " ", "");
+
+        //If command was split without space
+        if(components[0].equals(command)){
+            components[0] = "";
+        }
 
         List<String> parsedComponents = new ArrayList<>();
 
         parsedComponents.add(command);
 
-        parsedComponents.addAll(Arrays.asList(body.split(fullCommandSeparator)));
+        for(String component: components){
+            if(!component.trim().isEmpty()){
+               parsedComponents.add(component);
+            }
+        }
 
         return parsedComponents;
 
