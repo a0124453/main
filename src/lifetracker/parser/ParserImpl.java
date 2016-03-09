@@ -112,6 +112,11 @@ public class ParserImpl implements Parser {
     }
 
     private String restoreCommandSections(List<String> stringList) {
+
+        if(stringList.isEmpty()){
+            return "";
+        }
+
         StringBuilder collapsedString = new StringBuilder();
 
         for (String fragment : stringList) {
