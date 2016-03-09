@@ -21,7 +21,7 @@ public class DateTimeParser {
             DATE_PATTERN0, DATE_PATTERN1, DATE_PATTERN2, 
             DATE_PATTERN3, DATE_PATTERN4, DATE_PATTERN5, TIME_PATTERN);
         
-    boolean isDateTime(String dateTimeString) {
+    static boolean isDateTime(String dateTimeString) {
         boolean isValidDAteTime;
         
         if (dateTimeString.matches(DATE_TIME_PATTERN)) {
@@ -33,7 +33,7 @@ public class DateTimeParser {
         return isValidDAteTime;
     }
     
-    LocalDateTime parse(String endDateTimeString) {
+    static LocalDateTime parse(String endDateTimeString) {
 
         String endDateString = null;
         String endTimeString = null;
