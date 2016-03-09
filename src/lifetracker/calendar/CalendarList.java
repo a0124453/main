@@ -20,6 +20,6 @@ public interface CalendarList {
 
     boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
 
-    void list(String toSearch);
+    List<CalendarEntry> list(String toSearch);
 
 }

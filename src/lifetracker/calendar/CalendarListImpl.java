@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -118,8 +119,13 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#list(String)
      */
     @Override
-    public void list(String toSearch) {
-
+    public List<CalendarEntry> list(String toSearch) {
+        List<CalendarEntry> result = new ArrayList<CalendarEntry>();
+        result.addAll(getTaskList());
+        result.addAll(getEventList());
+        Predicate<CalendarEntry> p = (entry) -> entry.getName().contains(toSearch);
+        result.removeIf(p);
+        return result;
     }
 
 }
