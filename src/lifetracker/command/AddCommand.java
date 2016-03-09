@@ -33,4 +33,12 @@ public class AddCommand implements CommandObject {
         return this.comment;
     }
 
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
+    }
+
 }
