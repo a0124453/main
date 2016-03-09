@@ -27,9 +27,9 @@ public class ParserImpl implements Parser {
 
     {
         commands.put("add", this::processAdd);
-        commands.put("list", null);
-        commands.put("delete", null);
-        commands.put("edit", null);
+        commands.put("list", this::processList);
+        commands.put("delete", this::processDelete);
+        commands.put("edit", this::processEdit);
     }
 
     private final CommandParser cmdParser;
@@ -53,7 +53,7 @@ public class ParserImpl implements Parser {
         return commands.get(command).apply(commandBody);
     }
 
-    private CommandObject processAdd(List<String> commandBody){
+    private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
         Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
@@ -61,10 +61,22 @@ public class ParserImpl implements Parser {
         return new AddCommand();
     }
 
-    private String restoreCommandSections(List<String> stringList){
+    private CommandObject processList(List<String> commandBody) {
+        return null;
+    }
+
+    private CommandObject processDelete(List<String> commandBody) {
+        return null;
+    }
+
+    private CommandObject processEdit(List<String> commmandBody) {
+        return null;
+    }
+
+    private String restoreCommandSections(List<String> stringList) {
         StringBuilder collapsedString = new StringBuilder();
 
-        for(String fragment: stringList){
+        for (String fragment : stringList) {
             collapsedString.append(FULL_COMMAND_SEPARATOR);
 
             collapsedString.append(fragment);
