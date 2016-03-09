@@ -16,7 +16,7 @@ public interface CalendarList {
 
     void add(String name, LocalDateTime start, LocalDateTime end); // event
 
-    void delete(int id);
+    boolean delete(int id);
 
     void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
 

@@ -80,8 +80,15 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#delete(int)
      */
     @Override
-    public void delete(int id) {
-
+    public boolean delete(int id) {
+        if (taskList.containsKey(id)) {
+            taskList.remove(id);
+            return true;
+        } else if (eventList.containsKey(id)) {
+            eventList.remove(id);
+            return true;
+        }
+        return false;
     }
 
     /*
