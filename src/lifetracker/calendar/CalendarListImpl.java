@@ -97,8 +97,19 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
      */
     @Override
-    public void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
-
+    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+        if (taskList.containsKey(id)) {
+            taskList.get(id).setName(newName);
+            taskList.get(id).setStart(newStart);
+            taskList.get(id).setEnd(newEnd);
+            return true;
+        } else if (eventList.containsKey(id)) {
+            eventList.get(id).setName(newName);
+            eventList.get(id).setStart(newStart);
+            eventList.get(id).setEnd(newEnd);
+            return true;
+        }
+        return false;
     }
 
     /*
