@@ -8,33 +8,17 @@ import lifetracker.parser.ParserImpl;
 import lifetracker.storage.Storage;
 import lifetracker.storage.ThreadedFileStorage;
 
-import java.io.IOException;
-
 public class LifeTracker {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
 
-        Storage fileStorage = createStorage();
+        try (Storage fileStorage = new ThreadedFileStorage()) {
 
-        Parser commandParser = new ParserImpl();
+            Parser commandParser = new ParserImpl();
 
-        Logic programLogic = new LogicImpl(commandParser, fileStorage);
+            Logic programLogic = new LogicImpl(commandParser, fileStorage);
 
-        new UI(programLogic);
-    }
-
-    private static Storage createStorage(){
-        Storage fileStorage = null;
-
-        try {
-            fileStorage = new ThreadedFileStorage();
-
-            return fileStorage;
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            new UI(programLogic);
         }
-
-        return fileStorage;
     }
 }
