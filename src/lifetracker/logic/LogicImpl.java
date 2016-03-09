@@ -20,7 +20,8 @@ public class LogicImpl implements Logic {
     private static final String TASK_HEADER = "Tasks:";
     private static final String EVENT_HEADER = "Events:";
 
-    private static final String ERROR_SAVE = "There was an error saving to the save file!";
+    private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
+    private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
 
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
     private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
@@ -38,9 +39,19 @@ public class LogicImpl implements Logic {
 
     @Override
     public ExecuteResult executeCommand(String commandString) {
-        CommandObject commandToExecute = commandParser.parse(commandString);
 
-        CalendarList executedState = commandToExecute.execute(calendar);
+        CommandObject commandToExecute;
+        CalendarList executedState;
+
+        try {
+            commandToExecute = commandParser.parse(commandString);
+            executedState = commandToExecute.execute(calendar);
+        } catch (IllegalArgumentException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(ERROR_INVALID_COMMAND);
+
+            return errorResult;
+        }
 
         try {
             calendarStorage.store(calendar);
@@ -48,8 +59,13 @@ public class LogicImpl implements Logic {
             System.err.println(ERROR_SAVE);
         }
 
+        return processExecutionResults(commandToExecute, executedState);
+    }
+
+    private ExecuteResult processExecutionResults(CommandObject commandExecuted, CalendarList executedState) {
+
         ExecuteResult runResult = new CommandLineResult();
-        runResult.setComment(commandToExecute.getComment());
+        runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
             runResult.addResultLine(TASK_HEADER);
