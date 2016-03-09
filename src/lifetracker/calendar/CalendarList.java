@@ -10,11 +10,11 @@ public interface CalendarList {
 
     List<CalendarEntry> getEventList();
 
-    void add(String name); // floating task
+    int add(String name); // floating task
 
-    void add(String name, LocalDateTime due); // deadline task
+    int add(String name, LocalDateTime due); // deadline task
 
-    void add(String name, LocalDateTime start, LocalDateTime end); // event
+    int add(String name, LocalDateTime start, LocalDateTime end); // event
 
     boolean delete(int id);
 

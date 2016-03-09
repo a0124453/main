@@ -42,11 +42,11 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#add(java.lang.String)
      */
     @Override
-    public void add(String name) {
+    public int add(String name) {
         int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
-
+        return idToSet;
     }
 
     /*
@@ -56,10 +56,13 @@ public class CalendarListImpl implements CalendarList {
      * java.time.LocalDateTime)
      */
     @Override
-    public void add(String name, LocalDateTime deadline) {
-        int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
+    public int add(String name, LocalDateTime deadline) {
+        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
+        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
+        int idToSet = Math.max(taskMax, eventMax) + 1;
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
+        return idToSet;
     }
 
     /*
@@ -69,10 +72,11 @@ public class CalendarListImpl implements CalendarList {
      * java.time.LocalDateTime, java.time.LocalDateTime)
      */
     @Override
-    public void add(String name, LocalDateTime start, LocalDateTime end) {
+    public int add(String name, LocalDateTime start, LocalDateTime end) {
         int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
         CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, e);
+        return idToSet;
     }
 
     /*
