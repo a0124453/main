@@ -3,8 +3,10 @@ package lifetracker.storage;
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -103,6 +105,14 @@ public class ThreadedFileStorage implements Storage {
 
         if (!storageFile.exists()) {
             storageFile.createNewFile();
+            
+            try(BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storageFile))){
+                fileWriter.write("0");
+                fileWriter.newLine();
+                fileWriter.write("0");
+                fileWriter.newLine();
+            }
+            
         } else if (storageFile.isDirectory()) {
             throw new IOException(ERROR_FILE_IS_DIRECTORY);
         }
@@ -125,11 +135,8 @@ public class ThreadedFileStorage implements Storage {
 
         for (CalendarEntry event : eventList) {
 
-            String processedLine = event.getStart().toString()
-                    + FIELD_SEPARATOR
-                    + event.getEnd().toString()
-                    + FIELD_SEPARATOR
-                    + event.getName();
+            String processedLine = event.getStart().toString() + FIELD_SEPARATOR + event.getEnd().toString()
+                    + FIELD_SEPARATOR + event.getName();
 
             processedLines.add(processedLine);
         }
@@ -145,8 +152,7 @@ public class ThreadedFileStorage implements Storage {
         for (CalendarEntry task : taskList) {
 
             String processedLine = (task.getEnd() == null ? NULL_DATETIME_MARKER : task.getEnd().toString())
-                    + FIELD_SEPARATOR
-                    + task.getName();
+                    + FIELD_SEPARATOR + task.getName();
 
             processedLines.add(processedLine);
         }
