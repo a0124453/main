@@ -35,33 +35,39 @@ public class StorageCalendarStub implements CalendarList {
     }
 
     @Override
-    public void add(String name) {
+    public int add(String name) {
         taskList.add(new CalendarEntryStub(name, null, null));
+        return 0;
     }
 
     @Override
-    public void add(String name, LocalDateTime due) {
+    public int add(String name, LocalDateTime due) {
         taskList.add(new CalendarEntryStub(name, null, due));
+        return 0;
     }
 
     @Override
-    public void add(String name, LocalDateTime start, LocalDateTime end) {
+    public int add(String name, LocalDateTime start, LocalDateTime end) {
         eventList.add(new CalendarEntryStub(name, start, end));
+        return 0;
     }
 
     @Override
-    public void delete(int id) {
+    public boolean delete(int id) {
 
+        return false;
     }
 
     @Override
-    public void update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
 
+        return false;
     }
 
     @Override
-    public void list(String toSearch) {
+    public List<CalendarEntry> list(String toSearch) {
 
+        return null;
     }
 
     @Override
@@ -73,9 +79,7 @@ public class StorageCalendarStub implements CalendarList {
 
         StorageCalendarStub that = (StorageCalendarStub) o;
 
-        if (!getTaskList().equals(that.getTaskList()))
-            return false;
-        return getEventList().equals(that.getEventList());
+        return getTaskList().equals(that.getTaskList()) && getEventList().equals(that.getEventList());
 
     }
 
@@ -170,6 +174,7 @@ public class StorageCalendarStub implements CalendarList {
             return false;
         }
 
+        //Auto-generated function
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -179,11 +184,11 @@ public class StorageCalendarStub implements CalendarList {
 
             CalendarEntryStub that = (CalendarEntryStub) o;
 
-            if (!getName().equals(that.getName()))
-                return false;
-            if (getStartTime() != null ? !getStartTime().equals(that.getStartTime()) : that.getStartTime() != null)
-                return false;
-            return getEndTime() != null ? getEndTime().equals(that.getEndTime()) : that.getEndTime() == null;
+            return getName().equals(that.getName()) && (getStartTime() != null ?
+                    getStartTime().equals(that.getStartTime()) :
+                    that.getStartTime() == null && (getEndTime() != null ?
+                            getEndTime().equals(that.getEndTime()) :
+                            that.getEndTime() == null));
 
         }
 
