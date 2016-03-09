@@ -22,15 +22,19 @@ public class DateTimeParser {
             DATE_PATTERN3, DATE_PATTERN4, DATE_PATTERN5, TIME_PATTERN);
         
     static boolean isDateTime(String dateTimeString) {
-        boolean isValidDAteTime;
+        boolean isValidDateTime;
         
         if (dateTimeString.matches(DATE_TIME_PATTERN)) {
-            isValidDAteTime = true;
+            if (dateTimeString.matches(DATE_PATTERN0)) {
+                isValidDateTime = DateParser.isValidDay(dateTimeString);
+            } else {
+                isValidDateTime = true;
+            }
         } else {
-            isValidDAteTime = false;
+            isValidDateTime = false;
         }
         
-        return isValidDAteTime;
+        return isValidDateTime;
     }
     
     static LocalDateTime parse(String endDateTimeString) {
