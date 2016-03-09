@@ -2,12 +2,15 @@ package lifetracker.parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * This class deals with separating commands into distinct components.
@@ -37,7 +40,7 @@ public class CommandParser {
         this.commands = commands;
         this.keywordsWithVerifications = keywordsWithVerifications;
         this.defaultCommand = defaultCommand;
-        this.fullCommandSeparator = fullCommandSeparator;
+        this.fullCommandSeparator = Pattern.quote(fullCommandSeparator);
     }
 
     public List<String> parseFullCommand(String fullCommand) {
@@ -76,28 +79,33 @@ public class CommandParser {
 
         Map<String, String> keyWordArgumentMap = new LinkedHashMap<>();
 
-        Stack<String> processStack = commandBodyToReverseStack(commandBody);
-        Stack<String> intermediateStack = new Stack<>();
+        Deque<String> processStack = commandBodyToDeque(commandBody);
+        Deque<String> intermediateStack = new LinkedList<>();
 
         while (!processStack.isEmpty()) {
-            String element = processStack.pop();
+            String element = processStack.removeLast();
 
             if (keywordsWithVerifications.containsKey(element)) {
-                String argument = collapseList(intermediateStack);
+
+                String argument = collapseDeque(intermediateStack);
                 intermediateStack.clear();
 
                 if (keywordsWithVerifications.get(element).test(argument) && !keyWordArgumentMap.containsKey(element)) {
                     keyWordArgumentMap.put(element, argument);
                 } else {
-                    processStack.push(element);
-                    processStack.push(argument);
+                    processStack.add(element);
+                    processStack.add(argument);
 
-                    keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseList(processStack));
+                    keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseDeque(processStack));
                     processStack.clear();
                 }
             } else {
                 intermediateStack.push(element);
             }
+        }
+
+        if(!keyWordArgumentMap.containsKey(COMMAND_BODY_NAME_FIELD_KEY)){
+            keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseDeque(intermediateStack));
         }
 
         return keyWordArgumentMap;
@@ -120,19 +128,17 @@ public class CommandParser {
      * @param commandBody The command body
      * @return The reverse stack
      */
-    private static Stack<String> commandBodyToReverseStack(String commandBody) {
+    private static Deque<String> commandBodyToDeque(String commandBody) {
         String[] splitCommand = commandBody.split(COMMAND_BODY_SEPARATOR);
 
-        Stack<String> processStack = new Stack<>();
+        Deque<String> processStack = new LinkedList<>();
 
-        for (String elem : splitCommand) {
-            processStack.push(elem);
-        }
+        Collections.addAll(processStack, splitCommand);
 
         return processStack;
     }
 
-    private static String collapseList(List<String> list) {
+    private static String collapseDeque(Deque<String> list) {
         StringBuilder collateString = new StringBuilder();
 
         for (String elem : list) {
