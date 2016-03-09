@@ -43,7 +43,10 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
+        int eventMax = eventList.isEmpty()? 0 : eventList.lastKey();
+        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
+
+        int idToSet = Math.max(eventMax, taskMax) + 1;
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
         return idToSet;
@@ -73,7 +76,10 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
-        int idToSet = Math.max(eventList.lastKey(), taskList.lastKey()) + 1;
+                int eventMax = eventList.isEmpty()? 0 : eventList.lastKey();
+        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
+
+        int idToSet = Math.max(eventMax, taskMax) + 1;
         CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, e);
         return idToSet;

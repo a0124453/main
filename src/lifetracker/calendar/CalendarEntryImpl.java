@@ -9,7 +9,7 @@ public class CalendarEntryImpl implements CalendarEntry {
     // variables
     public enum EntryType {
         FLOATING, DEADLINE, EVENT
-    };
+    }
 
     private String name;
     private LocalDateTime startDateTime;
@@ -70,12 +70,12 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public LocalTime getStartTime() {
-        return startDateTime.toLocalTime();
+        return startDateTime == null ? null : startDateTime.toLocalTime();
     }
 
     @Override
     public LocalTime getEndTime() {
-        return endDateTime.toLocalTime();
+        return endDateTime == null ? null : endDateTime.toLocalTime();
     }
 
     @Override
