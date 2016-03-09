@@ -2,6 +2,8 @@ package lifetracker.parser;
 
 import lifetracker.command.AddCommand;
 import lifetracker.command.CommandObject;
+import lifetracker.command.DeleteCommand;
+import lifetracker.command.ListCommand;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -100,14 +102,34 @@ public class ParserImpl implements Parser {
     }
 
     private CommandObject processList(List<String> commandBody) {
-        return null;
+        return new ListCommand();
     }
 
-    private CommandObject processDelete(List<String> commandBody) {
-        return null;
+    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException{
+
+        String idString = restoreCommandSections(commandBody);
+
+        int id = Integer.parseInt(idString);
+
+        return new DeleteCommand(id);
     }
 
-    private CommandObject processEdit(List<String> commmandBody) {
+    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException{
+        if(commandBody.size() < 2){
+            throw new IllegalArgumentException();
+        }
+
+        String idString = commandBody.get(0);
+        int id = Integer.parseInt(idString);
+
+        String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
+
+        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection);
+
+        return detectEdit(editSectionMap);
+    }
+
+    private CommandObject detectEdit(Map<String, String> editSectionMap){
         return null;
     }
 
