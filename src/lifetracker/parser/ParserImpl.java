@@ -3,6 +3,7 @@ package lifetracker.parser;
 import lifetracker.command.AddCommand;
 import lifetracker.command.CommandObject;
 import lifetracker.command.DeleteCommand;
+import lifetracker.command.EditCommand;
 import lifetracker.command.ListCommand;
 
 import java.time.LocalDateTime;
@@ -105,7 +106,7 @@ public class ParserImpl implements Parser {
         return new ListCommand();
     }
 
-    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException{
+    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
 
         String idString = restoreCommandSections(commandBody);
 
@@ -114,8 +115,8 @@ public class ParserImpl implements Parser {
         return new DeleteCommand(id);
     }
 
-    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException{
-        if(commandBody.size() < 2){
+    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException {
+        if (commandBody.size() < 2) {
             throw new IllegalArgumentException();
         }
 
@@ -126,16 +127,31 @@ public class ParserImpl implements Parser {
 
         Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection);
 
-        return detectEdit(editSectionMap);
+        return detectEdit(editSectionMap, id);
     }
 
-    private CommandObject detectEdit(Map<String, String> editSectionMap){
-        return null;
+    private CommandObject detectEdit(Map<String, String> editSectionMap, int id) {
+
+        String name = editSectionMap.get("name");
+
+        if (validAddEventMap(editSectionMap)) {
+            LocalDateTime[] dateTimes = DateTimeParser.parse(editSectionMap.get("from"), editSectionMap.get("to"));
+
+            return new EditCommand(id, name, dateTimes[0], dateTimes[1]);
+        } else if (validAddDeadlineTaskMap(editSectionMap)) {
+            LocalDateTime due = DateTimeParser.parse(editSectionMap.get("by"));
+
+            return new EditCommand(id, name, null, due);
+        } else if (validAddFloatingTaskMap(editSectionMap)) {
+            return new EditCommand(id, name, null, null);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     private String restoreCommandSections(List<String> stringList) {
 
-        if(stringList.isEmpty()){
+        if (stringList.isEmpty()) {
             return "";
         }
 
