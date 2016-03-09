@@ -1,6 +1,7 @@
 package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarListImpl;
 
 public class DeleteCommand implements CommandObject {
 
@@ -20,7 +21,7 @@ public class DeleteCommand implements CommandObject {
         calendar.delete(entryID);
 
         comment = String.format(MESSAGE_DELETED, entryID);
-        return null;
+        return new CalendarListImpl();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarListImpl;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +30,7 @@ public class EditCommand implements CommandObject {
 
         comment = String.format(MESSAGE_EDITED, entryID);
 
-        return null;
+        return new CalendarListImpl();
     }
 
     @Override
