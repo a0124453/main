@@ -20,7 +20,8 @@ public class LogicImpl implements Logic {
     private static final String TASK_HEADER = "Tasks:";
     private static final String EVENT_HEADER = "Events:";
 
-    private static final String ERROR_SAVE = "There was an error saving to the save file!";
+    private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
+    private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
 
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
     private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
@@ -29,18 +30,28 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
 
-    public LogicImpl(Parser parser, Storage storage) {
+    public LogicImpl(Parser parser, Storage storage) throws IOException {
         commandParser = parser;
         calendarStorage = storage;
 
-        calendar = new CalendarListImpl();
+        calendar = storage.load(new CalendarListImpl());
     }
 
     @Override
     public ExecuteResult executeCommand(String commandString) {
-        CommandObject commandToExecute = commandParser.parse(commandString);
 
-        CalendarList executedState = commandToExecute.execute(calendar);
+        CommandObject commandToExecute;
+        CalendarList executedState;
+
+        try {
+            commandToExecute = commandParser.parse(commandString);
+            executedState = commandToExecute.execute(calendar);
+        } catch (IllegalArgumentException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(ERROR_INVALID_COMMAND);
+
+            return errorResult;
+        }
 
         try {
             calendarStorage.store(calendar);
@@ -48,18 +59,25 @@ public class LogicImpl implements Logic {
             System.err.println(ERROR_SAVE);
         }
 
+        return processExecutionResults(commandToExecute, executedState);
+    }
+
+    private ExecuteResult processExecutionResults(CommandObject commandExecuted, CalendarList executedState) {
+
         ExecuteResult runResult = new CommandLineResult();
-        runResult.setComment(commandToExecute.getComment());
+        runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
             runResult.addResultLine(TASK_HEADER);
             executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+            runResult.addResultLine("");
         }
 
         if (!executedState.getEventList().isEmpty()) {
             runResult.addResultLine(EVENT_HEADER);
 
-            executedState.getTaskList().forEach(event -> runResult.addResultLine(eventSummary(event)));
+            executedState.getEventList().forEach(event -> runResult.addResultLine(eventSummary(event)));
+            runResult.addResultLine("");
         }
 
         return runResult;
@@ -70,7 +88,7 @@ public class LogicImpl implements Logic {
         String returnString = String.format(ENTRY_COMMON_FORMAT, task.getId(), task.getName());
 
         if (task.getEndTime() != null) {
-            returnString += task.getEndTime().format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE));
+            returnString += task.getEnd().format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE));
         }
 
         return returnString;
