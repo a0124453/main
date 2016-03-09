@@ -52,7 +52,7 @@ public class CommandParserTest {
 
         expected.clear();
         expected.add("testcommand");
-        expected.add("add  testcommand");
+        expected.add(" add  testcommand ");
 
         Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
 
@@ -67,9 +67,17 @@ public class CommandParserTest {
         command = "testcommand   | add| two| ";
         expected.add("testcommand");
         expected.add("add");
-        expected.add("two|");
+        expected.add("two");
 
         Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+
+        command = "testcommand|  abc |def";
+        expected.clear();
+        expected.add("testcommand");
+        expected.add(" abc |def");
+
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+
     }
 
     @Test
