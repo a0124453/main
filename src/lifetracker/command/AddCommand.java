@@ -7,19 +7,22 @@ import java.time.LocalDateTime;
 public class AddCommand implements CommandObject {
 
     private static final String MESSAGE_ADDED = "\"%1$s\" is added.";
-    private static final String MESSAGE_ERROR = "Error: Command was not executed.";
+
+    private final String name;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
 
     private String comment = MESSAGE_ERROR;
-    private String name;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
 
     public AddCommand(String name) {
         this.name = name;
+        this.startDateTime = null;
+        this.endDateTime = null;
     }
 
     public AddCommand(String name, LocalDateTime dueDateTime) {
         this.name = name;
+        this.startDateTime = null;
         this.endDateTime = dueDateTime;
     }
 
