@@ -29,11 +29,11 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
 
-    public LogicImpl(Parser parser, Storage storage) {
+    public LogicImpl(Parser parser, Storage storage) throws IOException {
         commandParser = parser;
         calendarStorage = storage;
 
-        calendar = new CalendarListImpl();
+        calendar = storage.load(new CalendarListImpl());
     }
 
     @Override
@@ -54,12 +54,14 @@ public class LogicImpl implements Logic {
         if (!executedState.getTaskList().isEmpty()) {
             runResult.addResultLine(TASK_HEADER);
             executedState.getTaskList().forEach(task -> runResult.addResultLine(taskSummary(task)));
+            runResult.addResultLine("");
         }
 
         if (!executedState.getEventList().isEmpty()) {
             runResult.addResultLine(EVENT_HEADER);
 
-            executedState.getTaskList().forEach(event -> runResult.addResultLine(eventSummary(event)));
+            executedState.getEventList().forEach(event -> runResult.addResultLine(eventSummary(event)));
+            runResult.addResultLine("");
         }
 
         return runResult;
@@ -70,7 +72,7 @@ public class LogicImpl implements Logic {
         String returnString = String.format(ENTRY_COMMON_FORMAT, task.getId(), task.getName());
 
         if (task.getEndTime() != null) {
-            returnString += task.getEndTime().format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE));
+            returnString += task.getEnd().format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE));
         }
 
         return returnString;
