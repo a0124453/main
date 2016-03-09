@@ -32,10 +32,10 @@ public class CalendarListTest {
         // set up testTaskList for comparison with task list in testCalendar
         for (int i = 0; i < listSize; i++) {
             if (i < listSize / 2) {
-                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i), null, null);
+                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i), null, null, i);
                 expectedTaskList.add(task);
             } else {
-                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i),null ,now);
+                CalendarEntryImpl task = new CalendarEntryImpl(Integer.toString(i),null ,now, i);
                 expectedTaskList.add(task);
             }
         }
