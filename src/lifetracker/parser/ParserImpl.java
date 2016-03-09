@@ -1,5 +1,6 @@
 package lifetracker.parser;
 
+import lifetracker.command.AddCommand;
 import lifetracker.command.CommandObject;
 
 import java.util.HashMap;
@@ -10,32 +11,32 @@ import java.util.function.Predicate;
 
 public class ParserImpl implements Parser {
 
-    private static final Map<String, Predicate<String>> keyWordWithVerifications = new HashMap<>();
+    private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
 
     static {
-        keyWordWithVerifications.put("by", DateTimeParser::isDateTime);
-        keyWordWithVerifications.put("from", DateTimeParser::isDateTime);
-        keyWordWithVerifications.put("to", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("by", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("from", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("to", DateTimeParser::isDateTime);
     }
 
-    private static final String fullCommandSeparator = " > ";
+    private static final String defaultCommand = "add";
+
+    private static final String FULL_COMMAND_SEPARATOR = " > ";
 
     private final Map<String, Function<List<String>, CommandObject>> commands = new HashMap<>();
 
     {
-        commands.put("add", null);
+        commands.put("add", this::processAdd);
         commands.put("list", null);
         commands.put("delete", null);
         commands.put("edit", null);
     }
 
-    private final String defaultCommand = "add";
-
     private final CommandParser cmdParser;
 
     public ParserImpl() {
-        cmdParser = new CommandParser(commands.keySet(), keyWordWithVerifications, defaultCommand,
-                fullCommandSeparator);
+        cmdParser = new CommandParser(commands.keySet(), KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
+                FULL_COMMAND_SEPARATOR);
     }
 
     @Override
@@ -52,4 +53,23 @@ public class ParserImpl implements Parser {
         return commands.get(command).apply(commandBody);
     }
 
+    private CommandObject processAdd(List<String> commandBody){
+        String addCommandBody = restoreCommandSections(commandBody);
+
+        Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
+
+        return new AddCommand();
+    }
+
+    private String restoreCommandSections(List<String> stringList){
+        StringBuilder collapsedString = new StringBuilder();
+
+        for(String fragment: stringList){
+            collapsedString.append(FULL_COMMAND_SEPARATOR);
+
+            collapsedString.append(fragment);
+        }
+
+        return collapsedString.substring(FULL_COMMAND_SEPARATOR.length());
+    }
 }
