@@ -10,7 +10,7 @@ public class TimeParser {
     static ArrayList<String> possibleTimeFormats = new ArrayList<String>();
     static ArrayList<DateTimeFormatter> possibleTimeFormatters = new ArrayList<DateTimeFormatter>();
 
-    public static LocalTime parseTime(String timeInput) {
+    public static LocalTime parse(String timeInput) {
         LocalTime time = null;
         createPossibleTimeFormats();
         createPossibleTimeFormatters();

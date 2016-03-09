@@ -1,94 +1,168 @@
 package lifetracker.parser;
 
+import lifetracker.command.AddCommand;
 import lifetracker.command.CommandObject;
+import lifetracker.command.DeleteCommand;
+import lifetracker.command.EditCommand;
+import lifetracker.command.ListCommand;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ParserImpl implements Parser {
-    public String command;
-    public String task;
-    public String endTime;
-    public String endDate;
-    public String feedback;
-    public String startTime;
-    public String startDate;
+
+    private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+
+    static {
+        KEYWORDS_WITH_VERIFICATIONS.put("by", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("from", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("to", DateTimeParser::isDateTime);
+    }
+
+    private static final String defaultCommand = "add";
+
+    private static final String FULL_COMMAND_SEPARATOR = " > ";
+
+    private final Map<String, Function<List<String>, CommandObject>> commands = new HashMap<>();
+
+    {
+        commands.put("add", this::processAdd);
+        commands.put("list", this::processList);
+        commands.put("delete", this::processDelete);
+        commands.put("edit", this::processEdit);
+    }
+
+    private final CommandParser cmdParser;
 
     public ParserImpl() {
+        cmdParser = new CommandParser(commands.keySet(), KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
+                FULL_COMMAND_SEPARATOR);
     }
 
     @Override
     public CommandObject parse(String userInput) {
-        if (userInput.isEmpty()) {
-            feedback = "invalid command!";
+        List<String> commandSegments = cmdParser.parseFullCommand(userInput);
+
+        String command = commandSegments.get(0);
+        commandSegments.remove(0);
+
+        return processCommand(command, commandSegments);
+    }
+
+    private CommandObject processCommand(String command, List<String> commandBody) {
+        return commands.get(command).apply(commandBody);
+    }
+
+    private CommandObject processAdd(List<String> commandBody) {
+        String addCommandBody = restoreCommandSections(commandBody);
+
+        Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
+
+        return detectAddMethod(commandBodySectionsMap);
+    }
+
+    private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
+        if (validAddEventMap(commandBodySectionsMap)) {
+
+            LocalDateTime[] startEndDateTime =
+                    DateTimeParser.parse(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
+
+            return new AddCommand(commandBodySectionsMap.get("name"), startEndDateTime[0], startEndDateTime[1]);
+
+        } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
+
+            LocalDateTime dueDate = DateTimeParser.parse(commandBodySectionsMap.get("by"));
+
+            return new AddCommand(commandBodySectionsMap.get("name"), dueDate);
+
+        } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
+
+            return new AddCommand(commandBodySectionsMap.get("name"));
         } else {
-
-            if (userInput.startsWith("add")) {
-                userInput = userInput.replaceFirst("add ", "");
-            }
-
-            if (userInput.contains(" by ")) {
-                Pattern pattern = Pattern.compile("^(.+) by(\\s?([a-zA-Z]+))?(\\s?(\\d+))?$");
-                Matcher matcher = pattern.matcher(userInput);
-                matcher.find();
-                task = matcher.group(1);
-                endDate = matcher.group(3);
-                endTime = matcher.group(5);
-
-                if (endDate == null) {
-                    endDate = "today";
-                }
-
-                if (endTime == null) {
-                    endTime = "2359";
-                }
-
-                feedback = "\"" + task.trim() + "\" is added! It is due on " + endDate + " at " + endTime + ".";
-
-            } else if (userInput.contains(" from ")) {
-                Pattern pattern = Pattern
-                        .compile("^(.+) from(\\s?([a-zA-Z]+))?(\\s?(\\d+))?(\\s(to))?(\\s?([a-zA-Z]+))?(\\s?(\\d+))?$");
-                Matcher matcher = pattern.matcher(userInput);
-                matcher.find();
-                task = matcher.group(1);
-                startDate = matcher.group(3);
-                startTime = matcher.group(5);
-                String toParam = matcher.group(7);
-                endDate = matcher.group(9);
-                endTime = matcher.group(11);
-
-                if (endTime == null) {
-                    endTime = "2359";
-                }
-
-                if (startTime == null) {
-                    startTime = "currenttime";
-                }
-
-                if (startDate == null) {
-                    startDate = "today";
-                }
-
-                if (toParam == null) {
-                    int time = Integer.parseInt(startTime);
-                    endTime = Integer.toString(time + 100);
-                }
-
-                if (endDate == null) {
-                    feedback = String.format("\"%s\" is added! It is scheduled from %s at %s to %s.", task,
-                            startDate, startTime, endTime);
-                } else {
-                    feedback = String.format("\"%s\" is added! It is scheduled from %s at %s to %s at %s.", task,
-                            startDate, startTime, endDate, endTime);
-                }
-
-            } else {
-                task = userInput;
-                feedback = "\"" + task.trim() + "\" is added!";
-
-            }
-
+            throw new IllegalArgumentException();
         }
-        return null;
+    }
+
+    private boolean validAddEventMap(Map<String, String> commandBodySectionMap) {
+        return commandBodySectionMap.containsKey("from") && !commandBodySectionMap.containsKey("by");
+    }
+
+    private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
+        return commandBodySectionMap.containsKey("by")
+                && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
+    }
+
+    private boolean validAddFloatingTaskMap(Map<String, String> commandBodySectionMap) {
+        return !(commandBodySectionMap.containsKey("by")
+                || commandBodySectionMap.containsKey("from")
+                || commandBodySectionMap.containsKey("to"));
+    }
+
+    private CommandObject processList(List<String> commandBody) {
+        return new ListCommand();
+    }
+
+    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
+
+        String idString = restoreCommandSections(commandBody);
+
+        int id = Integer.parseInt(idString);
+
+        return new DeleteCommand(id);
+    }
+
+    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException {
+        if (commandBody.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        String idString = commandBody.get(0);
+        int id = Integer.parseInt(idString);
+
+        String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
+
+        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection);
+
+        return detectEdit(editSectionMap, id);
+    }
+
+    private CommandObject detectEdit(Map<String, String> editSectionMap, int id) {
+
+        String name = editSectionMap.get("name");
+
+        if (validAddEventMap(editSectionMap)) {
+            LocalDateTime[] dateTimes = DateTimeParser.parse(editSectionMap.get("from"), editSectionMap.get("to"));
+
+            return new EditCommand(id, name, dateTimes[0], dateTimes[1]);
+        } else if (validAddDeadlineTaskMap(editSectionMap)) {
+            LocalDateTime due = DateTimeParser.parse(editSectionMap.get("by"));
+
+            return new EditCommand(id, name, null, due);
+        } else if (validAddFloatingTaskMap(editSectionMap)) {
+            return new EditCommand(id, name, null, null);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private String restoreCommandSections(List<String> stringList) {
+
+        if (stringList.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder collapsedString = new StringBuilder();
+
+        for (String fragment : stringList) {
+            collapsedString.append(FULL_COMMAND_SEPARATOR);
+
+            collapsedString.append(fragment);
+        }
+
+        return collapsedString.substring(FULL_COMMAND_SEPARATOR.length());
     }
 }
