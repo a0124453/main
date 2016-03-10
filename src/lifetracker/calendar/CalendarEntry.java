@@ -3,6 +3,8 @@ package lifetracker.calendar;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import lifetracker.calendar.CalendarEntryImpl.EntryType;
+
 public interface CalendarEntry {
 
     // get() and set() functions for variables
@@ -24,10 +26,14 @@ public interface CalendarEntry {
 
     LocalTime getEndTime();
 
+    EntryType getType();
+
     boolean isToday();
 
     boolean isOngoing();
 
     boolean isOver();
+
+    boolean equals(CalendarEntry entry);
 
 }

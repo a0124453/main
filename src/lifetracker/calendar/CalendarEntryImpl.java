@@ -79,6 +79,11 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public EntryType getType() {
+        return entryType;
+    }
+
+    @Override
     public boolean isToday() {
         if (entryType.equals(EntryType.EVENT)) {
             LocalDate eventStartDay = startDateTime.toLocalDate();
@@ -130,6 +135,25 @@ public class CalendarEntryImpl implements CalendarEntry {
             LocalDateTime now = LocalDateTime.now();
             return now.isAfter(endDateTime);
         }
+    }
+
+    @Override
+    public boolean equals(CalendarEntry entry) {
+        if (!this.getType().equals(entry.getType())) {
+            return false;
+        }
+        boolean result = this.getName().equals(entry.getName());
+        if (this.getStart() == null) {
+            result = (result && entry.getStart() == null);
+        } else {
+            result = (result && this.getStart().equals(entry.getStart()));
+        }
+        if (this.getEnd() == null) {
+            result = (result && entry.getEnd() == null);
+        } else {
+            result = (result && this.getEnd().equals(entry.getEnd()));
+        }
+        return result;
     }
 
 }
