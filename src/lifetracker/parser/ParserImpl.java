@@ -68,6 +68,14 @@ public class ParserImpl implements Parser {
     private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
         if (validAddEventMap(commandBodySectionsMap)) {
 
+            if(!commandBodySectionsMap.containsKey("from")){
+                commandBodySectionsMap.put("from", "");
+            }
+
+            if(!commandBodySectionsMap.containsKey("to")){
+                commandBodySectionsMap.put("to", "");
+            }
+
             LocalDateTime[] startEndDateTime =
                     DateTimeParser.parse(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
 
