@@ -117,6 +117,10 @@ public class DateTimeParser {
         LocalDate endDate = DateParser.parse(endDateString);
         LocalTime endTime = TimeParser.parse(endTimeString);
         LocalDateTime endDateTime = endDate.atTime(endTime);
+        
+        if (endDateTime.isBefore(startDateTime)) {
+            endDateTime.plusDays(1);
+        }
 
         dates[0] = startDateTime;
         dates[1] = endDateTime;  
@@ -138,12 +142,18 @@ public class DateTimeParser {
     }
 
     private static String addOneHourTo(String startTimeString) {
+        String endTimeString;
         LocalTime startTime = TimeParser.parse(startTimeString);
         startTime = startTime.plusHours(1);
         
         String hour = Integer.toString(startTime.getHour());
-        String minute = Integer.toString(startTime.getMinute());
-        String endTimeString = new String(hour + minute);
+        Integer minute = startTime.getMinute();
+        
+        if (minute < 10) {
+            endTimeString = new String(hour + "0" + minute);
+        } else {
+            endTimeString = new String(hour + minute);
+        }
        
         return endTimeString;
     }
