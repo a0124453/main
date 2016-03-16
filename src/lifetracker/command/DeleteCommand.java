@@ -18,6 +18,8 @@ public class DeleteCommand implements CommandObject {
     @Override
     public CalendarList execute(CalendarList calendar) {
 
+        assert calendar != null;
+
         calendar.delete(entryID);
 
         comment = String.format(MESSAGE_DELETED, entryID);

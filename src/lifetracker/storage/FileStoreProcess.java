@@ -25,7 +25,9 @@ public class FileStoreProcess implements Runnable {
     private File storeFile;
 
     FileStoreProcess(File storeFile) throws FileNotFoundException {
-        if (storeFile == null || storeFile.isDirectory() || !storeFile.exists()) {
+        assert storeFile != null;
+
+        if (storeFile.isDirectory() || !storeFile.exists()) {
             throw new FileNotFoundException(ERROR_INVALID_FILE);
         }
 
@@ -41,6 +43,8 @@ public class FileStoreProcess implements Runnable {
      * @param saveList The list to write to the save file.
      */
     public void submitSaveList(List<String> saveList) {
+        assert saveList != null;
+
         writeQueue.add(new WriteNode(new ArrayList<>(saveList)));
     }
 

@@ -16,18 +16,29 @@ public class AddCommand implements CommandObject {
     private String comment = MESSAGE_ERROR;
 
     public AddCommand(String name) {
+        assert name != null;
+
         this.name = name;
         this.startDateTime = null;
         this.endDateTime = null;
     }
 
     public AddCommand(String name, LocalDateTime dueDateTime) {
+        assert name != null;
+        assert dueDateTime != null;
+
         this.name = name;
         this.startDateTime = null;
         this.endDateTime = dueDateTime;
     }
 
     public AddCommand(String name, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+        assert name != null;
+        assert startDateTime != null;
+        assert endDateTime != null;
+        assert startDateTime.isBefore(endDateTime);
+
         this.name = name;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -35,6 +46,8 @@ public class AddCommand implements CommandObject {
 
     @Override
     public CalendarList execute(CalendarList calendar) {
+
+        assert calendar != null;
 
         if (endDateTime == null) {
             calendar.add(name);

@@ -10,6 +10,8 @@ public class ListCommand implements CommandObject {
 
     @Override
     public CalendarList execute(CalendarList calendar) {
+        assert calendar != null;
+
         comment = MESSAGE_LIST;
 
         return calendar;

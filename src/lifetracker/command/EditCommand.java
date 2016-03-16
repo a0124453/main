@@ -26,6 +26,8 @@ public class EditCommand implements CommandObject {
     @Override
     public CalendarList execute(CalendarList calendar) {
 
+        assert calendar != null;
+
         calendar.update(entryID, name, startTime, endTime);
 
         comment = String.format(MESSAGE_EDITED, entryID);
