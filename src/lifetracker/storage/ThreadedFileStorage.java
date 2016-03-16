@@ -52,11 +52,15 @@ public class ThreadedFileStorage implements Storage {
 
     @Override
     public void store(CalendarList calendar) throws IOException {
+        assert calendar != null;
+
         fileStoreProcess.submitSaveList(processCalendar(calendar));
     }
 
     @Override
     public CalendarList load(CalendarList calendar) throws IOException {
+
+        assert calendar != null;
 
         try (Scanner storageFileScanner = new Scanner(storageFile)) {
 
