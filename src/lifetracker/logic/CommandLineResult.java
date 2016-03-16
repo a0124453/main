@@ -19,6 +19,8 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void setComment(String newComment) {
+    	assert newComment != null;
+    	
         comment = newComment;
     }
 
@@ -29,6 +31,8 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void addResultLine(String resultLine) {
+    	assert resultLine != null;
+    	
         resultLines.add(resultLine);
     }
 }

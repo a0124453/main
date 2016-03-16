@@ -13,6 +13,8 @@ public class UI {
     static Scanner scanner = new Scanner(System.in);
 
     public UI(Logic l) {
+    	assert l != null;
+    	
         welcomeMessage();
         executeUntilExit(l);
     }
@@ -22,6 +24,8 @@ public class UI {
     }
 
     public void executeUntilExit(Logic l) {
+    	assert l != null;
+    	
         while (true) {
             System.out.printf(MESSAGE_INPUT);
             String input = scanner.nextLine();
