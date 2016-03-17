@@ -31,9 +31,9 @@ public class LogicImpl implements Logic {
     private CalendarList calendar;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
-    	assert parser != null;
-    	assert storage != null;
-    	
+        assert parser != null;
+        assert storage != null;
+
         commandParser = parser;
         calendarStorage = storage;
 
@@ -42,7 +42,7 @@ public class LogicImpl implements Logic {
 
     @Override
     public ExecuteResult executeCommand(String commandString) {
-    	assert commandString != null;
+        assert commandString != null;
 
         CommandObject commandToExecute;
         CalendarList executedState;
@@ -67,8 +67,8 @@ public class LogicImpl implements Logic {
     }
 
     private ExecuteResult processExecutionResults(CommandObject commandExecuted, CalendarList executedState) {
-    	assert commandExecuted != null;
-    	assert executedState != null;
+        assert commandExecuted != null;
+        assert executedState != null;
 
         ExecuteResult runResult = new CommandLineResult();
         runResult.setComment(commandExecuted.getComment());
@@ -89,7 +89,7 @@ public class LogicImpl implements Logic {
     }
 
     private static String taskSummary(CalendarEntry task) {
-    	assert task != null;
+        assert task != null;
 
         String returnString = String.format(ENTRY_COMMON_FORMAT, task.getId(), task.getName());
 
@@ -101,7 +101,7 @@ public class LogicImpl implements Logic {
     }
 
     private static String eventSummary(CalendarEntry event) {
-    	assert event != null;
+        assert event != null;
 
         String returnString = String.format(ENTRY_COMMON_FORMAT, event.getId(), event.getName());
 
