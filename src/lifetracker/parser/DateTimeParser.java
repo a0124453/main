@@ -26,13 +26,17 @@ class DateTimeParser {
     }
 
     boolean isDateTime(String dateTimeString) {
-        return nattyParser.parse(dateTimeString).size() == 1;
+        assert dateTimeString != null;
+
+        return dateTimeString.isEmpty() || nattyParser.parse(dateTimeString).size() == 1;
     }
 
     LocalDateTime parseSingleDateTime(String dateTimeString) {
         assert isDateTime(dateTimeString);
 
-        LocalDateTime parsedDateTimeObj = parseWithNatty(dateTimeString);
+        DateGroup parsedDateGroup = parseWithNatty(dateTimeString);
+
+        LocalDateTime parsedDateTimeObj = convertDateGroupToLocalDateTime(parsedDateGroup);
 
         return parsedDateTimeObj;
     }
@@ -43,8 +47,12 @@ class DateTimeParser {
         startString = fillEmpty(startString);
         endString = fillEmpty(endString);
 
-        LocalDateTime startDateTime = parseWithNatty(startString);
-        LocalDateTime endDateTime = parseWithNatty(endString);
+        DateGroup startDateGroup = parseWithNatty(startString);
+        DateGroup endDateGroup = parseWithNatty(endString);
+
+
+        LocalDateTime startDateTime = convertDateGroupToLocalDateTime(startDateGroup);
+        LocalDateTime endDateTime = convertDateGroupToLocalDateTime(endDateGroup);
 
         dateTimeResults.add(startDateTime);
         dateTimeResults.add(endDateTime);
@@ -60,14 +68,13 @@ class DateTimeParser {
         }
     }
 
-    private LocalDateTime parseWithNatty(String dateTimeString) {
-        DateGroup parsedDateGroup = nattyParser.parse(dateTimeString).get(0);
-        Date parsedDate = parsedDateGroup.getDates().get(0);
-
-        return convertDateToLocalDateTime(parsedDate);
+    private DateGroup parseWithNatty(String dateTimeString) {
+        return nattyParser.parse(dateTimeString).get(0);
     }
 
-    private LocalDateTime convertDateToLocalDateTime(Date date) {
+    private LocalDateTime convertDateGroupToLocalDateTime(DateGroup dateGroup) {
+        Date date = dateGroup.getDates().get(0);
+
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 }
