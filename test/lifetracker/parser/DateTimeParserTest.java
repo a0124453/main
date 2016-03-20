@@ -142,4 +142,34 @@ public class DateTimeParserTest {
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
     }
+
+    @Test
+    public void parseDoubleDateTimeMissingStart() throws Exception {
+        DateTimeParser parser = DateTimeParser.getInstance();
+
+        LocalDateTime expectedStart, expectedEnd;
+
+        List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
+        List<LocalDateTime> actualDateTimeList;
+
+        actualDateTimeList = parser.parseDoubleDateTime("11:30am", "24/3/16 11.40pm");
+        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 30));
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
+        expectedDateTimeList.add(expectedStart);
+        expectedDateTimeList.add(expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        actualDateTimeList = parser.parseDoubleDateTime("24/3/16", "24/3/16 11.40pm");
+        expectedStart = LocalDateTime.of(LocalDate.of(2016, 3, 24), LocalTime.now());
+        expectedDateTimeList.set(0, expectedStart);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        actualDateTimeList = parser.parseDoubleDateTime("", "24/3/16 11.40pm");
+        expectedStart = LocalDateTime.now();
+        expectedDateTimeList.set(0, expectedStart);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+    }
 }
