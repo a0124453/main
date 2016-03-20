@@ -6,7 +6,9 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 //@@author A0091173J
 public class DateTimeParserTest {
@@ -72,5 +74,72 @@ public class DateTimeParserTest {
     @Test
     public void parseDoubleDateTime() throws Exception {
 
+        DateTimeParser parser = DateTimeParser.getInstance();
+
+        LocalDateTime expectedStart, expectedEnd;
+
+        List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
+        List<LocalDateTime> actualDateTimeList;
+
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "24/3/16 11.40pm");
+        expectedStart = LocalDateTime.of(2016, 3, 23, 11, 30);
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
+        expectedDateTimeList.add(expectedStart);
+        expectedDateTimeList.add(expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+    }
+
+    @Test
+    public void parseDoubleDateTimeMissingEnd() throws Exception {
+        DateTimeParser parser = DateTimeParser.getInstance();
+
+        LocalDateTime expectedStart, expectedEnd;
+
+        List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
+        List<LocalDateTime> actualDateTimeList;
+
+        //Auto assign end time
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "23/3/16");
+        expectedStart = LocalDateTime.of(2016, 3, 23, 11, 30);
+        expectedEnd = LocalDateTime.of(2016, 3, 23, 12, 30);
+        expectedDateTimeList.add(expectedStart);
+        expectedDateTimeList.add(expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "24/3/16");
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 11, 30);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        //Auto assign end date
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "1300");
+        expectedEnd = LocalDateTime.of(2016, 3, 23, 13, 0);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "1100");
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 11, 0);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "");
+        expectedEnd = LocalDateTime.of(2016, 3, 23, 12, 30);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        //Boundary: When start time is close to midnight
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:59pm", "");
+        expectedStart = LocalDateTime.of(2016, 3, 23, 23, 59);
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 0, 59);
+        expectedDateTimeList.set(0, expectedStart);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
     }
 }
