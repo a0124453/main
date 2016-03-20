@@ -1,9 +1,7 @@
 package lifetracker.parser;
 
-import static org.junit.Assert.*;
-
 import java.time.LocalDateTime;
-import lifetracker.parser.DateTimeParser;
+
 import org.junit.Test;
 
 public class DateTimeParserTest {
