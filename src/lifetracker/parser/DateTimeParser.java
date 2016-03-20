@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -121,16 +120,9 @@ class DateTimeParser {
 
         adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0].plusHours(1), endParseElements);
 
+        adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(), startParseElements);
+
         adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
-
-        if (adjustedDateTimes[1].isBefore(LocalDateTime.now())) {
-            Set<String> joinSet = new HashSet<>(startParseElements);
-            joinSet.addAll(endParseElements);
-
-            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(), joinSet);
-            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now(), joinSet);
-
-        }
 
         return adjustedDateTimes;
     }
