@@ -3,9 +3,11 @@ package lifetracker.calendar;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import lifetracker.calendar.CalendarEntryImpl.EntryType;
-
 public interface CalendarEntry {
+
+    public enum EntryType {
+        FLOATING, DEADLINE, EVENT
+    }
 
     // get() and set() functions for variables
     int getId();

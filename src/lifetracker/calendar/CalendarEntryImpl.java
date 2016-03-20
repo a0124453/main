@@ -7,10 +7,6 @@ import java.time.LocalTime;
 public class CalendarEntryImpl implements CalendarEntry {
 
     // variables
-    public enum EntryType {
-        FLOATING, DEADLINE, EVENT
-    }
-
     private String name;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
