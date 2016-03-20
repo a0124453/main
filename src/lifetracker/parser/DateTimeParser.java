@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -66,6 +67,8 @@ class DateTimeParser {
 
         List<LocalDateTime> dateTimeResults = new ArrayList<>(2);
 
+        boolean isEndEmpty = endString == null || endString.isEmpty();
+
         startString = fillEmpty(startString);
         endString = fillEmpty(endString);
 
@@ -75,8 +78,12 @@ class DateTimeParser {
         LocalDateTime startDateTime = convertDateGroupToLocalDateTime(startDateGroup);
         LocalDateTime endDateTime = convertDateGroupToLocalDateTime(endDateGroup);
 
-        LocalDateTime[] adjustedDates = adjustDoubleDateToDefault(startDateTime, endDateTime,
-                startDateGroup.getParseLocations().keySet(), endDateGroup.getParseLocations().keySet());
+        Set<String> startParseElements = startDateGroup.getParseLocations().keySet();
+        //If end datetime was empty to begin with, we have to pretend nothing was parsed.
+        Set<String> endParseElements = isEndEmpty ? Collections.emptySet() : endDateGroup.getParseLocations().keySet();
+
+        LocalDateTime[] adjustedDates
+                = adjustDoubleDateToDefault(startDateTime, endDateTime, startParseElements, endParseElements);
 
         dateTimeResults.addAll(Arrays.asList(adjustedDates));
 
@@ -120,7 +127,8 @@ class DateTimeParser {
 
         adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0].plusHours(1), endParseElements);
 
-        adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(), startParseElements);
+        adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(),
+                startParseElements);
 
         adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
 
