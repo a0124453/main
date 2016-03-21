@@ -20,7 +20,7 @@ public class DateTimeParserTest {
         Assert.assertTrue(parser.isDateTime("23/4/2016 2:30pm"));
         Assert.assertTrue(parser.isDateTime("23/4/2016"));
         Assert.assertTrue(parser.isDateTime("2:30pm"));
-        Assert.assertTrue(parser.isDateTime("tommorrow 2pm"));
+        Assert.assertTrue(parser.isDateTime("tomorrow 2pm"));
         Assert.assertTrue(parser.isDateTime("next monday 4am"));
         Assert.assertTrue(parser.isDateTime("monday after 2/3"));
 
@@ -60,7 +60,7 @@ public class DateTimeParserTest {
         expected = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
         Assert.assertEquals(expected, actual);
 
-        actual = parser.parseSingleDateTime("day after tommorrow");
+        actual = parser.parseSingleDateTime("day after tomorrow");
         expected = LocalDateTime.of(LocalDate.now().plusDays(2), LocalTime.MIDNIGHT.minusMinutes(1));
         Assert.assertEquals(expected, actual);
 
@@ -228,7 +228,7 @@ public class DateTimeParserTest {
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
-        actualDateTimeList = parser.parseDoubleDateTime("2pm", "tommorrow");
+        actualDateTimeList = parser.parseDoubleDateTime("2pm", "tomorrow");
         expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
         expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
 

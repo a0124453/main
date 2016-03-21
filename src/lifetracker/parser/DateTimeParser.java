@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -125,10 +126,20 @@ class DateTimeParser {
 
         adjustedDateTimes[0] = fillDefaultDateTime(startDateTime, LocalDateTime.now(), startParseElements);
 
-        //TODO assign the same date first and adjust later
-        adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0].plusHours(1), endParseElements);
+        adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0], endParseElements);
+
+        adjustedDateTimes[1] = adjustTimeToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
 
         adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
+
+        if (adjustedDateTimes[1].isBefore(LocalDateTime.now())) {
+            //jointParse will detect if both dates can be adjusted
+            Set<String> jointParse = new HashSet<>(startParseElements);
+            jointParse.addAll(endParseElements);
+
+            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(), jointParse);
+            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now(), jointParse);
+        }
 
         return adjustedDateTimes;
     }
@@ -153,6 +164,17 @@ class DateTimeParser {
         if (!parseElements.contains(NATTY_DATE_FIELD)) {
             while (dateTime.isBefore(reference)) {
                 dateTime = dateTime.plusDays(1);
+            }
+        }
+
+        return dateTime;
+    }
+
+    private LocalDateTime adjustTimeToAfterReference(LocalDateTime dateTime, LocalDateTime reference,
+            Set<String> parseElements) {
+        if (!parseElements.contains(NATTY_TIME_FIELD)) {
+            if (dateTime.isBefore(reference) || dateTime.isEqual(reference)) {
+                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
             }
         }
 
