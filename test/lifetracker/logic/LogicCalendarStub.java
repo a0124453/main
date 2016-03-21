@@ -2,7 +2,6 @@ package lifetracker.logic;
 
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarEntry.EntryType;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
