@@ -43,15 +43,13 @@ public class LogicImpl implements Logic {
     @Override
     public ExecuteResult executeCommand(String commandString) {
         assert commandString != null;
-        
+
         ExecuteResult runResult = new CommandLineResult();
         runResult.setType(commandString);
-        
+
         if (commandString.equals("exit")) {
             return runResult;
-        }
-
-        else {
+        } else {
             CommandObject commandToExecute;
             CalendarList executedState;
 
