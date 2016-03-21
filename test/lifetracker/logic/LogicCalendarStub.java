@@ -117,11 +117,6 @@ public class LogicCalendarStub implements CalendarList {
         }
 
         @Override
-        public EntryType getType() {
-            return null;
-        }
-
-        @Override
         public boolean isToday() {
             return false;
         }
@@ -139,6 +134,11 @@ public class LogicCalendarStub implements CalendarList {
         @Override
         public boolean equals(CalendarEntry entry) {
             return false;
+        }
+        
+        @Override
+        public EntryType getType() {
+            return null;
         }
     }
 }
