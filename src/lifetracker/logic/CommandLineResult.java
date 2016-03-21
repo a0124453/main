@@ -1,16 +1,24 @@
 package lifetracker.logic;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandLineResult implements ExecuteResult {
 
     private String comment;
-    private List<String> resultLines;
+    private List<List<String>> eventList;
+    private List<List<String>> taskList;
     private CommandType commandType;
 
+    private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
+    private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
+
     public CommandLineResult() {
-        this.resultLines = new ArrayList<>();
+        this.eventList = new ArrayList<>();
+        this.taskList = new ArrayList<>();
     }
 
     @Override
@@ -26,15 +34,40 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public List<String> getResultLines() {
-        return resultLines;
+    public List<List<String>> getEventList() {
+        return eventList;
     }
 
     @Override
-    public void addResultLine(String resultLine) {
-        assert resultLine != null;
+    public List<List<String>> getTaskList() {
+        return taskList;
+    }
 
-        resultLines.add(resultLine);
+    @Override
+    public void addTaskLine(int id, String name) {
+        List<String> record = new ArrayList<>();
+        record.add(String.valueOf(id));
+        record.add(name);
+        taskList.add(record);
+    }
+
+    @Override
+    public void addTaskLine(int id, String name, LocalDateTime deadline) {
+        List<String> record = new ArrayList<>();
+        record.add(String.valueOf(id));
+        record.add(name);
+        record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        taskList.add(record);
+    }
+
+    @Override
+    public void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end) {
+        List<String> record = new ArrayList<>();
+        record.add(String.valueOf(id));
+        record.add(name);
+        record.add(start.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        record.add(end.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        eventList.add(record);
     }
 
     @Override
