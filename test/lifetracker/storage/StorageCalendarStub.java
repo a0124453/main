@@ -160,6 +160,11 @@ public class StorageCalendarStub implements CalendarList {
         }
 
         @Override
+        public EntryType getType() {
+            return null;
+        }
+
+        @Override
         public boolean isToday() {
             return false;
         }
@@ -172,6 +177,11 @@ public class StorageCalendarStub implements CalendarList {
         @Override
         public boolean isOver() {
             return false;
+        }
+
+        @Override
+        public boolean equals(CalendarEntry entry) {
+            return equals((Object) entry);
         }
 
         //Auto-generated function
