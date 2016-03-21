@@ -7,6 +7,7 @@ import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
 import java.io.IOException;
+import java.util.Stack;
 
 public class LogicImpl implements Logic {
 
@@ -16,6 +17,7 @@ public class LogicImpl implements Logic {
     private Parser commandParser;
     private Storage calendarStorage;
     private CalendarList calendar;
+    private Stack<String> commandStack;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -25,6 +27,8 @@ public class LogicImpl implements Logic {
         calendarStorage = storage;
 
         calendar = storage.load(new CalendarListImpl());
+
+        commandStack = new Stack<String>();
     }
 
     @Override
@@ -36,18 +40,30 @@ public class LogicImpl implements Logic {
 
         if (commandString.equals("exit")) {
             return runResult;
+
         } else {
             CommandObject commandToExecute;
             CalendarList executedState;
 
-            try {
-                commandToExecute = commandParser.parse(commandString);
-                executedState = commandToExecute.execute(calendar);
-            } catch (IllegalArgumentException ex) {
-                ExecuteResult errorResult = new CommandLineResult();
-                errorResult.setComment(ERROR_INVALID_COMMAND);
+            if (commandString.equals("undo")) {
 
-                return errorResult;
+                commandStack.pop();
+
+                commandToExecute = commandParser.parse(commandString);
+                executedState = commandToExecute.undo(calendar);
+
+            } else {
+
+                try {
+                    commandToExecute = commandParser.parse(commandString);
+                    executedState = commandToExecute.execute(calendar);
+                } catch (IllegalArgumentException ex) {
+                    ExecuteResult errorResult = new CommandLineResult();
+                    errorResult.setComment(ERROR_INVALID_COMMAND);
+                    return errorResult;
+                }
+
+                commandStack.push(commandString);
             }
 
             try {
