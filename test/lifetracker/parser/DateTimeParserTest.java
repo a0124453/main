@@ -152,8 +152,8 @@ public class DateTimeParserTest {
         List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
         List<LocalDateTime> actualDateTimeList;
 
-        actualDateTimeList = parser.parseDoubleDateTime("11:30am", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 30));
+        actualDateTimeList = parser.parseDoubleDateTime("12am", "24/3/16 11.40pm");
+        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0));
         expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
         expectedDateTimeList.add(expectedStart);
         expectedDateTimeList.add(expectedEnd);

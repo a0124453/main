@@ -128,9 +128,6 @@ class DateTimeParser {
         //TODO assign the same date first and adjust later
         adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0].plusHours(1), endParseElements);
 
-        adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(),
-                startParseElements);
-
         adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
 
         return adjustedDateTimes;
