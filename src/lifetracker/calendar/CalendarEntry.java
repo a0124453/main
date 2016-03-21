@@ -5,6 +5,10 @@ import java.time.LocalTime;
 
 public interface CalendarEntry {
 
+    public enum EntryType {
+        FLOATING, DEADLINE, EVENT
+    }
+
     // get() and set() functions for variables
     int getId();
 
@@ -24,10 +28,14 @@ public interface CalendarEntry {
 
     LocalTime getEndTime();
 
+    EntryType getType();
+
     boolean isToday();
 
     boolean isOngoing();
 
     boolean isOver();
+
+    boolean equals(CalendarEntry entry);
 
 }
