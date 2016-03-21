@@ -17,10 +17,12 @@ public class ParserImpl implements Parser {
 
     private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
 
+    private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
+
     static {
-        KEYWORDS_WITH_VERIFICATIONS.put("by", DateTimeParser::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("from", DateTimeParser::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("to", DateTimeParser::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
     }
 
     private static final String defaultCommand = "add";
@@ -68,22 +70,23 @@ public class ParserImpl implements Parser {
     private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
         if (validAddEventMap(commandBodySectionsMap)) {
 
-            if(!commandBodySectionsMap.containsKey("from")){
+            if (!commandBodySectionsMap.containsKey("from")) {
                 commandBodySectionsMap.put("from", "");
             }
 
-            if(!commandBodySectionsMap.containsKey("to")){
+            if (!commandBodySectionsMap.containsKey("to")) {
                 commandBodySectionsMap.put("to", "");
             }
 
-            LocalDateTime[] startEndDateTime =
-                    DateTimeParser.parse(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
+            List<LocalDateTime> startEndDateTime =
+                    DATE_TIME_PARSER
+                            .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
 
-            return new AddCommand(commandBodySectionsMap.get("name"), startEndDateTime[0], startEndDateTime[1]);
+            return new AddCommand(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
-            LocalDateTime dueDate = DateTimeParser.parse(commandBodySectionsMap.get("by"));
+            LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
             return new AddCommand(commandBodySectionsMap.get("name"), dueDate);
 
@@ -143,11 +146,12 @@ public class ParserImpl implements Parser {
         String name = editSectionMap.get("name");
 
         if (validAddEventMap(editSectionMap)) {
-            LocalDateTime[] dateTimes = DateTimeParser.parse(editSectionMap.get("from"), editSectionMap.get("to"));
+            List<LocalDateTime> dateTimes = DATE_TIME_PARSER
+                    .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
 
-            return new EditCommand(id, name, dateTimes[0], dateTimes[1]);
+            return new EditCommand(id, name, dateTimes.get(0), dateTimes.get(1));
         } else if (validAddDeadlineTaskMap(editSectionMap)) {
-            LocalDateTime due = DateTimeParser.parse(editSectionMap.get("by"));
+            LocalDateTime due = DATE_TIME_PARSER.parseSingleDateTime(editSectionMap.get("by"));
 
             return new EditCommand(id, name, null, due);
         } else if (validAddFloatingTaskMap(editSectionMap)) {
