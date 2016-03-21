@@ -193,7 +193,7 @@ public class DateTimeParserTest {
 
         //Date should skip
         actualDateTimeList = parser.parseDoubleDateTime("12am", "12.01am");
-        expectedStart = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(0,0));
+        expectedStart = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(0, 0));
         expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(0, 1));
 
         expectedDateTimeList.set(0, expectedStart);
@@ -228,6 +228,24 @@ public class DateTimeParserTest {
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
-        //TODO add test where start has time and end has date
+        actualDateTimeList = parser.parseDoubleDateTime("2pm", "tommorrow");
+        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
+        expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
+
+        expectedDateTimeList.set(0, expectedStart);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        //Boundary case
+        //when both start and end time defaults to the same day, time should be adjusted to 1 hr after start
+        actualDateTimeList = parser.parseDoubleDateTime("2pm", "today");
+        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
+        expectedEnd = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 0));
+
+        expectedDateTimeList.set(0, expectedStart);
+        expectedDateTimeList.set(1, expectedEnd);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
     }
 }
