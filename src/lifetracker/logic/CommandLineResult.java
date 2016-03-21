@@ -7,6 +7,7 @@ public class CommandLineResult implements ExecuteResult {
 
     private String comment;
     private List<String> resultLines;
+    private CommandType commandType;
 
     public CommandLineResult() {
         this.resultLines = new ArrayList<>();
@@ -34,5 +35,19 @@ public class CommandLineResult implements ExecuteResult {
         assert resultLine != null;
 
         resultLines.add(resultLine);
+    }
+
+    @Override
+    public void setType(String commandString) {
+        if (commandString.equals("exit"))
+            this.commandType = CommandType.EXIT;
+
+        else
+            this.commandType = CommandType.DISPLAY;
+    }
+
+    @Override
+    public CommandType getType() {
+        return this.commandType;
     }
 }

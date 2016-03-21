@@ -43,34 +43,43 @@ public class LogicImpl implements Logic {
     @Override
     public ExecuteResult executeCommand(String commandString) {
         assert commandString != null;
-
-        CommandObject commandToExecute;
-        CalendarList executedState;
-
-        try {
-            commandToExecute = commandParser.parse(commandString);
-            executedState = commandToExecute.execute(calendar);
-        } catch (IllegalArgumentException ex) {
-            ExecuteResult errorResult = new CommandLineResult();
-            errorResult.setComment(ERROR_INVALID_COMMAND);
-
-            return errorResult;
+        
+        ExecuteResult runResult = new CommandLineResult();
+        runResult.setType(commandString);
+        
+        if (commandString.equals("exit")) {
+            return runResult;
         }
 
-        try {
-            calendarStorage.store(calendar);
-        } catch (IOException ex) {
-            System.err.println(ERROR_SAVE);
-        }
+        else {
+            CommandObject commandToExecute;
+            CalendarList executedState;
 
-        return processExecutionResults(commandToExecute, executedState);
+            try {
+                commandToExecute = commandParser.parse(commandString);
+                executedState = commandToExecute.execute(calendar);
+            } catch (IllegalArgumentException ex) {
+                ExecuteResult errorResult = new CommandLineResult();
+                errorResult.setComment(ERROR_INVALID_COMMAND);
+
+                return errorResult;
+            }
+
+            try {
+                calendarStorage.store(calendar);
+            } catch (IOException ex) {
+                System.err.println(ERROR_SAVE);
+            }
+
+            return processExecutionResults(runResult, commandToExecute, executedState);
+        }
     }
 
-    private ExecuteResult processExecutionResults(CommandObject commandExecuted, CalendarList executedState) {
+    private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted,
+            CalendarList executedState) {
         assert commandExecuted != null;
         assert executedState != null;
 
-        ExecuteResult runResult = new CommandLineResult();
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
