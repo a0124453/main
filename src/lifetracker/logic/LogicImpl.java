@@ -41,35 +41,36 @@ public class LogicImpl implements Logic {
     }
 
     @Override
-	public ExecuteResult executeCommand(String commandString) {
-		assert commandString != null;
+    public ExecuteResult executeCommand(String commandString) {
+        assert commandString != null;
 
-		ExecuteResult runResult = new CommandLineResult();
-		runResult.setType(commandString);
-		
-		CommandObject commandToExecute;
-		CalendarList executedState;
+        ExecuteResult runResult = new CommandLineResult();
+        runResult.setType(commandString);
 
-		try {
-			commandToExecute = commandParser.parse(commandString);
-			executedState = commandToExecute.execute(calendar);
-		} catch (IllegalArgumentException ex) {
-			ExecuteResult errorResult = new CommandLineResult();
-			errorResult.setComment(ERROR_INVALID_COMMAND);
+        CommandObject commandToExecute;
+        CalendarList executedState;
 
-			return errorResult;
-		}
+        try {
+            commandToExecute = commandParser.parse(commandString);
+            executedState = commandToExecute.execute(calendar);
+        } catch (IllegalArgumentException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(ERROR_INVALID_COMMAND);
 
-		try {
-			calendarStorage.store(calendar);
-		} catch (IOException ex) {
-			System.err.println(ERROR_SAVE);
-		}
+            return errorResult;
+        }
 
-		return processExecutionResults(runResult, commandToExecute, executedState);
-	}
+        try {
+            calendarStorage.store(calendar);
+        } catch (IOException ex) {
+            System.err.println(ERROR_SAVE);
+        }
 
-    private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted, CalendarList executedState) {
+        return processExecutionResults(runResult, commandToExecute, executedState);
+    }
+
+    private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted,
+            CalendarList executedState) {
         assert commandExecuted != null;
         assert executedState != null;
 

@@ -12,8 +12,8 @@ public interface ExecuteResult {
     List<String> getResultLines();
 
     void addResultLine(String resultLine);
-    
+
     CommandType getType();
-    
+
     void setType(String commandString);
 }

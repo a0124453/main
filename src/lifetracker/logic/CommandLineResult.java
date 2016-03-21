@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandLineResult implements ExecuteResult {
-	
+
     public enum CommandType {
-    	DISPLAY, EXIT
+        DISPLAY, EXIT
     }
 
     private String comment;
@@ -40,20 +40,20 @@ public class CommandLineResult implements ExecuteResult {
 
         resultLines.add(resultLine);
     }
-    
+
     @Override
-    public void setType(String commandString){
-    	if(commandString.equals("exit")){
-    		this.commandType = CommandType.EXIT;
-    		System.exit(0);
-    	}
-    	
-    	else
-    		this.commandType = CommandType.DISPLAY;
+    public void setType(String commandString) {
+        if (commandString.equals("exit")) {
+            this.commandType = CommandType.EXIT;
+            System.exit(0);
+        }
+
+        else
+            this.commandType = CommandType.DISPLAY;
     }
-    
+
     @Override
-    public CommandType getType(){
-    	return this.commandType;
+    public CommandType getType() {
+        return this.commandType;
     }
 }
