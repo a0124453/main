@@ -2,9 +2,12 @@ package lifetracker.logic;
 
 import java.util.List;
 
-import lifetracker.logic.CommandLineResult.CommandType;
-
 public interface ExecuteResult {
+    
+    public enum CommandType {
+        DISPLAY, EXIT
+    }
+    
     String getComment();
 
     void setComment(String comment);

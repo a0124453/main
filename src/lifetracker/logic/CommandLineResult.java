@@ -5,10 +5,6 @@ import java.util.List;
 
 public class CommandLineResult implements ExecuteResult {
 
-    public enum CommandType {
-        DISPLAY, EXIT
-    }
-
     private String comment;
     private List<String> resultLines;
     private CommandType commandType;
@@ -43,10 +39,8 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void setType(String commandString) {
-        if (commandString.equals("exit")) {
+        if (commandString.equals("exit"))
             this.commandType = CommandType.EXIT;
-            System.exit(0);
-        }
 
         else
             this.commandType = CommandType.DISPLAY;
