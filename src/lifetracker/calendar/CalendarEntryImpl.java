@@ -7,10 +7,6 @@ import java.time.LocalTime;
 public class CalendarEntryImpl implements CalendarEntry {
 
     // variables
-    public enum EntryType {
-        FLOATING, DEADLINE, EVENT
-    }
-
     private String name;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -79,6 +75,11 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public EntryType getType() {
+        return entryType;
+    }
+
+    @Override
     public boolean isToday() {
         if (entryType.equals(EntryType.EVENT)) {
             LocalDate eventStartDay = startDateTime.toLocalDate();
@@ -89,17 +90,17 @@ public class CalendarEntryImpl implements CalendarEntry {
             return result;
         }
 
-        if (entryType.equals(EntryType.FLOATING)) {
+        else if (entryType.equals(EntryType.FLOATING)) {
             return false;
         }
 
-        if (entryType.equals(EntryType.DEADLINE)) {
-            LocalDate eventStartDay = endDateTime.toLocalDate();
+        else {
+            assert entryType.equals(EntryType.DEADLINE);
+            LocalDate deadline = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
-            return eventStartDay.isEqual(today);
+            return deadline.isEqual(today);
         }
 
-        return false;
     }
 
     @Override
@@ -108,28 +109,50 @@ public class CalendarEntryImpl implements CalendarEntry {
             return true;
         }
 
-        if (entryType.equals(EntryType.EVENT)) {
+        else if (entryType.equals(EntryType.EVENT)) {
             LocalDateTime now = LocalDateTime.now();
             boolean hasStarted = now.isAfter(startDateTime);
             return (hasStarted && !isOver());
         }
 
-        if (entryType.equals(EntryType.DEADLINE)) {
+        else {
+            assert entryType.equals(EntryType.DEADLINE);
             return (!isOver());
         }
 
-        return false;
     }
 
     @Override
     public boolean isOver() {
-        if (entryType.equals(EntryType.FLOATING))
-            return false;
-
-        else {
+        if (!entryType.equals(EntryType.FLOATING)) {
             LocalDateTime now = LocalDateTime.now();
             return now.isAfter(endDateTime);
         }
+
+        else {
+            assert entryType.equals(EntryType.FLOATING);
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean equals(CalendarEntry entry) {
+        if (!this.getType().equals(entry.getType())) {
+            return false;
+        }
+        boolean result = this.getName().equals(entry.getName());
+        if (this.getStart() == null) {
+            result = (result && entry.getStart() == null);
+        } else {
+            result = (result && this.getStart().equals(entry.getStart()));
+        }
+        if (this.getEnd() == null) {
+            result = (result && entry.getEnd() == null);
+        } else {
+            result = (result && this.getEnd().equals(entry.getEnd()));
+        }
+        return result;
     }
 
 }

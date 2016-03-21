@@ -43,9 +43,8 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        int eventMax = eventList.isEmpty()? 0 : eventList.lastKey();
+        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-
         int idToSet = Math.max(eventMax, taskMax) + 1;
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
@@ -60,6 +59,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
+        assert deadline != null;
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int idToSet = Math.max(taskMax, eventMax) + 1;
@@ -76,9 +76,13 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
-                int eventMax = eventList.isEmpty()? 0 : eventList.lastKey();
+        assert start != null;
+        assert end != null;
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException();
+        }
+        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-
         int idToSet = Math.max(eventMax, taskMax) + 1;
         CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, e);
