@@ -44,19 +44,15 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public void addTaskLine(int id, String name) {
-        List<String> record = new ArrayList<>();
-        record.add(String.valueOf(id));
-        record.add(name);
-        taskList.add(record);
-    }
-
-    @Override
     public void addTaskLine(int id, String name, LocalDateTime deadline) {
         List<String> record = new ArrayList<>();
         record.add(String.valueOf(id));
         record.add(name);
-        record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        
+        if(deadline != null) {
+            record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        }
+        
         taskList.add(record);
     }
 
