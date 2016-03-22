@@ -8,18 +8,26 @@ public class ListCommand implements CommandObject {
 
     private String comment = MESSAGE_ERROR;
 
+    private boolean executed = false;
+
     @Override
     public CalendarList execute(CalendarList calendar) {
         assert calendar != null;
 
         comment = MESSAGE_LIST;
 
+        executed = true;
+
         return calendar;
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        throw new UnsupportedOperationException();
+        assert executed;
+
+        executed = false;
+
+        return calendar;
     }
 
     @Override
