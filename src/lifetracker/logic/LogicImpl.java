@@ -17,7 +17,7 @@ public class LogicImpl implements Logic {
     private Parser commandParser;
     private Storage calendarStorage;
     private CalendarList calendar;
-    private Stack<String> commandStack;
+    private Stack<CommandObject> commandStack;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -28,7 +28,7 @@ public class LogicImpl implements Logic {
 
         calendar = storage.load(new CalendarListImpl());
 
-        commandStack = new Stack<String>();
+        commandStack = new Stack<CommandObject>();
     }
 
     @Override
@@ -47,9 +47,7 @@ public class LogicImpl implements Logic {
 
             if (commandString.equals("undo")) {
 
-                commandStack.pop();
-
-                commandToExecute = commandParser.parse(commandString);
+                commandToExecute = commandStack.pop();
                 executedState = commandToExecute.undo(calendar);
 
             } else {
@@ -63,7 +61,7 @@ public class LogicImpl implements Logic {
                     return errorResult;
                 }
 
-                commandStack.push(commandString);
+                commandStack.push(commandToExecute);
             }
 
             try {
