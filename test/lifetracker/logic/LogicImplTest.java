@@ -2,6 +2,8 @@ package lifetracker.logic;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -12,14 +14,16 @@ public class LogicImplTest {
     
     private static Parser parser = new LogicParserStub();
     private static Storage storage = new LogicStorageStub();
-    private static LogicImpl logicTest = new LogicImpl(parser, storage);
+    private static LogicImpl logicTest;
     
     private static ExecuteResult expected1 = new CommandLineResult();
     private static ExecuteResult expected2 = new CommandLineResult();
     private static ExecuteResult expected3 = new CommandLineResult();
     
     @BeforeClass
-    public static void setUpBeforeClass() {
+    public static void setUpBeforeClass() throws IOException {
+        logicTest = new LogicImpl(parser, storage);
+        
         expected1.setComment("\"first meeting\" is added.");
         expected1.setType("add first meeting");
         
