@@ -1,19 +1,22 @@
 package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarListImpl;
 
 import java.time.LocalDateTime;
 
 public class AddCommand implements CommandObject {
 
     private static final String MESSAGE_ADDED = "\"%1$s\" is added.";
+    private static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
 
     private final String name;
     private final LocalDateTime startDateTime;
     private final LocalDateTime endDateTime;
 
     private String comment = MESSAGE_ERROR;
+
+    private int addedEntryID;
+    private boolean executed = false;
 
     public AddCommand(String name) {
         assert name != null;
@@ -50,21 +53,31 @@ public class AddCommand implements CommandObject {
         assert calendar != null;
 
         if (endDateTime == null) {
-            calendar.add(name);
+            addedEntryID = calendar.add(name);
         } else if (startDateTime == null) {
-            calendar.add(name, endDateTime);
+            addedEntryID = calendar.add(name, endDateTime);
         } else {
-            calendar.add(name, startDateTime, endDateTime);
+            addedEntryID = calendar.add(name, startDateTime, endDateTime);
         }
 
         comment = String.format(MESSAGE_ADDED, name);
 
-        return new CalendarListImpl();
+        executed = true;
+
+        return calendar;
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        throw new UnsupportedOperationException();
+
+        assert calendar != null;
+        assert executed;
+
+        calendar.delete(addedEntryID);
+
+        comment = String.format(MESSAGE_UNDO, addedEntryID, name);
+
+        return calendar;
     }
 
     @Override
