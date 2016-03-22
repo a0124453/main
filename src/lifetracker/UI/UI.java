@@ -47,6 +47,9 @@ public class UI {
                 printTable(EVENT_TITLE, EVENT_HEADERS, result.getEventList());
                 printTable(TASK_TITLE, TASK_HEADERS, result.getTaskList());
 
+            }
+
+            if(result.getType() != ExecuteResult.CommandType.EXIT) {
                 System.out.println(result.getComment());
                 System.out.println();
             }
