@@ -30,8 +30,8 @@ public class LogicImplTest {
         expected3.setType("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59");
     }
 
-    @Test
-    /*public void testAdd() {
+    /*@Test
+    public void testAdd() {
         assertEquals(expected1, logicTest.executeCommand("add first meeting"));
         assertEquals(expected2, logicTest.executeCommand("add second meeting by 2016-09-01 23:59:59"));
         assertEquals(expected3, logicTest.executeCommand("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59"));
