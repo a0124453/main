@@ -1,14 +1,22 @@
 package lifetracker.UI;
 
+import dnl.utils.text.table.TextTable;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class UI {
 
     private static final String MESSAGE_WELCOME = "Welcome to the Life Tracker, Spend less time planning so you always know what's next.";
     private static final String MESSAGE_INPUT = "Command: ";
+
+    private static final String[] EVENT_HEADERS = {"ID", "Name", "Start", "End"};
+    private static final String[] TASK_HEADERS = {"ID", "Name", "Due"};
+
+    private static final String EVENT_TITLE = "Events: ";
+    private static final String TASK_TITLE = "Tasks: ";
 
     static Scanner scanner = new Scanner(System.in);
 
@@ -26,18 +34,44 @@ public class UI {
     public void executeUntilExit(Logic l) {
         assert l != null;
 
-        while (true) {
+        ExecuteResult result;
+
+        do {
             System.out.printf(MESSAGE_INPUT);
             String input = scanner.nextLine();
 
-            ExecuteResult result = l.executeCommand(input);
+            result = l.executeCommand(input);
 
-            System.out.println(result.getComment());
-            System.out.println();
+            if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
 
-            for (String resultLine : result.getResultLines()) {
-                System.out.println(resultLine);
+                printTable(EVENT_TITLE, EVENT_HEADERS, result.getEventList());
+                printTable(TASK_TITLE, TASK_HEADERS, result.getTaskList());
+
+                System.out.println(result.getComment());
+                System.out.println();
             }
+
+        } while (result.getType() != ExecuteResult.CommandType.EXIT);
+    }
+
+    private void printTable(String title ,String[] headers ,List<List<String>> data) {
+
+        TextTable displayTable = new TextTable(headers, listToArray(data));
+
+        System.out.println(title);
+        displayTable.printTable();
+        System.out.println();
+    }
+
+    private String[][] listToArray(List<List<String>> list) {
+        String[][] outputArray = new String[list.size()][];
+
+        for (int i = 0; i < list.size(); i++) {
+
+            String[] row = new String[list.get(i).size()];
+            outputArray[i] = list.get(i).toArray(row);
         }
+
+        return outputArray;
     }
 }
