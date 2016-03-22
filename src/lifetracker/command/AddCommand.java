@@ -40,7 +40,6 @@ public class AddCommand implements CommandObject {
         assert name != null;
         assert startDateTime != null;
         assert endDateTime != null;
-        assert startDateTime.isBefore(endDateTime);
 
         this.name = name;
         this.startDateTime = startDateTime;
