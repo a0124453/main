@@ -155,4 +155,14 @@ public class CalendarEntryImpl implements CalendarEntry {
         return result;
     }
 
+    @Override
+    public CalendarEntry copy() {
+        String name = this.getName();
+        LocalDateTime start = this.getStart();
+        LocalDateTime end = this.getEnd();
+        int id = this.getId();
+        CalendarEntry copy = new CalendarEntryImpl(name, start, end, id);
+        return copy;
+    }
+
 }

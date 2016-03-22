@@ -38,4 +38,6 @@ public interface CalendarEntry {
 
     boolean equals(CalendarEntry entry);
 
+    CalendarEntry copy();
+
 }
