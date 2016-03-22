@@ -64,6 +64,7 @@ public class LogicCalendarStub implements CalendarList {
         private String name;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
+        private int id;
 
         public CalendarEntryStub(String name, LocalDateTime startTime, LocalDateTime endTime) {
             this.name = name;
@@ -73,7 +74,7 @@ public class LogicCalendarStub implements CalendarList {
 
         @Override
         public int getId() {
-            return 0;
+            return id;
         }
 
         @Override
@@ -108,12 +109,12 @@ public class LogicCalendarStub implements CalendarList {
 
         @Override
         public LocalTime getStartTime() {
-            return null;
+            return startTime == null ? null : startTime.toLocalTime();
         }
 
         @Override
         public LocalTime getEndTime() {
-            return null;
+            return endTime == null ? null : endTime.toLocalTime();
         }
 
         @Override
