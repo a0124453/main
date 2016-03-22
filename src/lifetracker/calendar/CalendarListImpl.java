@@ -79,7 +79,7 @@ public class CalendarListImpl implements CalendarList {
         assert start != null;
         assert end != null;
         if (start.isAfter(end)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Start date is after end date!");
         }
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
