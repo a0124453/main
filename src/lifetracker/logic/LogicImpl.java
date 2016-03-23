@@ -7,6 +7,7 @@ import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
 import java.io.IOException;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class LogicImpl implements Logic {
@@ -50,7 +51,7 @@ public class LogicImpl implements Logic {
                 try {
                     commandToExecute = commandStack.pop();
                     executedState = commandToExecute.undo(calendar);
-                } catch (IllegalArgumentException ex) {
+                } catch (EmptyStackException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
                     errorResult.setComment(ERROR_INVALID_COMMAND);
                     errorResult.setType("ERROR");
