@@ -26,3 +26,6 @@ hs_err_pid*
 
 # storage file
 *.dat
+
+# log folder
+logs/
