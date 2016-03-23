@@ -12,6 +12,8 @@ import lifetracker.storage.Storage;
 
 public class LogicImplTest {
     
+    private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
+    
     private static Parser parser = new LogicParserStub();
     private static Storage storage = new LogicStorageStub();
     private static LogicImpl logicTest;
@@ -19,6 +21,8 @@ public class LogicImplTest {
     private static ExecuteResult expected1 = new CommandLineResult();
     private static ExecuteResult expected2 = new CommandLineResult();
     private static ExecuteResult expected3 = new CommandLineResult();
+    
+    private static ExecuteResult error = new CommandLineResult();
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
@@ -32,23 +36,54 @@ public class LogicImplTest {
         
         expected3.setComment("\"third meeting\" is added.");
         expected3.setType("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59");
+        
+        error.setComment(ERROR_INVALID_COMMAND);
+        error.setType("ERROR");
     }
 
     @Test
     public void testAdd() {
+        //test adding valid floating task
         assertEquals(expected1.getComment(), logicTest.executeCommand("add first meeting").getComment());
         assertEquals(expected1.getEventList(), logicTest.executeCommand("add first meeting").getEventList());
         assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());
         assertEquals(expected1.getType(), logicTest.executeCommand("add first meeting").getType());
         
+        //test adding valid deadline task
         assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getComment());
         assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getEventList());
         assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getTaskList());
         assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getType());
         
+        //test adding valid event
         assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getComment());
         assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getEventList());
         assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getTaskList());
         assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getType());
+        
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getType());
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getType());
+        
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getType());
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getType());
+        
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getType());
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getType());
+        
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getType());
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getType());
+        
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getType());
+        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60").getComment());
+        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60").getType());
     }
 }
