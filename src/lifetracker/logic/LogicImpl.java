@@ -46,9 +46,16 @@ public class LogicImpl implements Logic {
             CalendarList executedState;
 
             if (commandString.equals("undo")) {
-
-                commandToExecute = commandStack.pop();
-                executedState = commandToExecute.undo(calendar);
+                
+                try {
+                    commandToExecute = commandStack.pop();
+                    executedState = commandToExecute.undo(calendar);
+                } catch (IllegalArgumentException ex) {
+                    ExecuteResult errorResult = new CommandLineResult();
+                    errorResult.setComment(ERROR_INVALID_COMMAND);
+                    errorResult.setType("ERROR");
+                    return errorResult;
+                }
 
             } else {
 
