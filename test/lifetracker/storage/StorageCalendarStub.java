@@ -53,15 +53,15 @@ public class StorageCalendarStub implements CalendarList {
     }
 
     @Override
-    public boolean delete(int id) {
+    public CalendarEntry delete(int id) {
 
-        return false;
+        return null;
     }
 
     @Override
-    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
 
-        return false;
+        return null;
     }
 
     @Override
@@ -182,6 +182,11 @@ public class StorageCalendarStub implements CalendarList {
         @Override
         public boolean equals(CalendarEntry entry) {
             return equals((Object) entry);
+        }
+
+        @Override
+        public CalendarEntry copy() {
+            return null;
         }
 
         //Auto-generated function
