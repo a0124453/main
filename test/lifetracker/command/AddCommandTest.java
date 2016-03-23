@@ -1,9 +1,9 @@
 package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarListImpl;
-import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -11,21 +11,34 @@ import static org.mockito.Mockito.verify;
 //@@author A0091173J
 public class AddCommandTest {
 
-    CalendarList mockedCalendar;
-
-    @Before
-    public void setUp() throws Exception {
-        mockedCalendar = mock(CalendarListImpl.class);
-    }
-
     @Test
     public void testExecute() throws Exception {
 
-        AddCommand addFloating = new AddCommand("floating");
+        //Floating task
+        AddCommand addCommand = new AddCommand("floating");
 
-        addFloating.execute(mockedCalendar);
+        CalendarList mockedCalendar = mock(CalendarList.class);
+
+        addCommand.execute(mockedCalendar);
 
         verify(mockedCalendar).add("floating");
 
+        //Deadline task
+        addCommand = new AddCommand("task", LocalDateTime.MIN);
+
+        mockedCalendar = mock(CalendarList.class);
+
+        addCommand.execute(mockedCalendar);
+
+        verify(mockedCalendar).add("task", LocalDateTime.MIN);
+
+        //Event
+        addCommand = new AddCommand("event", LocalDateTime.MIN, LocalDateTime.MAX);
+
+        mockedCalendar = mock(CalendarList.class);
+
+        addCommand.execute(mockedCalendar);
+
+        verify(mockedCalendar).add("event", LocalDateTime.MIN, LocalDateTime.MAX);
     }
 }
