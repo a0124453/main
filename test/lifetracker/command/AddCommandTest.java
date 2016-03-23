@@ -86,4 +86,33 @@ public class AddCommandTest {
         verify(calendar).delete(3);
         Assert.assertEquals("3: \"event\" removed.", addCommand.getComment());
     }
+
+    @Test(expected = AssertionError.class)
+    public void testPrematureUndo() throws Exception {
+        AddCommand addCommand = new AddCommand("test");
+        addCommand.undo(mock(CalendarList.class));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testDoubleExecute() throws Exception {
+        AddCommand addCommand = new AddCommand("test");
+
+        CalendarList calendar = mock(CalendarList.class);
+
+        addCommand.execute(calendar);
+        addCommand.execute(calendar);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testDoubleUndo() throws Exception {
+
+        CalendarList calendar = mock(CalendarList.class);
+
+        AddCommand addCommand = new AddCommand("test");
+
+        addCommand.execute(calendar);
+
+        addCommand.undo(calendar);
+        addCommand.undo(calendar);
+    }
 }
