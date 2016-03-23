@@ -58,6 +58,7 @@ public class LogicImpl implements Logic {
                 } catch (IllegalArgumentException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
                     errorResult.setComment(ERROR_INVALID_COMMAND);
+                    errorResult.setType("ERROR");
                     return errorResult;
                 }
 

@@ -71,6 +71,10 @@ public class CommandLineResult implements ExecuteResult {
         if (commandString.equals("exit"))
             this.commandType = CommandType.EXIT;
 
+        else if (commandString.equals("ERROR")) {
+            this.commandType = CommandType.ERROR;
+        }
+        
         else
             this.commandType = CommandType.DISPLAY;
     }
