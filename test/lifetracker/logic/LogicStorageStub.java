@@ -19,7 +19,7 @@ public class LogicStorageStub implements Storage {
     
     @Override
     public CalendarList load(CalendarList calendar) throws IOException {
-        return null;
+        return calendar;
     }
     
     @Override

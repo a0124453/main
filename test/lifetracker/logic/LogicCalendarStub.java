@@ -42,15 +42,15 @@ public class LogicCalendarStub implements CalendarList {
     }
 
     @Override
-    public boolean delete(int id) {
+    public CalendarEntry delete(int id) {
 
-        return false;
+        return null;
     }
 
     @Override
-    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
 
-        return false;
+        return null;
     }
 
     @Override
@@ -116,6 +116,11 @@ public class LogicCalendarStub implements CalendarList {
         public LocalTime getEndTime() {
             return endTime == null ? null : endTime.toLocalTime();
         }
+        
+        @Override
+        public EntryType getType() {
+            return null;
+        }
 
         @Override
         public boolean isToday() {
@@ -134,11 +139,11 @@ public class LogicCalendarStub implements CalendarList {
 
         @Override
         public boolean equals(CalendarEntry entry) {
-            return false;
+            return equals((Object) entry);
         }
         
         @Override
-        public EntryType getType() {
+        public CalendarEntry copy() {
             return null;
         }
     }
