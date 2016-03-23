@@ -50,37 +50,51 @@ public class LogicImplTest {
         assertEquals(expected1.getType(), logicTest.executeCommand("add first meeting").getType());
         
         //test adding valid deadline task
+        //This is the upper bound of the boundary case for the valid partition
         assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getComment());
         assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getEventList());
         assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getTaskList());
         assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getType());
         
         //test adding valid event
+        //This is the lower bound of the boundary case for the valid partition
         assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getComment());
         assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getEventList());
         assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getTaskList());
         assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getType());
         
+        /*----------test adding error event----------*/
+        
+        //test error month
+        //This is the boundary case for the invalid partition
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getType());
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getType());
         
+        //test error day
+        //This is the boundary case for the invalid partition
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getType());
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getType());
         
+        //test error hour
+        //This is the boundary case for the invalid partition
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getType());
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getType());
         
+        //test error minute
+        //This is the boundary case for the invalid partition
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getType());
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getType());
         
+        //test error second
+        //This is the boundary case for the invalid partition
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getComment());
         assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getType());
         assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60").getComment());
