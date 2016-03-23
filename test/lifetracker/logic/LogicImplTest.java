@@ -28,10 +28,10 @@ public class LogicImplTest {
         expected1.setType("add first meeting");
         
         expected2.setComment("\"second meeting\" is added.");
-        expected2.setType("add second meeting by 2016-09-01 23:59:59");
+        expected2.setType("add second meeting by 2016-12-31 23:59:59");
         
         expected3.setComment("\"third meeting\" is added.");
-        expected3.setType("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59");
+        expected3.setType("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59");
     }
 
     @Test
@@ -41,14 +41,14 @@ public class LogicImplTest {
         assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());
         assertEquals(expected1.getType(), logicTest.executeCommand("add first meeting").getType());
         
-        assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-09-01 23:59:59").getComment());
-        assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-09-01 23:59:59").getEventList());
-        assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-09-01 23:59:59").getTaskList());
-        assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-09-01 23:59:59").getType());
+        assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getComment());
+        assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getEventList());
+        assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getTaskList());
+        assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getType());
         
-        assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59").getComment());
-        assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59").getEventList());
-        assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59").getTaskList());
-        assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2016-10-01 23:59:59 to 2016-11-01 23:59:59").getType());
+        assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getComment());
+        assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getEventList());
+        assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getTaskList());
+        assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getType());
     }
 }
