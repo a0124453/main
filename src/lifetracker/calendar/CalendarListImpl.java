@@ -79,7 +79,7 @@ public class CalendarListImpl implements CalendarList {
         assert start != null;
         assert end != null;
         if (start.isAfter(end)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Start date is after end date!");
         }
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
@@ -95,15 +95,17 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#delete(int)
      */
     @Override
-    public boolean delete(int id) {
+    public CalendarEntry delete(int id) {
         if (taskList.containsKey(id)) {
+            CalendarEntry copy = taskList.get(id);
             taskList.remove(id);
-            return true;
+            return copy;
         } else if (eventList.containsKey(id)) {
+            CalendarEntry copy = taskList.get(id);
             eventList.remove(id);
-            return true;
+            return copy;
         }
-        return false;
+        return null;
     }
 
     /*
@@ -112,19 +114,23 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
      */
     @Override
-    public boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
         if (taskList.containsKey(id)) {
-            taskList.get(id).setName(newName);
-            taskList.get(id).setStart(newStart);
-            taskList.get(id).setEnd(newEnd);
-            return true;
+            CalendarEntry toUpdate = taskList.get(id);
+            CalendarEntry copy = toUpdate.copy();
+            toUpdate.setName(newName);
+            toUpdate.setStart(newStart);
+            toUpdate.setEnd(newEnd);
+            return copy;
         } else if (eventList.containsKey(id)) {
-            eventList.get(id).setName(newName);
-            eventList.get(id).setStart(newStart);
-            eventList.get(id).setEnd(newEnd);
-            return true;
+            CalendarEntry toUpdate = eventList.get(id);
+            CalendarEntry copy = toUpdate.copy();
+            toUpdate.setName(newName);
+            toUpdate.setStart(newStart);
+            toUpdate.setEnd(newEnd);
+            return copy;
         }
-        return false;
+        return null;
     }
 
     /*

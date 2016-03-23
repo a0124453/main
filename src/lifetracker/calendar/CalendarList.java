@@ -16,9 +16,9 @@ public interface CalendarList {
 
     int add(String name, LocalDateTime start, LocalDateTime end); // event
 
-    boolean delete(int id);
+    CalendarEntry delete(int id);
 
-    boolean update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
+    CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
 
     List<CalendarEntry> list(String toSearch);
 
