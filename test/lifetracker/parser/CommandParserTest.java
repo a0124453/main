@@ -40,7 +40,7 @@ public class CommandParserTest {
     @Test
     public void testParseFullCommand() throws Exception {
 
-        //Basic command with spaces
+        //Parition: Default (no) command with spaces
         String command = "abc testcommand";
 
         List<String> expected = new ArrayList<>();
@@ -50,8 +50,8 @@ public class CommandParserTest {
 
         Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
 
-        //Test for custom command
-        //Boundary case for command with spaces: multiple spaces between words.
+        //Partition: Explicit command specified
+        //Boundary: more than one space between words
         command = "testcommand  add  testcommand ";
 
         expected.clear();
@@ -60,7 +60,7 @@ public class CommandParserTest {
 
         Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
 
-        //Command has more than one section
+        //Partition: Command with mulitple sections
         command = "testcommand add testcommand |  add";
         expected.set(1, "add testcommand ");
         expected.add(" add");
@@ -69,8 +69,8 @@ public class CommandParserTest {
 
         expected.clear();
 
-        //Boundary case where spaces are added after command keyword
-        //Also tests case where separator appears at the end
+        //Boundary: Spaces after command itself
+        //Boundary: Blank last section
         command = "testcommand   | add| two| ";
         expected.add("testcommand");
         expected.add("add");
@@ -78,7 +78,7 @@ public class CommandParserTest {
 
         Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
 
-        //Boundary case where extra spaces are added after a separator
+        //Boundary: Spaces right after separator
         command = "testcommand|  abc |def";
         expected.clear();
         expected.add("testcommand");
@@ -91,7 +91,7 @@ public class CommandParserTest {
     @Test
     public void testParseCommandBody() throws Exception {
 
-        //Case where keyword arguments are all valid
+        //Partition: All keyword arguments valid
         String commandBody = "name empty three abc";
 
         Map<String, String> expected = new LinkedHashMap<>();
@@ -102,7 +102,17 @@ public class CommandParserTest {
 
         Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
 
-        //Case where keywords are repeated
+        //Boundary: Blank name
+        commandBody = "empty empty2";
+
+        expected.clear();
+        expected.put("empty2", "");
+        expected.put("empty", "");
+        expected.put("name", "");
+
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+
+        //Partition: repeated keywords
         commandBody = "name anything abs anything abc def three abc";
 
         expected.clear();
@@ -112,21 +122,11 @@ public class CommandParserTest {
 
         Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
 
-        //Case where keyword arguments are not valid
+        //Partition: Invalid keyword arguements
         commandBody = "anything something something empty aaa";
 
         expected.clear();
         expected.put("name", "anything something something empty aaa");
-
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
-
-        //Boundary case for valid command: when name is empty
-        commandBody = "empty empty2";
-
-        expected.clear();
-        expected.put("empty2", "");
-        expected.put("empty", "");
-        expected.put("name", "");
 
         Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
     }
