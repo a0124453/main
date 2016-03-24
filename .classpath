@@ -8,6 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/natty.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-nop-1.7.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/j-text-utils-0.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-all-2.0.2-beta.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mockito-all-2.0.2-beta"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
