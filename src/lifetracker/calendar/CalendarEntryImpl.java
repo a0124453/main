@@ -21,13 +21,13 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.id = id;
         if (start != null) {
             assert end != null;
-            assert start.isBefore(end);
+            if (start.isAfter(end)) {
+                throw new IllegalArgumentException("Start date cannot be after end date!");
+            }
             this.entryType = EntryType.EVENT;
         } else if (start == null && end == null) {
             this.entryType = EntryType.FLOATING;
         } else {
-            assert start == null;
-            assert end != null;
             this.entryType = EntryType.DEADLINE;
         }
     }
