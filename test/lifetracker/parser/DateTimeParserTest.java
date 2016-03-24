@@ -33,19 +33,22 @@ public class DateTimeParserTest {
 
         LocalDateTime expected, actual;
 
+        //Partition: Case where everything is specified
         actual = parser.parseSingleDateTime("today 2:30pm");
         expected = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 30));
         Assert.assertEquals(expected, actual);
 
+        //Everything is specified but in a different format
         actual = parser.parseSingleDateTime("2/3 21:33");
         expected = LocalDateTime.of(Calendar.getInstance().get(Calendar.YEAR), 3, 2, 21, 33);
         Assert.assertEquals(expected, actual);
 
-        //To make sure dates don't skip to next day when it's specified explicitly.
+        //Boundary case: To make sure dates don't skip to next day when it's specified explicitly.
         actual = parser.parseSingleDateTime("2/3 00:00");
         expected = LocalDateTime.of(Calendar.getInstance().get(Calendar.YEAR), 3, 2, 0, 0);
         Assert.assertEquals(expected, actual);
 
+        //Partition: When date is not specified
         actual = parser.parseSingleDateTime("10pm");
         expected = LocalDateTime.of(LocalDate.now(), LocalTime.of(22, 0));
 
@@ -55,16 +58,17 @@ public class DateTimeParserTest {
         }
         Assert.assertEquals(expected, actual);
 
-        //Always skip
+        //Boundary case: date should always skip
         actual = parser.parseSingleDateTime("00:00");
         expected = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
         Assert.assertEquals(expected, actual);
 
+        //Partition: missing time
         actual = parser.parseSingleDateTime("day after tomorrow");
         expected = LocalDateTime.of(LocalDate.now().plusDays(2), LocalTime.MIDNIGHT.minusMinutes(1));
         Assert.assertEquals(expected, actual);
 
-        //Boundary: Empty string
+        //Partition: Empty string
         actual = parser.parseSingleDateTime("");
         expected = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
         Assert.assertEquals(expected, actual);
@@ -81,6 +85,7 @@ public class DateTimeParserTest {
         List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
         List<LocalDateTime> actualDateTimeList;
 
+        //Parition: When everything is specified
         actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "24/3/16 11.40pm");
         expectedStart = LocalDateTime.of(2016, 3, 23, 11, 30);
         expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
@@ -99,41 +104,44 @@ public class DateTimeParserTest {
         List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
         List<LocalDateTime> actualDateTimeList;
 
-        //Auto assign end time
-        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "23/3/16");
+        //Partition: When end time is missing
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "24/3/16");
         expectedStart = LocalDateTime.of(2016, 3, 23, 11, 30);
-        expectedEnd = LocalDateTime.of(2016, 3, 23, 12, 30);
+        expectedEnd = LocalDateTime.of(2016, 3, 24, 11, 30);
         expectedDateTimeList.add(expectedStart);
         expectedDateTimeList.add(expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
-        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "24/3/16");
-        expectedEnd = LocalDateTime.of(2016, 3, 24, 11, 30);
+        //Boundary: When end date is the same
+        actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "23/3/16");
+        expectedEnd = LocalDateTime.of(2016, 3, 23, 12, 30);
         expectedDateTimeList.set(1, expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
-        //Auto assign end date
+        //Parition: When end date is missing
         actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "1300");
         expectedEnd = LocalDateTime.of(2016, 3, 23, 13, 0);
         expectedDateTimeList.set(1, expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
+        //Boundary: When end time occurs before start time
         actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "1100");
         expectedEnd = LocalDateTime.of(2016, 3, 24, 11, 0);
         expectedDateTimeList.set(1, expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
+        //Partition: When both end date and end time is missing
         actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:30am", "");
         expectedEnd = LocalDateTime.of(2016, 3, 23, 12, 30);
         expectedDateTimeList.set(1, expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
-        //Boundary: When start time is close to midnight
+        //Boundary: When end time will spill into next day
         actualDateTimeList = parser.parseDoubleDateTime("23/3/16 11:59pm", "");
         expectedStart = LocalDateTime.of(2016, 3, 23, 23, 59);
         expectedEnd = LocalDateTime.of(2016, 3, 24, 0, 59);
@@ -152,6 +160,7 @@ public class DateTimeParserTest {
         List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
         List<LocalDateTime> actualDateTimeList;
 
+        //Partition: When start date is missing
         actualDateTimeList = parser.parseDoubleDateTime("12am", "24/3/16 11.40pm");
         expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0));
         expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
@@ -160,12 +169,14 @@ public class DateTimeParserTest {
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
+        //Partition: When start time is missing
         actualDateTimeList = parser.parseDoubleDateTime("24/3/16", "24/3/16 11.40pm");
         expectedStart = LocalDateTime.of(LocalDate.of(2016, 3, 24), LocalTime.now());
         expectedDateTimeList.set(0, expectedStart);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
+        //Partition: Both start date and time are missing
         actualDateTimeList = parser.parseDoubleDateTime("", "24/3/16 11.40pm");
         expectedStart = LocalDateTime.now();
         expectedDateTimeList.set(0, expectedStart);
