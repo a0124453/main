@@ -7,6 +7,7 @@ import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
 import java.io.IOException;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class LogicImpl implements Logic {
@@ -46,9 +47,16 @@ public class LogicImpl implements Logic {
             CalendarList executedState;
 
             if (commandString.equals("undo")) {
-
-                commandToExecute = commandStack.pop();
-                executedState = commandToExecute.undo(calendar);
+                
+                try {
+                    commandToExecute = commandStack.pop();
+                    executedState = commandToExecute.undo(calendar);
+                } catch (EmptyStackException ex) {
+                    ExecuteResult errorResult = new CommandLineResult();
+                    errorResult.setComment(ERROR_INVALID_COMMAND);
+                    errorResult.setType("ERROR");
+                    return errorResult;
+                }
 
             } else {
 
