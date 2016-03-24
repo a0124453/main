@@ -22,7 +22,7 @@ public class CalendarEntryImpl implements CalendarEntry {
         if (start != null) {
             assert end != null;
             if (start.isAfter(end)) {
-                throw new IllegalArgumentException("Start date cannot be after end date!");
+                throw new IllegalArgumentException("Start date/time cannot be after end date/time!");
             }
             this.entryType = EntryType.EVENT;
         } else if (start == null && end == null) {
