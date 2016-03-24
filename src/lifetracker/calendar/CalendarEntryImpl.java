@@ -90,7 +90,7 @@ public class CalendarEntryImpl implements CalendarEntry {
             LocalDate eventEndDay = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
             boolean result = today.isEqual(eventStartDay);
-            result = result || (today.isAfter(eventStartDay) && today.isBefore(eventEndDay));
+            result = result || this.isOngoing();
             return result;
         }
 

@@ -145,11 +145,18 @@ public class CalendarEntryTest {
     @Test
     public void testIsToday() {
 
-        assertFalse(testEntry1.isToday());
-        assertTrue(testEntry2.isToday());
+        assertFalse(testEntry1.isToday()); // false for floating tasks
+        assertTrue(testEntry2.isToday()); // true for deadline tasks whose
+                                          // deadline is today
+        assertFalse(testEntry3.isToday()); // false for deadline tasks whose
+                                           // deadline is not today
         assertFalse(testEntry4.isToday());
-        assertTrue(testEntry5.isToday());
-        assertTrue(testEntry6.isToday());
+        assertTrue(testEntry5.isToday()); // true for ongoing events
+        assertTrue(testEntry6.isToday()); // true for events that start today
+        assertFalse(testEntry7.isToday()); // false for events not starting
+                                           // today and not ongoing
+        assertFalse(testEntry8.isToday()); // false for events that are over and
+                                           // did not start today
     }
 
     @Test
