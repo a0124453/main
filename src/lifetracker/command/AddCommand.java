@@ -50,6 +50,7 @@ public class AddCommand implements CommandObject {
     public CalendarList execute(CalendarList calendar) {
 
         assert calendar != null;
+        assert !executed;
 
         if (endDateTime == null) {
             addedEntryID = calendar.add(name);
@@ -75,6 +76,7 @@ public class AddCommand implements CommandObject {
         calendar.delete(addedEntryID);
 
         comment = String.format(MESSAGE_UNDO, addedEntryID, name);
+        executed = false;
 
         return calendar;
     }
