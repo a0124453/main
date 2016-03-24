@@ -19,12 +19,16 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.setStart(start);
         this.setEnd(end);
         this.id = id;
-        if (start == null && end == null) {
-            this.entryType = EntryType.FLOATING;
-        } else if (start == null && end != null) {
-            this.entryType = EntryType.DEADLINE;
-        } else if (start != null && end != null) {
+        if (start != null) {
+            assert end != null;
+            assert start.isBefore(end);
             this.entryType = EntryType.EVENT;
+        } else if (start == null && end == null) {
+            this.entryType = EntryType.FLOATING;
+        } else {
+            assert start == null;
+            assert end != null;
+            this.entryType = EntryType.DEADLINE;
         }
     }
 
