@@ -16,6 +16,7 @@ public class CalendarEntryTest {
 
     public static final LocalDateTime NOW = LocalDateTime.now();
     public static final LocalDateTime TWO_HOURS_FROM_NOW = LocalDateTime.now().plusHours(2);
+    public static final LocalDateTime TWO_HOURS_AGO = LocalDateTime.now().minusHours(2);
     public static final LocalDateTime THIS_TIME_TOMORROW = LocalDateTime.now().plusDays(1);
     public static final LocalDateTime TWO_HOURS_FROM_NOW_TOMORROW = THIS_TIME_TOMORROW.plusHours(2);
     public static final LocalDateTime THIS_TIME_YESTERDAY = LocalDateTime.now().minusDays(1);

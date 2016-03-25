@@ -87,10 +87,8 @@ public class CalendarEntryImpl implements CalendarEntry {
     public boolean isToday() {
         if (entryType.equals(EntryType.EVENT)) {
             LocalDate eventStartDay = startDateTime.toLocalDate();
-            LocalDate eventEndDay = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
-            boolean result = today.isEqual(eventStartDay);
-            result = result || this.isOngoing();
+            boolean result = today.isEqual(eventStartDay) || this.isOngoing();
             return result;
         }
 
