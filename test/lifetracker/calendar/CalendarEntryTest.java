@@ -33,7 +33,7 @@ public class CalendarEntryTest {
     static CalendarEntry testEntry9; // to test exceptions
     static CalendarEntry copyEntry1;
     static CalendarEntry copyEntry2;
-    static CalendarEntry copyEntry6;
+    static CalendarEntry copyEntry8;
 
     static String getTestEntryName(int k) {
         return String.format(TEST_NAME, k);
@@ -53,7 +53,7 @@ public class CalendarEntryTest {
         testEntry9 = null;
         copyEntry1 = testEntry1;
         copyEntry2 = testEntry2;
-        copyEntry6 = testEntry8;
+        copyEntry8 = testEntry8;
     }
 
     @Test
@@ -187,7 +187,7 @@ public class CalendarEntryTest {
 
         assertTrue(testEntry1.equals(copyEntry1));
         assertTrue(testEntry2.equals(copyEntry2));
-        assertTrue(testEntry8.equals(copyEntry6));
+        assertTrue(testEntry8.equals(copyEntry8));
     }
 
     @Test
@@ -195,11 +195,11 @@ public class CalendarEntryTest {
 
         copyEntry1 = testEntry1.copy();
         copyEntry2 = testEntry2.copy();
-        copyEntry6 = testEntry8.copy();
+        copyEntry8 = testEntry8.copy();
 
         assertTrue(testEntry1.equals(copyEntry1));
         assertTrue(testEntry2.equals(copyEntry2));
-        assertTrue(testEntry8.equals(copyEntry6));
+        assertTrue(testEntry8.equals(copyEntry8));
     }
 
 }
