@@ -12,6 +12,8 @@ public class CalendarEntryImpl implements CalendarEntry {
     private LocalDateTime endDateTime;
     private EntryType entryType;
     private int id;
+    private boolean recurring;
+    private boolean active;
 
     // constructor
     public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end, int id) {
@@ -19,6 +21,8 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.setStart(start);
         this.setEnd(end);
         this.id = id;
+        this.recurring = false;
+        this.active = true;
         if (start != null) {
             assert end != null;
             if (start.isAfter(end)) {
@@ -81,6 +85,30 @@ public class CalendarEntryImpl implements CalendarEntry {
     @Override
     public EntryType getType() {
         return entryType;
+    }
+
+    @Override
+    public void setRecurring(boolean recurring) {
+        this.recurring = recurring;
+    }
+
+    @Override
+    public void mark() {
+        if (this.isActive()) {
+            this.active = false;
+        } else {
+            this.active = true;
+        }
+    };
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public boolean isRecurring() {
+        return recurring;
     }
 
     @Override

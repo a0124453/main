@@ -30,6 +30,14 @@ public interface CalendarEntry {
 
     EntryType getType();
 
+    void setRecurring(boolean recurring);
+
+    void mark();
+
+    boolean isActive();
+
+    boolean isRecurring();
+
     boolean isToday();
 
     boolean isOngoing();
