@@ -8,10 +8,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class ThreadedFileStorage implements Storage {
@@ -51,39 +52,16 @@ public class ThreadedFileStorage implements Storage {
     }
 
     @Override
-    public void store(CalendarList calendar) throws IOException {
-        assert calendar != null;
+    public void store(String storeJsonString) throws IOException {
+        assert storeJsonString != null;
 
-        fileStoreProcess.submitSaveList(processCalendar(calendar));
+        //TODO: Change everything to store strings
+        fileStoreProcess.submitSaveList(processCalendar(null));
     }
 
     @Override
-    public CalendarList load(CalendarList calendar) throws IOException {
-
-        assert calendar != null;
-
-        try (Scanner storageFileScanner = new Scanner(storageFile)) {
-
-            int numEvents = storageFileScanner.nextInt();
-            storageFileScanner.nextLine();
-
-            for (int i = 0; i < numEvents; i++) {
-                String eventLine = storageFileScanner.nextLine();
-
-                addEvent(calendar, eventLine);
-            }
-
-            int numTasks = storageFileScanner.nextInt();
-            storageFileScanner.nextLine();
-
-            for (int i = 0; i < numTasks; i++) {
-                String taskLine = storageFileScanner.nextLine();
-
-                addTask(calendar, taskLine);
-            }
-        }
-
-        return calendar;
+    public String load() throws IOException {
+        return new String(Files.readAllBytes(storageFile.toPath()), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -109,14 +87,14 @@ public class ThreadedFileStorage implements Storage {
 
         if (!storageFile.exists()) {
             storageFile.createNewFile();
-            
-            try(BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storageFile))){
+
+            try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storageFile))) {
                 fileWriter.write("0");
                 fileWriter.newLine();
                 fileWriter.write("0");
                 fileWriter.newLine();
             }
-            
+
         } else if (storageFile.isDirectory()) {
             throw new IOException(ERROR_FILE_IS_DIRECTORY);
         }
