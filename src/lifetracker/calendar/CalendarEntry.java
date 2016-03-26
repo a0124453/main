@@ -2,6 +2,7 @@ package lifetracker.calendar;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAmount;
 
 public interface CalendarEntry {
 
@@ -30,7 +31,7 @@ public interface CalendarEntry {
 
     EntryType getType();
 
-    void setRecurring(boolean recurring);
+    void setRecurring(TemporalAmount period);
 
     void mark();
 

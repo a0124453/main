@@ -3,6 +3,8 @@ package lifetracker.calendar;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 
 public class CalendarEntryImpl implements CalendarEntry {
 
@@ -12,8 +14,8 @@ public class CalendarEntryImpl implements CalendarEntry {
     private LocalDateTime endDateTime;
     private EntryType entryType;
     private int id;
-    private boolean recurring;
-    private boolean active;
+    private TemporalAmount period;
+    private boolean isActive;
 
     // constructor
     public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end, int id) {
@@ -21,8 +23,8 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.setStart(start);
         this.setEnd(end);
         this.id = id;
-        this.recurring = false;
-        this.active = true;
+        this.period = Period.ZERO;
+        this.isActive = true;
         if (start != null) {
             assert end != null;
             if (start.isAfter(end)) {
@@ -88,27 +90,27 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
-    public void setRecurring(boolean recurring) {
-        this.recurring = recurring;
+    public void setRecurring(TemporalAmount period) {
+        this.period = period;
     }
 
     @Override
     public void mark() {
         if (this.isActive()) {
-            this.active = false;
+            this.isActive = false;
         } else {
-            this.active = true;
+            this.isActive = true;
         }
     };
 
     @Override
     public boolean isActive() {
-        return active;
+        return isActive;
     }
 
     @Override
     public boolean isRecurring() {
-        return recurring;
+        return !period.equals(Period.ZERO);
     }
 
     @Override
