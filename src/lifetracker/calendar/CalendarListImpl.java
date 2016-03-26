@@ -1,6 +1,7 @@
 package lifetracker.calendar;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -43,6 +44,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
+        assert name != null && !name.isEmpty();
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int idToSet = Math.max(eventMax, taskMax) + 1;
@@ -59,6 +61,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
+        assert name != null && !name.isEmpty();
         assert deadline != null;
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
@@ -66,6 +69,11 @@ public class CalendarListImpl implements CalendarList {
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
         return idToSet;
+    }
+
+    @Override
+    public int add(String name, LocalDateTime deadline, TemporalAmount period) {
+        return 0;
     }
 
     /*
@@ -87,6 +95,12 @@ public class CalendarListImpl implements CalendarList {
         CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, e);
         return idToSet;
+    }
+    
+    @Override
+    public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     /*
@@ -139,13 +153,25 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#list(String)
      */
     @Override
-    public List<CalendarEntry> list(String toSearch) {
+    public CalendarList find(String toSearch) {
         List<CalendarEntry> result = new ArrayList<CalendarEntry>();
         result.addAll(getTaskList());
         result.addAll(getEventList());
         Predicate<CalendarEntry> p = (entry) -> entry.getName().contains(toSearch);
         result.removeIf(p);
-        return result;
+        return null;
+    }
+
+    @Override
+    public CalendarList findArchived(String toSearch) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public CalendarList findAll(String toSearch) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
