@@ -9,8 +9,6 @@ import java.util.function.Predicate;
 
 public class CalendarListImpl implements CalendarList {
 
-    public static final String EMPTY_STRING = "";
-
     // variables
     private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
     private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
@@ -46,7 +44,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        assert name != null && name != EMPTY_STRING;
+        assert name != null && !name.isEmpty();
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int idToSet = Math.max(eventMax, taskMax) + 1;
@@ -63,7 +61,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
-        assert name != null && name != EMPTY_STRING;
+        assert name != null && !name.isEmpty();
         assert deadline != null;
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
