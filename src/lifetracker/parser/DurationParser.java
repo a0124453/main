@@ -16,7 +16,7 @@ public class DurationParser {
 
     private static final String FORMAT_ERROR = "Invalid duration format!";
 
-    private final String DURATION_PATTERN = "[\\d+\\s]?\\w+";
+    private final String DURATION_PATTERN = "(\\d+\\s+)?\\w+";
     private final String TERM_SEPARATOR_PATTERN = "\\s+";
 
     private Map<String, Function<Integer, Period>> parserMap = new HashMap<>();
@@ -33,7 +33,7 @@ public class DurationParser {
 
     public TemporalAmount parse(String durationString) {
 
-        if (!isValidFormat(durationString)) {
+        if(!isValidFormat(durationString)){
             throw new IllegalArgumentException(FORMAT_ERROR);
         }
 
