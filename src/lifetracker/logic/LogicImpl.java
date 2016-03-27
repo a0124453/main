@@ -28,6 +28,7 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
 
+        storageAdapter = new StorageAdapterImpl();
         calendar = storageAdapter.load(storage);
 
         commandStack = new Stack<CommandObject>();

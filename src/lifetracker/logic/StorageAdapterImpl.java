@@ -20,7 +20,7 @@ public class StorageAdapterImpl implements StorageAdapter {
     @Override
     public CalendarList load(Storage storage) throws IOException {
         String l = storage.load();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson();
         CalendarList calendar = gson.fromJson(l, CalendarList.class);
         return calendar;
     }
