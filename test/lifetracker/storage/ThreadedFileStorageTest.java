@@ -1,6 +1,5 @@
 package lifetracker.storage;
 
-import lifetracker.calendar.CalendarList;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,8 +11,6 @@ import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ThreadedFileStorageTest {
 
@@ -71,45 +68,45 @@ public class ThreadedFileStorageTest {
 
     @Test
     public void testStore() throws Exception {
-        CalendarList populatedCalendar = new StorageCalendarStub(true);
-
-        storage.store(populatedCalendar);
+        //Partition: Storing a string
+        String testString = "Test string";
+        storage.store(testString);
         storage.close();
 
-        List<String> actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
+        String actualFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
 
-        Assert.assertEquals(expectedFileContent, actualFileContent);
+        Assert.assertEquals(testString, actualFileContent);
 
-    }
+        //Boundary: Line breaks and empty lines
+        storage = new ThreadedFileStorage(TEST_FILE_NAME);
+        testString = "Line 1\n\nLine3";
 
-    @Test
-    public void testStoreEmpty() throws Exception {
-        CalendarList emptyCalendar = new StorageCalendarStub(false);
-
-        storage.store(emptyCalendar);
+        storage.store(testString);
         storage.close();
 
-        List<String> emptyFileContent = new ArrayList<>();
-        emptyFileContent.add("0");
-        emptyFileContent.add("0");
+        actualFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
 
-        List<String> actualFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
+        Assert.assertEquals(testString, actualFileContent);
 
-        Assert.assertEquals(emptyFileContent, actualFileContent);
+        //Boundary: Empty String
+        storage = new ThreadedFileStorage(TEST_FILE_NAME);
+        testString = "";
+
+        storage.store(testString);
+        storage.close();
+
+        actualFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
+
+        Assert.assertEquals(testString, actualFileContent);
     }
 
     @Test
     public void testLoad() throws Exception {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(TEST_FILE_NAME))) {
-            for (String line : expectedFileContent) {
-                writer.write(line);
-                writer.newLine();
-            }
+            writer.write(jsonTestData);
         }
 
-        CalendarList readCalendar = storage.load(new StorageCalendarStub(false));
-
-        Assert.assertEquals(testCalendarStub, readCalendar);
+        Assert.assertEquals(jsonTestData, storage.load());
     }
 
     private void deleteTestFiles() {
