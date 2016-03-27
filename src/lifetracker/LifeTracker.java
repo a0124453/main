@@ -1,6 +1,7 @@
 package lifetracker;
 
 import lifetracker.UI.UI;
+import lifetracker.command.CommandFactoryImpl;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicImpl;
 import lifetracker.parser.Parser;
@@ -24,7 +25,7 @@ public class LifeTracker {
         try (Storage fileStorage = new ThreadedFileStorage()) {
 
             setLogger();
-            Parser commandParser = new ParserImpl();
+            Parser commandParser = new ParserImpl(new CommandFactoryImpl());
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
 
             new UI(programLogic);
