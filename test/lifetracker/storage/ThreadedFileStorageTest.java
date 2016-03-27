@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,6 +30,7 @@ public class ThreadedFileStorageTest {
 
     @After
     public void tearDown() throws Exception {
+        storage.close();
         deleteTestFiles();
     }
 
@@ -98,15 +100,51 @@ public class ThreadedFileStorageTest {
         actualFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
 
         Assert.assertEquals(testString, actualFileContent);
+
+        //Full JSON format
+        storage = new ThreadedFileStorage(TEST_FILE_NAME);
+
+        storage.store(jsonTestData);
+        storage.close();
+
+        actualFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
+
+        Assert.assertEquals(jsonTestData, actualFileContent);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testNull() throws Exception {
+        storage.store(null);
     }
 
     @Test
     public void testLoad() throws Exception {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(TEST_FILE_NAME))) {
-            writer.write(jsonTestData);
-        }
+        //Partition: Load a string
+        String testString = "Some string";
+        writeToTestFile(testString, TEST_FILE_NAME);
+        Assert.assertEquals(testString, storage.load());
+
+        //Boundary: Line breaks
+        testString = "Line 1\nLine 2";
+        writeToTestFile(testString, TEST_FILE_NAME);
+        Assert.assertEquals(testString, storage.load());
+
+        //Boundary: Empty string
+        testString = "";
+        writeToTestFile(testString, TEST_FILE_NAME);
+        Assert.assertEquals(testString, storage.load());
+
+        //Full json format
+        writeToTestFile(jsonTestData, TEST_FILE_NAME);
 
         Assert.assertEquals(jsonTestData, storage.load());
+    }
+
+    private void writeToTestFile(String content, String fileName) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(content);
+            writer.flush();
+        }
     }
 
     private void deleteTestFiles() {
