@@ -3,6 +3,8 @@ package lifetracker.calendar;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 
 public class CalendarEntryImpl implements CalendarEntry {
 
@@ -12,6 +14,8 @@ public class CalendarEntryImpl implements CalendarEntry {
     private LocalDateTime endDateTime;
     private EntryType entryType;
     private int id;
+    private TemporalAmount period;
+    private boolean isActive;
 
     // constructor
     public CalendarEntryImpl(String name, LocalDateTime start, LocalDateTime end, int id) {
@@ -19,15 +23,17 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.setStart(start);
         this.setEnd(end);
         this.id = id;
+        this.period = Period.ZERO;
+        this.isActive = true;
         if (start != null) {
             assert end != null;
-            assert start.isBefore(end);
+            if (start.isAfter(end)) {
+                throw new IllegalArgumentException("Start date/time cannot be after end date/time!");
+            }
             this.entryType = EntryType.EVENT;
         } else if (start == null && end == null) {
             this.entryType = EntryType.FLOATING;
         } else {
-            assert start == null;
-            assert end != null;
             this.entryType = EntryType.DEADLINE;
         }
     }
@@ -84,13 +90,35 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public void setRecurring(TemporalAmount period) {
+        this.period = period;
+    }
+
+    @Override
+    public void mark() {
+        if (this.isActive()) {
+            this.isActive = false;
+        } else {
+            this.isActive = true;
+        }
+    };
+
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public boolean isRecurring() {
+        return !period.equals(Period.ZERO);
+    }
+
+    @Override
     public boolean isToday() {
         if (entryType.equals(EntryType.EVENT)) {
             LocalDate eventStartDay = startDateTime.toLocalDate();
-            LocalDate eventEndDay = endDateTime.toLocalDate();
             LocalDate today = LocalDate.now();
-            boolean result = today.isEqual(eventStartDay);
-            result = result || (today.isAfter(eventStartDay) && today.isBefore(eventEndDay));
+            boolean result = today.isEqual(eventStartDay) || this.isOngoing();
             return result;
         }
 

@@ -2,14 +2,43 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-public interface CommandObject {
+/**
+ * A generic command object.
+ * <p>
+ * This abstract class implements command comments, as well as checks for executing and undoing only when allowed.
+ * Avoid calling the super method when inheriting to skip such checks.
+ */
+//@@author A0091173J
+public abstract class CommandObject {
 
-    String MESSAGE_ERROR = "Error: Command was not executed.";
+    static final String MESSAGE_ERROR = "Error: Command was not executed.";
 
-    CalendarList execute(CalendarList calendar);
+    private boolean executed = false;
 
-    CalendarList undo(CalendarList calendar);
+    private String comment = MESSAGE_ERROR;
 
-    String getComment();
+    public CalendarList execute(CalendarList calendar) {
+        assert !executed;
+        executed = true;
+        return calendar;
+    }
 
+    public CalendarList undo(CalendarList calendar) {
+        assert executed;
+        executed = false;
+        return calendar;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    protected void setComment(String comment) {
+        assert comment != null;
+        this.comment = comment;
+    }
+
+    protected boolean isExecuted() {
+        return executed;
+    }
 }

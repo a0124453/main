@@ -1,3 +1,5 @@
+//@@author A0091173J-unused
+//This class was a test stub that was not neccesssary after storage was decoupled from calendar.
 package lifetracker.storage;
 
 import lifetracker.calendar.CalendarEntry;

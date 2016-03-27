@@ -5,15 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A class that writes lines to a file.
+ * A class that writes strings to a file.
  * <p>
  * This class is designed to be run by a single thread. Running it on multiple threads might cause concurrency issues.
  */
@@ -46,17 +44,17 @@ public class FileStoreProcess implements Runnable {
     }
 
     /**
-     * Takes a list of strings, duplicates it, and adds it to the queue to be written.
+     * Adds a string to the write queue.
      * <p>
-     * Note that this function repects the order in which the lists are submitted, and a list submitted later will
-     * effectively override a list submitted earlier.
+     * Note that this function respects the order in which the strings are submitted, and a string submitted later will
+     * effectively override a string submitted earlier.
      *
-     * @param saveList The list to write to the save file.
+     * @param saveString The string to write to the save file.
      */
-    public void submitSaveList(List<String> saveList) {
-        assert saveList != null;
+    public void submitSave(String saveString) {
+        assert saveString != null;
 
-        WriteNode newNode = new WriteNode(new ArrayList<>(saveList));
+        WriteNode newNode = new WriteNode(saveString);
 
         writeQueue.add(newNode);
 
@@ -109,13 +107,10 @@ public class FileStoreProcess implements Runnable {
     }
 
     private void writeNodeToFile(WriteNode currentNode) throws IOException {
-        List<String> writeLineList = currentNode.getContent();
+        String writeString = currentNode.getContent();
 
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storeFile))) {
-            for (String line : writeLineList) {
-                fileWriter.write(line);
-                fileWriter.newLine();
-            }
+                fileWriter.write(writeString);
         }
     }
 
@@ -126,16 +121,16 @@ public class FileStoreProcess implements Runnable {
         private static int nextSequenceNum = 0;
 
         private final long sequenceNum;
-        private List<String> content;
+        private String content;
 
-        WriteNode(List<String> content) {
+        WriteNode(String content) {
             sequenceNum = nextSequenceNum;
             nextSequenceNum++;
 
             this.content = content;
         }
 
-        private WriteNode(int sequenceNum, List<String> content) {
+        private WriteNode(int sequenceNum, String content) {
             this.sequenceNum = sequenceNum;
             this.content = content;
         }
@@ -144,7 +139,7 @@ public class FileStoreProcess implements Runnable {
             return sequenceNum;
         }
 
-        private List<String> getContent() {
+        private String getContent() {
             return content;
         }
 

@@ -1,10 +1,7 @@
 package lifetracker.parser;
 
-import lifetracker.command.AddCommand;
+import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
-import lifetracker.command.DeleteCommand;
-import lifetracker.command.EditCommand;
-import lifetracker.command.ListCommand;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -40,9 +37,12 @@ public class ParserImpl implements Parser {
 
     private final CommandParser cmdParser;
 
-    public ParserImpl() {
+    private final CommandFactory commandObjectFactory;
+
+    public ParserImpl(CommandFactory commandFactory) {
         cmdParser = new CommandParser(commands.keySet(), KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
                 FULL_COMMAND_SEPARATOR);
+        commandObjectFactory = commandFactory;
     }
 
     @Override
@@ -82,17 +82,17 @@ public class ParserImpl implements Parser {
                     DATE_TIME_PARSER
                             .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
 
-            return new AddCommand(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
+            return commandObjectFactory.addEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
             LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
-            return new AddCommand(commandBodySectionsMap.get("name"), dueDate);
+            return commandObjectFactory.addDeadlineTask(commandBodySectionsMap.get("name"), dueDate);
 
         } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
 
-            return new AddCommand(commandBodySectionsMap.get("name"));
+            return commandObjectFactory.addFloatingTask(commandBodySectionsMap.get("name"));
         } else {
             throw new IllegalArgumentException();
         }
@@ -114,7 +114,7 @@ public class ParserImpl implements Parser {
     }
 
     private CommandObject processList(List<String> commandBody) {
-        return new ListCommand();
+        return commandObjectFactory.find();
     }
 
     private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
@@ -123,7 +123,7 @@ public class ParserImpl implements Parser {
 
         int id = Integer.parseInt(idString);
 
-        return new DeleteCommand(id);
+        return commandObjectFactory.delete(id);
     }
 
     private CommandObject processEdit(List<String> commandBody) throws NumberFormatException {
@@ -149,13 +149,13 @@ public class ParserImpl implements Parser {
             List<LocalDateTime> dateTimes = DATE_TIME_PARSER
                     .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
 
-            return new EditCommand(id, name, dateTimes.get(0), dateTimes.get(1));
+            return commandObjectFactory.edit(id, name, dateTimes.get(0), dateTimes.get(1), null);
         } else if (validAddDeadlineTaskMap(editSectionMap)) {
             LocalDateTime due = DATE_TIME_PARSER.parseSingleDateTime(editSectionMap.get("by"));
 
-            return new EditCommand(id, name, null, due);
+            return commandObjectFactory.edit(id, name, null, due, null);
         } else if (validAddFloatingTaskMap(editSectionMap)) {
-            return new EditCommand(id, name, null, null);
+            return commandObjectFactory.edit(id, name, null, null, null);
         } else {
             throw new IllegalArgumentException();
         }

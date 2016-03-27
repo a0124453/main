@@ -1,7 +1,5 @@
 package lifetracker.storage;
 
-import lifetracker.calendar.CalendarList;
-
 import java.io.IOException;
 
 /**
@@ -16,16 +14,13 @@ public interface Storage extends AutoCloseable {
      */
     void setStore(String destination) throws IOException;
 
-    void store(CalendarList calendar) throws IOException;
+    void store(String storeJsonString) throws IOException;
 
     /**
-     * Loads the data from the storage file and adds it to the calendar list.
-     * <p>
-     * The method then returns the same calendar list.
+     * Loads the data from the storage file and returns it directly as a String.
      *
-     * @param calendar The calendar object to load into.
-     * @return The loaded calendar
+     * @return The content of the file.
      * @throws IOException If there was an error reading the data file.
      */
-    CalendarList load(CalendarList calendar) throws IOException;
+    String load() throws IOException;
 }
