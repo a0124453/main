@@ -4,12 +4,12 @@ import lifetracker.calendar.CalendarList;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -20,57 +20,51 @@ public class ThreadedFileStorageTest {
     public static final String TEST_FILE_NAME = "test.dat";
     public static final String ALT_TEST_FILE_NAME = "alt_test.dat";
 
-    public static final List<String> expectedFileContent = new ArrayList<>();
+    public static final String jsonTestData = "{\\n  \"taskList\": {\\n    \"1\": {\\n      \"name\": \"floating\",\\n      \"entryType\": \"FLOATING\",\\n      \"id\": 1\\n    },\\n    \"2\": {\\n      \"name\": \"task\",\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"DEADLINE\",\\n      \"id\": 2\\n    },\\n    \"3\": {\\n      \"name\": \"recurring task\",\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 2016,\\n          \"month\": 3,\\n          \"day\": 27\\n        },\\n        \"time\": {\\n          \"hour\": 11,\\n          \"minute\": 29,\\n          \"second\": 43,\\n          \"nano\": 322000000\\n        }\\n      },\\n      \"entryType\": \"DEADLINE\",\\n      \"id\": 3\\n    }\\n  },\\n  \"eventList\": {\\n    \"4\": {\\n      \"name\": \"event\",\\n      \"startDateTime\": {\\n        \"date\": {\\n          \"year\": -999999999,\\n          \"month\": 1,\\n          \"day\": 1\\n        },\\n        \"time\": {\\n          \"hour\": 0,\\n          \"minute\": 0,\\n          \"second\": 0,\\n          \"nano\": 0\\n        }\\n      },\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"EVENT\",\\n      \"id\": 4\\n    },\\n    \"5\": {\\n      \"name\": \"recurring event\",\\n      \"startDateTime\": {\\n        \"date\": {\\n          \"year\": -999999999,\\n          \"month\": 1,\\n          \"day\": 1\\n        },\\n        \"time\": {\\n          \"hour\": 0,\\n          \"minute\": 0,\\n          \"second\": 0,\\n          \"nano\": 0\\n        }\\n      },\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"EVENT\",\\n      \"id\": 5\\n    }\\n  }\\n}";
 
     public ThreadedFileStorage storage;
-
-    public CalendarList testCalendarStub;
-
-    @BeforeClass
-    public static void setUpTestData() throws Exception {
-        expectedFileContent.clear();
-        expectedFileContent.add("2");
-        expectedFileContent.add("2016-03-14T23:59:59 2016-03-15T23:59:59 Test Event 1");
-        expectedFileContent.add("2016-03-14T11:59:59 2016-03-14T23:59:59 Test Event 2");
-        expectedFileContent.add("2");
-        expectedFileContent.add("NA Test Task 1");
-        expectedFileContent.add("2016-03-14T23:59:59 Test Task 2");
-    }
 
     @Before
     public void setUp() throws Exception {
         storage = new ThreadedFileStorage(TEST_FILE_NAME);
-        testCalendarStub = new StorageCalendarStub(true);
+        deleteTestFiles();
     }
 
     @After
     public void tearDown() throws Exception {
-        File testFile = new File(TEST_FILE_NAME);
-        File altTestFile = new File(ALT_TEST_FILE_NAME);
-
-        if (testFile.exists()) {
-            testFile.delete();
-        }
-
-        if (altTestFile.exists()) {
-            testFile.delete();
-        }
+        deleteTestFiles();
     }
 
     @Test
     public void testSetStore() throws Exception {
+        //Partition: Changing the save file
+        String testString = "Line 1\nLine 2";
 
-        storage.store(testCalendarStub);
+        storage.store(testString);
 
         storage.setStore(ALT_TEST_FILE_NAME);
 
         Assert.assertEquals(true, new File(ALT_TEST_FILE_NAME).exists());
 
-        storage.store(testCalendarStub);
+        storage.store(testString);
         storage.close();
 
-        List<String> originalFileContent = Files.readAllLines(Paths.get(TEST_FILE_NAME));
-        List<String> altFileContent = Files.readAllLines(Paths.get(ALT_TEST_FILE_NAME));
+        String originalFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
+        String altFileContent = new String(Files.readAllBytes(Paths.get(ALT_TEST_FILE_NAME)), StandardCharsets.UTF_8);
+
+        Assert.assertEquals(originalFileContent, altFileContent);
+
+        //Boundary: When file already exists
+        storage = new ThreadedFileStorage(TEST_FILE_NAME);
+        testString = "New Line 1\nNew Line 2";
+
+        storage.store(testString);
+        storage.setStore(ALT_TEST_FILE_NAME);
+        storage.store(testString);
+        storage.close();
+
+        originalFileContent = new String(Files.readAllBytes(Paths.get(TEST_FILE_NAME)), StandardCharsets.UTF_8);
+        altFileContent = new String(Files.readAllBytes(Paths.get(ALT_TEST_FILE_NAME)), StandardCharsets.UTF_8);
 
         Assert.assertEquals(originalFileContent, altFileContent);
     }
@@ -116,5 +110,18 @@ public class ThreadedFileStorageTest {
         CalendarList readCalendar = storage.load(new StorageCalendarStub(false));
 
         Assert.assertEquals(testCalendarStub, readCalendar);
+    }
+
+    private void deleteTestFiles() {
+        File testFile = new File(TEST_FILE_NAME);
+        File altTestFile = new File(ALT_TEST_FILE_NAME);
+
+        if (testFile.exists()) {
+            testFile.delete();
+        }
+
+        if (altTestFile.exists()) {
+            testFile.delete();
+        }
     }
 }
