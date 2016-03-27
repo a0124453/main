@@ -19,6 +19,7 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
+    private StorageAdapter storageAdapter;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -27,7 +28,7 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
 
-        calendar = storage.load(new CalendarListImpl());
+        calendar = storageAdapter.load(storage);
 
         commandStack = new Stack<CommandObject>();
     }
@@ -74,7 +75,7 @@ public class LogicImpl implements Logic {
             }
 
             try {
-                calendarStorage.store(calendar);
+                storageAdapter.store(calendar, calendarStorage);
             } catch (IOException ex) {
                 System.err.println(ERROR_SAVE);
             }
