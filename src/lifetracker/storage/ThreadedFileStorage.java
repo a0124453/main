@@ -56,7 +56,7 @@ public class ThreadedFileStorage implements Storage {
         assert storeJsonString != null;
 
         //TODO: Change everything to store strings
-        fileStoreProcess.submitSaveList(processCalendar(null));
+        fileStoreProcess.submitSave(processCalendar(null));
     }
 
     @Override
