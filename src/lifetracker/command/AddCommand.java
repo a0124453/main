@@ -4,7 +4,8 @@ import lifetracker.calendar.CalendarList;
 
 import java.time.LocalDateTime;
 
-public class AddCommand implements CommandObject {
+//@@author A0091173J
+public class AddCommand extends CommandObject {
 
     private static final String MESSAGE_ADDED = "\"%1$s\" is added.";
     private static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
@@ -13,10 +14,7 @@ public class AddCommand implements CommandObject {
     private final LocalDateTime startDateTime;
     private final LocalDateTime endDateTime;
 
-    private String comment = MESSAGE_ERROR;
-
     private int addedEntryID;
-    private boolean executed = false;
 
     public AddCommand(String name) {
         assert name != null;
@@ -48,9 +46,7 @@ public class AddCommand implements CommandObject {
 
     @Override
     public CalendarList execute(CalendarList calendar) {
-
         assert calendar != null;
-        assert !executed;
 
         if (endDateTime == null) {
             addedEntryID = calendar.add(name);
@@ -60,29 +56,20 @@ public class AddCommand implements CommandObject {
             addedEntryID = calendar.add(name, startDateTime, endDateTime);
         }
 
-        comment = String.format(MESSAGE_ADDED, name);
+        setComment(String.format(MESSAGE_ADDED, name));
 
-        executed = true;
-
-        return calendar;
+        return super.execute(calendar);
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
 
         assert calendar != null;
-        assert executed;
 
         calendar.delete(addedEntryID);
 
-        comment = String.format(MESSAGE_UNDO, addedEntryID, name);
-        executed = false;
+        setComment(String.format(MESSAGE_UNDO, addedEntryID, name));
 
-        return calendar;
-    }
-
-    @Override
-    public String getComment() {
-        return this.comment;
+        return super.undo(calendar);
     }
 }

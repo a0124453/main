@@ -2,36 +2,22 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-public class ListCommand implements CommandObject {
+//@@author A0091173J
+public class ListCommand extends CommandObject {
 
     private static final String MESSAGE_LIST = "Listing all Events and Tasks";
-
-    private String comment = MESSAGE_ERROR;
-
-    private boolean executed = false;
 
     @Override
     public CalendarList execute(CalendarList calendar) {
         assert calendar != null;
 
-        comment = MESSAGE_LIST;
-
-        executed = true;
+        setComment(MESSAGE_LIST);
 
         return calendar;
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        assert executed;
-
-        executed = false;
-
         return calendar;
-    }
-
-    @Override
-    public String getComment() {
-        return this.comment;
     }
 }

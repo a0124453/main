@@ -2,12 +2,12 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarListImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class EditCommand implements CommandObject {
+//@@author A0091173J
+public class EditCommand extends CommandObject {
 
     private static final String MESSAGE_EDITED = "\"%1$d\" is edited.";
     private static final String MESSAGE_NOT_FOUND = "%1$d cannot be found!";
@@ -16,10 +16,6 @@ public class EditCommand implements CommandObject {
     private final String name;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
-
-    private String comment = MESSAGE_ERROR;
-
-    private boolean executed = false;
 
     private String oldName;
     private LocalDateTime oldStartTime;
@@ -34,7 +30,6 @@ public class EditCommand implements CommandObject {
 
     @Override
     public CalendarList execute(CalendarList calendar) {
-
         assert calendar != null;
 
         CalendarEntry entryToUpdate = findEntry(calendar);
@@ -47,27 +42,18 @@ public class EditCommand implements CommandObject {
 
         calendar.update(entryID, name, startTime, endTime);
 
-        comment = String.format(MESSAGE_EDITED, entryID);
+        setComment(String.format(MESSAGE_EDITED, entryID));
 
-        executed = true;
-
-        return new CalendarListImpl();
+        return super.execute(calendar);
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        assert executed;
-
         calendar.update(entryID, oldName, oldStartTime, oldEndTime);
 
-        executed = false;
+        //TODO set comment
 
-        return calendar;
-    }
-
-    @Override
-    public String getComment() {
-        return comment;
+        return super.undo(calendar);
     }
 
     private void saveOldValues(CalendarEntry entryToUpdate) {

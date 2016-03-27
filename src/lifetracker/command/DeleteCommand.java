@@ -5,16 +5,15 @@ import lifetracker.calendar.CalendarList;
 
 import java.util.List;
 
-public class DeleteCommand implements CommandObject {
+//@@author A0091173J
+public class DeleteCommand extends CommandObject {
 
     private static final String MESSAGE_DELETED = "%1$d is deleted.";
     private static final String MESSAGE_NOT_FOUND = "%1$d cannot be found!";
     private static final String MESSAGE_UNDO = "\"%1$s\" re-added.";
 
     private final int entryID;
-    private String comment = MESSAGE_ERROR;
     private CalendarEntry entryDeleted;
-    private boolean executed = false;
 
     public DeleteCommand(int entryID) {
         this.entryID = entryID;
@@ -33,16 +32,13 @@ public class DeleteCommand implements CommandObject {
 
         calendar.delete(entryID);
 
-        comment = String.format(MESSAGE_DELETED, entryID);
+        setComment(String.format(MESSAGE_DELETED, entryID));
 
-        executed = true;
-        return calendar;
+        return super.execute(calendar);
     }
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        assert executed;
-
         switch (entryDeleted.getType()) {
             case FLOATING :
                 calendar.add(entryDeleted.getName());
@@ -55,16 +51,9 @@ public class DeleteCommand implements CommandObject {
 
         }
 
-        executed = false;
+        setComment(String.format(MESSAGE_UNDO, entryDeleted.getName()));
 
-        comment = String.format(MESSAGE_UNDO, entryDeleted.getName());
-
-        return calendar;
-    }
-
-    @Override
-    public String getComment() {
-        return this.comment;
+        return super.undo(calendar);
     }
 
     private CalendarEntry findEntry(CalendarList calendar) {
