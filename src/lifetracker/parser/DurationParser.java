@@ -31,6 +31,15 @@ public class DurationParser {
     private DurationParser() {
     }
 
+    public boolean isValidDurationString(String durationString) {
+        try {
+            parse(durationString);
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+        return true;
+    }
+
     public TemporalAmount parse(String durationString) {
 
         if (!isValidFormat(durationString)) {

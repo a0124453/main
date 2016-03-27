@@ -96,4 +96,20 @@ public class DurationParserTest {
     public void testBlankInput() throws Exception {
         parser.parse("");
     }
+
+    @Test
+    public void testIsValidMethod() throws Exception {
+
+        Assert.assertTrue(parser.isValidDurationString("2 weeks"));
+        Assert.assertTrue(parser.isValidDurationString("2 year"));
+        Assert.assertTrue(parser.isValidDurationString("month"));
+
+        Assert.assertFalse(parser.isValidDurationString("abc"));
+        Assert.assertFalse(parser.isValidDurationString("2 days abc"));
+        Assert.assertFalse(parser.isValidDurationString("-1 days"));
+        Assert.assertFalse(parser.isValidDurationString("1.5 months"));
+        Assert.assertFalse(parser.isValidDurationString("2years"));
+        Assert.assertFalse(parser.isValidDurationString("0 day"));
+        Assert.assertFalse(parser.isValidDurationString(""));
+    }
 }
