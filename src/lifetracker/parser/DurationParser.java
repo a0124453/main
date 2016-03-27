@@ -33,14 +33,18 @@ public class DurationParser {
 
     public TemporalAmount parse(String durationString) {
 
-        if(!isValidFormat(durationString)){
+        if (!isValidFormat(durationString)) {
             throw new IllegalArgumentException(FORMAT_ERROR);
         }
 
         int num = getNum(durationString);
         String expression = getDurationExpression(durationString);
 
-        return parserMap.get(expression).apply(num);
+        if (parserMap.containsKey(expression) && num > 0) {
+            return parserMap.get(expression).apply(num);
+        } else {
+            throw new IllegalArgumentException(FORMAT_ERROR);
+        }
     }
 
     private boolean isValidFormat(String durationString) {
