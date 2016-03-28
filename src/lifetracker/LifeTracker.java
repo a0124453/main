@@ -27,14 +27,14 @@ public class LifeTracker extends Application {
 
     public static void main(String args[]) throws Exception {
 
+        launch(args);
         try (Storage fileStorage = new ThreadedFileStorage()) {
 
             setLogger();
             Parser commandParser = new ParserImpl();
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
-
             new UI(programLogic);
-            launch(args);
+            
         }
     }
 
@@ -55,7 +55,7 @@ public class LifeTracker extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("lifetracker.UI/UITest.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/lifetracker/UI/UIDesign.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
