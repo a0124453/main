@@ -15,6 +15,9 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class LifeTracker extends Application {
@@ -52,7 +55,11 @@ public class LifeTracker extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // TODO Auto-generated method stub
+        Parent root = FXMLLoader.load(getClass().getResource("lifetracker.UI/UITest.fxml"));
+        Scene scene = new Scene(root);
+        primaryStage.setTitle("Life Tracker");
+        primaryStage.setScene(scene);
         
+        primaryStage.show();
     }
 }
