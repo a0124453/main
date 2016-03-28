@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CalendarList {
 
-    // get() and set() functions for variables
+    // getter and setter functions for variables
     List<CalendarEntry> getTaskList();
 
     List<CalendarEntry> getEventList();
