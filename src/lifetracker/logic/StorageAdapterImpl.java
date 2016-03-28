@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarListImpl;
 import lifetracker.storage.Storage;
 
 public class StorageAdapterImpl implements StorageAdapter {
@@ -20,8 +21,8 @@ public class StorageAdapterImpl implements StorageAdapter {
     @Override
     public CalendarList load(Storage storage) throws IOException {
         String l = storage.load();
-        Gson gson = new Gson();
-        CalendarList calendar = gson.fromJson(l, CalendarList.class);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        CalendarList calendar = gson.fromJson(l, CalendarListImpl.class);
         return calendar;
     }
 }
