@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 
 public class UIController {
@@ -14,9 +15,6 @@ public class UIController {
     TextField textInput;
     
     @FXML
-    TextArea textAreaOutput;
-    
-    @FXML
     Label labelFeedback;
 
     @FXML
@@ -25,11 +23,18 @@ public class UIController {
 
         if (!textInput.getText().toLowerCase().equals("exit")) {
             userInput = textInput.getText();
-            System.out.println(userInput);
+            process(userInput);
             textInput.setText("");
         } else {
             System.exit(0);
         }
+    }
+
+    private void process(String userInput) {
+        ExecuteResult result;
+        
+        result = l.executeCommand(userInput);
+        labelFeedback.setText(result.getComment());
     }
 
     public static Logic getLogic() {

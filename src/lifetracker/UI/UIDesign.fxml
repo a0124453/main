@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="470.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
    <children>
-      <TextArea fx:id="textAreaOutput" editable="false" prefHeight="365.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next.&#10;&#10;- You can add/delete/edit/display&#10;- You can type exit to close program" wrapText="true">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </TextArea>
-      <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="644.0" textAlignment="CENTER">
+      <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="ID" />
+          <TableColumn prefWidth="75.0" text="TASK" />
+            <TableColumn prefWidth="75.0" text="TIME" />
+        </columns>
+      </TableView>
+      <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="24.0" />
          </font>
