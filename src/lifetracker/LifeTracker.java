@@ -1,7 +1,6 @@
 package lifetracker;
 
 import lifetracker.UI.UI;
-import lifetracker.UI.UIController;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicImpl;
 import lifetracker.parser.Parser;
@@ -29,7 +28,16 @@ public class LifeTracker extends Application {
     private static final String LOG_FILE = "lifetracker.log";
 
     public static void main(String args[]) throws Exception {
+
         launch(args);
+        try (Storage fileStorage = new ThreadedFileStorage()) {
+
+            setLogger();
+            Parser commandParser = new ParserImpl();
+            Logic programLogic = new LogicImpl(commandParser, fileStorage);
+            //new UI(programLogic);
+            
+        }
     }
 
     private static void setLogger() throws IOException {
@@ -54,15 +62,6 @@ public class LifeTracker extends Application {
         scene.getStylesheets().add(getClass().getResource("/lifetracker/UI/application.css").toExternalForm());
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
-        
-        try (Storage fileStorage = new ThreadedFileStorage()) {
-
-            setLogger();
-            Parser commandParser = new ParserImpl();
-            Logic programLogic = new LogicImpl(commandParser, fileStorage);
-            new UIController(programLogic);
-            
-        }
         
         primaryStage.show();
     }
