@@ -6,8 +6,17 @@ import java.time.temporal.TemporalAmount;
 
 public interface CalendarEntry {
 
+    public static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
+    public static final String MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT = "A task cannot be changed into an event!";
+
     public enum EntryType {
         FLOATING, DEADLINE, EVENT
+    }
+
+    public static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_START_AFTER_END);
+        }
     }
 
     // get() and set() functions for variables
@@ -30,6 +39,8 @@ public interface CalendarEntry {
     LocalTime getEndTime();
 
     EntryType getType();
+
+    void setType(EntryType entryType);
 
     void setRecurring(TemporalAmount period);
 

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 
+import lifetracker.calendar.CalendarEntry.EntryType;
+
 public class CalendarListImpl implements CalendarList {
 
     // variables
@@ -110,9 +112,6 @@ public class CalendarListImpl implements CalendarList {
     public int add(String name, LocalDateTime start, LocalDateTime end) {
         assert start != null;
         assert end != null;
-        if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start date is after end date!");
-        }
         int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
         int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
         int idToSet = Math.max(eventMax, taskMax) + 1;
@@ -146,26 +145,82 @@ public class CalendarListImpl implements CalendarList {
         return null;
     }
 
+    void updateEntryName(CalendarEntry toUpdate, String newName) {
+        if (newName != null && !newName.isEmpty()) {
+            toUpdate.setName(newName);
+        }
+    }
+
+    void updateEntryStart(CalendarEntry toUpdate, LocalDateTime newStart) {
+        if (newStart != null) {
+            toUpdate.setStart(newStart);
+        }
+    }
+
+    void updateEntryEnd(CalendarEntry toUpdate, LocalDateTime newEnd) {
+        if (toUpdate.getType().equals(EntryType.EVENT)) {
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+            }
+        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+            }
+        } else {
+            assert toUpdate.getType().equals(EntryType.FLOATING);
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+                toUpdate.setType(EntryType.DEADLINE);
+            }
+        }
+        // allowed to change floating task to deadline but not the other way
+        // around
+    }
+
+    void checkUpdateArguments(CalendarEntry toUpdate, LocalDateTime newStart, LocalDateTime newEnd) {
+        if (toUpdate.getType().equals(EntryType.EVENT)) {
+            if (newStart != null && newEnd != null) {
+                CalendarEntry.checkStartBeforeEnd(newStart, newEnd);
+            } else if (newStart != null && newEnd == null) {
+                CalendarEntry.checkStartBeforeEnd(newStart, toUpdate.getEnd());
+            } else if (newStart == null && newEnd != null) {
+                CalendarEntry.checkStartBeforeEnd(toUpdate.getStart(), newEnd);
+            }
+        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
+            if (newStart != null) {
+                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
+            }
+        } else {
+            assert toUpdate.getType().equals(EntryType.FLOATING);
+            if (newStart != null) {
+                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
+            }
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
      * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
      */
     @Override
-    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd) {
+    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
+            TemporalAmount newPeriod) {
         if (taskList.containsKey(id)) {
             CalendarEntry toUpdate = taskList.get(id);
             CalendarEntry copy = toUpdate.copy();
-            toUpdate.setName(newName);
-            toUpdate.setStart(newStart);
-            toUpdate.setEnd(newEnd);
+            checkUpdateArguments(toUpdate, newStart, newEnd);
+            updateEntryName(toUpdate, newName);
+            updateEntryStart(toUpdate, newStart);
+            updateEntryEnd(toUpdate, newEnd);
             return copy;
         } else if (eventList.containsKey(id)) {
             CalendarEntry toUpdate = eventList.get(id);
             CalendarEntry copy = toUpdate.copy();
-            toUpdate.setName(newName);
-            toUpdate.setStart(newStart);
-            toUpdate.setEnd(newEnd);
+            checkUpdateArguments(toUpdate, newStart, newEnd);
+            updateEntryName(toUpdate, newName);
+            updateEntryStart(toUpdate, newStart);
+            updateEntryEnd(toUpdate, newEnd);
             return copy;
         }
         return null;
@@ -174,7 +229,7 @@ public class CalendarListImpl implements CalendarList {
     /*
      * (non-Javadoc)
      *
-     * @see lifetracker.calendar.CalenderList#list(String)
+     * @see lifetracker.calendar.CalenderList#find(String)
      */
     @Override
     public CalendarList find(String toSearch) {

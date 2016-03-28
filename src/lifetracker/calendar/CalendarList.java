@@ -29,7 +29,8 @@ public interface CalendarList {
 
     CalendarEntry delete(int id);
 
-    CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd);
+    CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
+            TemporalAmount newPeriod);
 
     CalendarList find(String toSearch);
 

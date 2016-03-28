@@ -27,9 +27,7 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.isActive = true;
         if (start != null) {
             assert end != null;
-            if (start.isAfter(end)) {
-                throw new IllegalArgumentException("Start date/time cannot be after end date/time!");
-            }
+            CalendarEntry.checkStartBeforeEnd(start, end);
             this.entryType = EntryType.EVENT;
         } else if (start == null && end == null) {
             this.entryType = EntryType.FLOATING;
@@ -87,6 +85,11 @@ public class CalendarEntryImpl implements CalendarEntry {
     @Override
     public EntryType getType() {
         return entryType;
+    }
+
+    @Override
+    public void setType(EntryType entryType) {
+        this.entryType = entryType;
     }
 
     @Override
