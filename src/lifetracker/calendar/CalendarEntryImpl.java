@@ -95,6 +95,11 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public TemporalAmount getPeriod() {
+        return period;
+    };
+
+    @Override
     public void mark() {
         if (this.isActive()) {
             this.isActive = false;

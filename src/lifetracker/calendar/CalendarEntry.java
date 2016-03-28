@@ -33,6 +33,8 @@ public interface CalendarEntry {
 
     void setRecurring(TemporalAmount period);
 
+    TemporalAmount getPeriod();
+
     void mark();
 
     boolean isActive();
