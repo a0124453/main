@@ -100,7 +100,9 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime deadline, TemporalAmount period) {
-        return 0;
+        int idToSet = this.add(name, deadline);
+        this.taskList.get(idToSet).setPeriod(period);
+        return idToSet;
     }
 
     /*
@@ -123,8 +125,9 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
-        // TODO Auto-generated method stub
-        return 0;
+        int idToSet = this.add(name, start, end);
+        this.eventList.get(idToSet).setPeriod(period);
+        return idToSet;
     }
 
     /*
@@ -144,65 +147,6 @@ public class CalendarListImpl implements CalendarList {
             return copy;
         }
         return null;
-    }
-
-    void updateEntryName(CalendarEntry toUpdate, String newName) {
-        if (newName != null && !newName.isEmpty()) {
-            toUpdate.setName(newName);
-        }
-    }
-
-    void updateEntryStart(CalendarEntry toUpdate, LocalDateTime newStart) {
-        if (newStart != null) {
-            toUpdate.setStart(newStart);
-        }
-    }
-
-    void updateEntryEnd(CalendarEntry toUpdate, LocalDateTime newEnd) {
-        if (toUpdate.getType().equals(EntryType.EVENT)) {
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-            }
-        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-            }
-        } else {
-            assert toUpdate.getType().equals(EntryType.FLOATING);
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-                ((CalendarEntryImpl) toUpdate).setType(EntryType.DEADLINE);
-            }
-        }
-        // allowed to change floating task to deadline but not the other way
-        // around
-    }
-
-    void updateEntryPeriod(CalendarEntry toUpdate, TemporalAmount newPeriod) {
-        if (newPeriod != null) {
-            toUpdate.setPeriod(newPeriod);
-        }
-    }
-
-    void checkUpdateArguments(CalendarEntry toUpdate, LocalDateTime newStart, LocalDateTime newEnd) {
-        if (toUpdate.getType().equals(EntryType.EVENT)) {
-            if (newStart != null && newEnd != null) {
-                CalendarEntry.checkStartBeforeEnd(newStart, newEnd);
-            } else if (newStart != null && newEnd == null) {
-                CalendarEntry.checkStartBeforeEnd(newStart, toUpdate.getEnd());
-            } else if (newStart == null && newEnd != null) {
-                CalendarEntry.checkStartBeforeEnd(toUpdate.getStart(), newEnd);
-            }
-        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
-            if (newStart != null) {
-                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
-            }
-        } else {
-            assert toUpdate.getType().equals(EntryType.FLOATING);
-            if (newStart != null) {
-                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
-            }
-        }
     }
 
     /*
@@ -274,6 +218,65 @@ public class CalendarListImpl implements CalendarList {
         filterByEndDate(copyMap, endDate);
         filterByEndTime(copyMap, endTime);
         return copyMap;
+    }
+
+    void updateEntryName(CalendarEntry toUpdate, String newName) {
+        if (newName != null && !newName.isEmpty()) {
+            toUpdate.setName(newName);
+        }
+    }
+
+    void updateEntryStart(CalendarEntry toUpdate, LocalDateTime newStart) {
+        if (newStart != null) {
+            toUpdate.setStart(newStart);
+        }
+    }
+
+    void updateEntryEnd(CalendarEntry toUpdate, LocalDateTime newEnd) {
+        if (toUpdate.getType().equals(EntryType.EVENT)) {
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+            }
+        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+            }
+        } else {
+            assert toUpdate.getType().equals(EntryType.FLOATING);
+            if (newEnd != null) {
+                toUpdate.setEnd(newEnd);
+                ((CalendarEntryImpl) toUpdate).setType(EntryType.DEADLINE);
+            }
+        }
+        // allowed to change floating task to deadline but not the other way
+        // around
+    }
+
+    void updateEntryPeriod(CalendarEntry toUpdate, TemporalAmount newPeriod) {
+        if (newPeriod != null) {
+            toUpdate.setPeriod(newPeriod);
+        }
+    }
+
+    void checkUpdateArguments(CalendarEntry toUpdate, LocalDateTime newStart, LocalDateTime newEnd) {
+        if (toUpdate.getType().equals(EntryType.EVENT)) {
+            if (newStart != null && newEnd != null) {
+                CalendarEntry.checkStartBeforeEnd(newStart, newEnd);
+            } else if (newStart != null && newEnd == null) {
+                CalendarEntry.checkStartBeforeEnd(newStart, toUpdate.getEnd());
+            } else if (newStart == null && newEnd != null) {
+                CalendarEntry.checkStartBeforeEnd(toUpdate.getStart(), newEnd);
+            }
+        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
+            if (newStart != null) {
+                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
+            }
+        } else {
+            assert toUpdate.getType().equals(EntryType.FLOATING);
+            if (newStart != null) {
+                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
+            }
+        }
     }
 
     void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
