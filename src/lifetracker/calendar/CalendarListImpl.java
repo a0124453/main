@@ -171,7 +171,7 @@ public class CalendarListImpl implements CalendarList {
             assert toUpdate.getType().equals(EntryType.FLOATING);
             if (newEnd != null) {
                 toUpdate.setEnd(newEnd);
-                toUpdate.setType(EntryType.DEADLINE);
+                ((CalendarEntryImpl) toUpdate).setType(EntryType.DEADLINE);
             }
         }
         // allowed to change floating task to deadline but not the other way
