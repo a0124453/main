@@ -1,7 +1,12 @@
 package lifetracker.UI;
 
+import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import lifetracker.logic.ExecuteResult;
@@ -16,6 +21,9 @@ public class UIController {
     
     @FXML
     Label labelFeedback;
+    
+    @FXML
+    TableView table;
 
     @FXML
     public void getInput() {
@@ -30,6 +38,12 @@ public class UIController {
         }
     }
 
+    public ObservableList<List<String>> getCalendar(ExecuteResult result) {
+        ObservableList<List<String>> calendar = FXCollections.observableArrayList(result.getEventList());
+        return calendar;
+        
+    }
+    
     private void process(String userInput) {
         ExecuteResult result;
         
