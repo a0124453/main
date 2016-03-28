@@ -178,6 +178,12 @@ public class CalendarListImpl implements CalendarList {
         // around
     }
 
+    void updateEntryPeriod(CalendarEntry toUpdate, TemporalAmount newPeriod) {
+        if (newPeriod != null) {
+            toUpdate.setPeriod(newPeriod);
+        }
+    }
+
     void checkUpdateArguments(CalendarEntry toUpdate, LocalDateTime newStart, LocalDateTime newEnd) {
         if (toUpdate.getType().equals(EntryType.EVENT)) {
             if (newStart != null && newEnd != null) {
@@ -222,6 +228,7 @@ public class CalendarListImpl implements CalendarList {
         updateEntryName(toUpdate, newName);
         updateEntryStart(toUpdate, newStart);
         updateEntryEnd(toUpdate, newEnd);
+        updateEntryPeriod(toUpdate, newPeriod);
         return copy;
     }
 

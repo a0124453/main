@@ -88,7 +88,7 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
-    public void setRecurring(TemporalAmount period) {
+    public void setPeriod(TemporalAmount period) {
         this.period = period;
     }
 
