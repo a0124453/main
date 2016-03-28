@@ -11,6 +11,10 @@ public interface CalendarList {
 
     List<CalendarEntry> getEventList();
 
+    List<CalendarEntry> getArchivedTaskList();
+
+    List<CalendarEntry> getArchivedEventList();
+
     int add(String name); // floating task
 
     int add(String name, LocalDateTime deadline); // deadline task

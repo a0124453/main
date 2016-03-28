@@ -12,6 +12,8 @@ public class CalendarListImpl implements CalendarList {
     // variables
     private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
     private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
 
     // get() and set() functions for variables
 
@@ -34,6 +36,28 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public List<CalendarEntry> getEventList() {
         List<CalendarEntry> list = new ArrayList<CalendarEntry>(eventList.values());
+        return list;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.CalenderList#getArchivedTaskList()
+     */
+    @Override
+    public List<CalendarEntry> getArchivedTaskList() {
+        List<CalendarEntry> list = new ArrayList<CalendarEntry>(archivedTaskList.values());
+        return list;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see lifetracker.calendar.CalenderList#getArchivedEventList()
+     */
+    @Override
+    public List<CalendarEntry> getArchivedEventList() {
+        List<CalendarEntry> list = new ArrayList<CalendarEntry>(archivedEventList.values());
         return list;
     }
 
@@ -96,7 +120,7 @@ public class CalendarListImpl implements CalendarList {
         eventList.put(idToSet, e);
         return idToSet;
     }
-    
+
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
         // TODO Auto-generated method stub
