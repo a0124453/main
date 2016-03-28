@@ -4,6 +4,7 @@ import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,13 @@ public class ParserImpl implements Parser {
 
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
 
+    private static final DurationParser DURATION_PARSER = DurationParser.getInstance();
+
     static {
         KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
         KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
         KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
     }
 
     private static final String defaultCommand = "add";
@@ -78,17 +82,32 @@ public class ParserImpl implements Parser {
                 commandBodySectionsMap.put("to", "");
             }
 
-            List<LocalDateTime> startEndDateTime =
-                    DATE_TIME_PARSER
-                            .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
+            List<LocalDateTime> startEndDateTime = DATE_TIME_PARSER
+                    .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
 
-            return commandObjectFactory.addEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
+            if (commandBodySectionsMap.containsKey("every")) {
+                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
+
+                return commandObjectFactory
+                        .addRecurringEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0),
+                                startEndDateTime.get(1),
+                                recurringAmount);
+            } else {
+                return commandObjectFactory
+                        .addEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
+            }
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
             LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
-            return commandObjectFactory.addDeadlineTask(commandBodySectionsMap.get("name"), dueDate);
+            if (commandBodySectionsMap.containsKey("every")) {
+                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(commandBodySectionsMap.get("name"), dueDate, recurringAmount);
+            } else {
+                return commandObjectFactory.addDeadlineTask(commandBodySectionsMap.get("name"), dueDate);
+            }
 
         } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
 
