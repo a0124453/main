@@ -23,12 +23,14 @@ public class UIController {
     private static final String EVENT_TITLE = "Events: ";
     private static final String TASK_TITLE = "Tasks: ";
 
+    /*
     @FXML
     TextField textInput;
     @FXML
     TextArea textAreaOutput;
     @FXML
     Label labelFeedback;
+    */
     
     public UIController(Logic l) {
         assert l != null;
@@ -38,6 +40,7 @@ public class UIController {
     @FXML
     public void getInput() {
 
+        /*
         if (!textInput.getText().toLowerCase().equals("exit")) {
             //String userInput = textInput.getText();
             //execute(userInput);
@@ -45,6 +48,7 @@ public class UIController {
         } else {
             System.exit(0);
         }
+        */
     }
 
     /*
