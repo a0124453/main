@@ -14,7 +14,10 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class LifeTracker {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class LifeTracker extends Application {
 
     private static final String LOG_FOLDER = "logs/";
     private static final String LOG_FILE = "lifetracker.log";
@@ -28,6 +31,7 @@ public class LifeTracker {
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
 
             new UI(programLogic);
+            launch(args);
         }
     }
 
@@ -44,5 +48,11 @@ public class LifeTracker {
         Logger globalLogger = Logger.getGlobal();
         globalLogger.addHandler(new FileHandler(LOG_FOLDER + LOG_FILE));
 
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }
