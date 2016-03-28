@@ -63,7 +63,7 @@ public class LifeTracker extends Application {
             setLogger();
             Parser commandParser = new ParserImpl();
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
-            //new UIController(programLogic);
+            UIController.setLogic(programLogic);
             
         }
         

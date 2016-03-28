@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import lifetracker.logic.Logic;
 
 public class UIController {
+    
+    private static Logic l;
 
     @FXML
     TextField textInput;
@@ -28,5 +30,14 @@ public class UIController {
         } else {
             System.exit(0);
         }
+    }
+
+    public static Logic getLogic() {
+        return l;
+    }
+
+    public static void setLogic(Logic l) {
+        assert l != null;
+        UIController.l = l;
     }
 }
