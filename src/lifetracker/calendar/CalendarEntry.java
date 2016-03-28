@@ -40,8 +40,6 @@ public interface CalendarEntry {
 
     EntryType getType();
 
-    void setType(EntryType entryType);
-
     void setRecurring(TemporalAmount period);
 
     TemporalAmount getPeriod();

@@ -88,11 +88,6 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
-    public void setType(EntryType entryType) {
-        this.entryType = entryType;
-    }
-
-    @Override
     public void setRecurring(TemporalAmount period) {
         this.period = period;
     }
@@ -203,6 +198,10 @@ public class CalendarEntryImpl implements CalendarEntry {
         int id = this.getId();
         CalendarEntry copy = new CalendarEntryImpl(name, start, end, id);
         return copy;
+    }
+
+    void setType(EntryType entryType) {
+        this.entryType = entryType;
     }
 
 }
