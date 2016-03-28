@@ -1,6 +1,7 @@
 package lifetracker.logic;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 public interface ExecuteResult {
@@ -17,9 +18,9 @@ public interface ExecuteResult {
 
     List<List<String>> getTaskList();
 
-    void addTaskLine(int id, String name, LocalDateTime deadline);
+    void addTaskLine(int id, String name, boolean isActive, LocalDateTime deadline, TemporalAmount period);
 
-    void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end);
+    void addEventLine(int id, String name, boolean isActive, LocalDateTime start, LocalDateTime end, TemporalAmount period);
 
     CommandType getType();
 

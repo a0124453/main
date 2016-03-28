@@ -112,12 +112,12 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             executedState.getTaskList()
-                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.getEnd()));
+                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(), task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
             executedState.getEventList().forEach(
-                    event -> runResult.addEventLine(event.getId(), event.getName(), event.getStart(), event.getEnd()));
+                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(), event.getEnd(), event.getPeriod()));
         }
 
         return runResult;
