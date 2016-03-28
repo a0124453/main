@@ -5,14 +5,16 @@ import javafx.scene.control.TextField;
 
 public class UILogic {
 
-    String input;
+    String userInput;
     
     @FXML
     TextField textInput;
     
     @FXML
     public void getInput() {
-        input = textInput.getText();
+        userInput = textInput.getText();
+        System.out.println(userInput);
         textInput.setText("");
+        textInput.setPromptText("Enter Command");
     }
 }

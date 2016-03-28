@@ -33,7 +33,7 @@ public class LifeTracker extends Application {
             setLogger();
             Parser commandParser = new ParserImpl();
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
-            new UI(programLogic);
+            //new UI(programLogic);
             
         }
     }
@@ -57,6 +57,7 @@ public class LifeTracker extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/lifetracker/UI/UIDesign.fxml"));
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/lifetracker/UI/application.css").toExternalForm());
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
         
