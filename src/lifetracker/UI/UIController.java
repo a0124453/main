@@ -1,6 +1,7 @@
 package lifetracker.UI;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -13,6 +14,9 @@ public class UIController {
     
     @FXML
     TextArea textAreaOutput;
+    
+    @FXML
+    Label labelFeedback;
 
     @FXML
     public void getInput() {
