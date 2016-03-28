@@ -129,7 +129,8 @@ public class ParserImpl implements Parser {
     private boolean validAddFloatingTaskMap(Map<String, String> commandBodySectionMap) {
         return !(commandBodySectionMap.containsKey("by")
                 || commandBodySectionMap.containsKey("from")
-                || commandBodySectionMap.containsKey("to"));
+                || commandBodySectionMap.containsKey("to")
+                || commandBodySectionMap.containsKey("every"));
     }
 
     private CommandObject processList(List<String> commandBody) {
@@ -164,15 +165,21 @@ public class ParserImpl implements Parser {
 
         String name = editSectionMap.get("name");
 
+        TemporalAmount recurringAmount = null;
+
+        if (editSectionMap.containsKey("every")) {
+            recurringAmount = DURATION_PARSER.parse(editSectionMap.get("every"));
+        }
+
         if (validAddEventMap(editSectionMap)) {
             List<LocalDateTime> dateTimes = DATE_TIME_PARSER
                     .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
 
-            return commandObjectFactory.edit(id, name, dateTimes.get(0), dateTimes.get(1), null);
+            return commandObjectFactory.edit(id, name, dateTimes.get(0), dateTimes.get(1), recurringAmount);
         } else if (validAddDeadlineTaskMap(editSectionMap)) {
             LocalDateTime due = DATE_TIME_PARSER.parseSingleDateTime(editSectionMap.get("by"));
 
-            return commandObjectFactory.edit(id, name, null, due, null);
+            return commandObjectFactory.edit(id, name, null, due, recurringAmount);
         } else if (validAddFloatingTaskMap(editSectionMap)) {
             return commandObjectFactory.edit(id, name, null, null, null);
         } else {
