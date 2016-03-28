@@ -1,21 +1,22 @@
 package lifetracker.calendar;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.function.Predicate;
 
 import lifetracker.calendar.CalendarEntry.EntryType;
 
 public class CalendarListImpl implements CalendarList {
 
     // variables
-    private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
-    private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
-    private TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
-    private TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
+    protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
+    protected TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
+    protected TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
+    protected TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
 
     // get() and set() functions for variables
 
@@ -206,24 +207,22 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             TemporalAmount newPeriod) {
+        CalendarEntry toUpdate;
+        CalendarEntry copy;
         if (taskList.containsKey(id)) {
-            CalendarEntry toUpdate = taskList.get(id);
-            CalendarEntry copy = toUpdate.copy();
-            checkUpdateArguments(toUpdate, newStart, newEnd);
-            updateEntryName(toUpdate, newName);
-            updateEntryStart(toUpdate, newStart);
-            updateEntryEnd(toUpdate, newEnd);
-            return copy;
+            toUpdate = taskList.get(id);
+            copy = toUpdate.copy();
         } else if (eventList.containsKey(id)) {
-            CalendarEntry toUpdate = eventList.get(id);
-            CalendarEntry copy = toUpdate.copy();
-            checkUpdateArguments(toUpdate, newStart, newEnd);
-            updateEntryName(toUpdate, newName);
-            updateEntryStart(toUpdate, newStart);
-            updateEntryEnd(toUpdate, newEnd);
-            return copy;
+            toUpdate = eventList.get(id);
+            copy = toUpdate.copy();
+        } else {
+            return null;
         }
-        return null;
+        checkUpdateArguments(toUpdate, newStart, newEnd);
+        updateEntryName(toUpdate, newName);
+        updateEntryStart(toUpdate, newStart);
+        updateEntryEnd(toUpdate, newEnd);
+        return copy;
     }
 
     /*
@@ -232,25 +231,112 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#find(String)
      */
     @Override
-    public CalendarList find(String toSearch) {
-        List<CalendarEntry> result = new ArrayList<CalendarEntry>();
-        result.addAll(getTaskList());
-        result.addAll(getEventList());
-        Predicate<CalendarEntry> p = (entry) -> entry.getName().contains(toSearch);
-        result.removeIf(p);
-        return null;
+    public CalendarList find(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
+            LocalTime endTime) {
+        CalendarListTemp result = new CalendarListTemp();
+        TreeMap<Integer, CalendarEntry> copyTaskList = this.filterList(this.taskList, toSearch, startDate, startTime,
+                endDate, endTime);
+        TreeMap<Integer, CalendarEntry> copyEventList = this.filterList(this.eventList, toSearch, startDate, startTime,
+                endDate, endTime);
+        result.setTaskList(copyTaskList);
+        result.setEventList(copyEventList);
+        return result;
     }
 
     @Override
-    public CalendarList findArchived(String toSearch) {
+    public CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
+            LocalTime endTime) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public CalendarList findAll(String toSearch) {
+    public CalendarList findAll(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
+            LocalTime endTime) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch,
+            LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
+        copyMap.putAll(treeMap);
+        filterByName(copyMap, toSearch);
+        filterByStartDate(copyMap, startDate);
+        filterByStartTime(copyMap, startTime);
+        filterByEndDate(copyMap, endDate);
+        filterByEndTime(copyMap, endTime);
+        return copyMap;
+    }
+
+    void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
+        if (toSearch == null || toSearch.isEmpty()) {
+            return;
+        }
+        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
+            if (treeMap.containsKey(i)) {
+                String entryName = treeMap.get(i).getName();
+                if (!entryName.contains(toSearch)) {
+                    treeMap.remove(i);
+                }
+            }
+        }
+    }
+
+    void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate startDate) {
+        if (startDate == null) {
+            return;
+        }
+        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
+            if (treeMap.containsKey(i)) {
+                LocalDate entryStartDate = treeMap.get(i).getStart().toLocalDate();
+                if (!entryStartDate.equals(startDate)) {
+                    treeMap.remove(i);
+                }
+            }
+        }
+    }
+
+    void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime startTime) {
+        if (startTime == null) {
+            return;
+        }
+        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
+            if (treeMap.containsKey(i)) {
+                LocalTime entryStartTime = treeMap.get(i).getStartTime();
+                if (!entryStartTime.equals(startTime)) {
+                    treeMap.remove(i);
+                }
+            }
+        }
+    }
+
+    void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate endDate) {
+        if (endDate == null) {
+            return;
+        }
+        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
+            if (treeMap.containsKey(i)) {
+                LocalDate entryEndDate = treeMap.get(i).getEnd().toLocalDate();
+                if (!entryEndDate.equals(endDate)) {
+                    treeMap.remove(i);
+                }
+            }
+        }
+    }
+
+    void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime endTime) {
+        if (endTime == null) {
+            return;
+        }
+        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
+            if (treeMap.containsKey(i)) {
+                LocalTime entryEndTime = treeMap.get(i).getEndTime();
+                if (!entryEndTime.equals(endTime)) {
+                    treeMap.remove(i);
+                }
+            }
+        }
     }
 
 }
