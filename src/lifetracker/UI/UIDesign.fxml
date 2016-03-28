@@ -9,7 +9,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="470.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
    <children>
-      <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="table" prefHeight="331.0" prefWidth="600.0">
         <columns>
           <TableColumn prefWidth="75.0" text="ID" />
           <TableColumn prefWidth="75.0" text="TASK" />
