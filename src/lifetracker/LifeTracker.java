@@ -60,7 +60,6 @@ public class LifeTracker extends Application {
         scene.getStylesheets().add(getClass().getResource("/lifetracker/UI/application.css").toExternalForm());
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
-        
         primaryStage.show();
     }
 }
