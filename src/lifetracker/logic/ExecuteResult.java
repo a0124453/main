@@ -7,7 +7,7 @@ import java.util.List;
 public interface ExecuteResult {
 
     public enum CommandType {
-        DISPLAY, EXIT, ERROR
+        DISPLAY, SAVE, EXIT, ERROR
     }
 
     String getComment();

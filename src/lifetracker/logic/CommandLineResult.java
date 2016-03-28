@@ -124,6 +124,10 @@ public class CommandLineResult implements ExecuteResult {
     public void setType(String commandString) {
         if (commandString.equals("exit"))
             this.commandType = CommandType.EXIT;
+        
+        else if (commandString.substring(0, 6).equals("saveat")) {
+            this.commandType = CommandType.SAVE;
+        }
 
         else if (commandString.equals("ERROR")) {
             this.commandType = CommandType.ERROR;
