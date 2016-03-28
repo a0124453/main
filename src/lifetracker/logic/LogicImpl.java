@@ -27,8 +27,8 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
 
-        StorageAdapter storageAdapter = new StorageAdapter();
-        calendar = storageAdapter.load(storage);
+        StorageAdapter storageAdapter = new StorageAdapter(storage);
+        calendar = storageAdapter.load();
 
         commandStack = new Stack<CommandObject>();
     }
@@ -93,8 +93,8 @@ public class LogicImpl implements Logic {
             }
 
             try {
-                StorageAdapter storageAdapter = new StorageAdapter();
-                storageAdapter.store(calendar, calendarStorage);
+                StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
+                storageAdapter.store(calendar);
             } catch (IOException ex) {
                 System.err.println(ERROR_SAVE);
             }

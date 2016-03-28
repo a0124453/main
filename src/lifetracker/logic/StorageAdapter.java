@@ -10,15 +10,21 @@ import lifetracker.calendar.CalendarListImpl;
 import lifetracker.storage.Storage;
 
 public class StorageAdapter {
+    
+    private Storage calendarStorage;
+    
+    public StorageAdapter(Storage storage) {
+        this.calendarStorage = storage;
+    }
 
-    public void store(CalendarList calendar, Storage storage) throws IOException {
+    public void store(CalendarList calendar) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String s = gson.toJson(calendar);
-        storage.store(s);
+        calendarStorage.store(s);
     }
     
-    public CalendarList load(Storage storage) throws IOException {
-        String l = storage.load();
+    public CalendarList load() throws IOException {
+        String l = calendarStorage.load();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CalendarList calendar = gson.fromJson(l, CalendarListImpl.class);
         return calendar;
