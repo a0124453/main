@@ -34,8 +34,7 @@ public class UIController implements Initializable {
     @FXML TableColumn<Task, String> columnTaskName;
     @FXML TableColumn<Task, String> columnTaskTime;
 
-    public ObservableList<String> task = FXCollections.observableArrayList("1", "dinner", "7pm");
-    public static ObservableList<Task> list = FXCollections.observableArrayList();
+    private static ObservableList<Task> taskList = FXCollections.observableArrayList();
 
     @FXML
     public void getInput() {
@@ -105,15 +104,15 @@ public class UIController implements Initializable {
                         return new ReadOnlyStringWrapper(param.getValue().getTask().get(2));
                     }
                 });
-        tableTask.setItems(list);
+        tableTask.setItems(taskList);
     }
 
     public static void populateList() {
         ExecuteResult result;
         result = l.executeCommand("list");
-        list.clear();
+        taskList.clear();
         for (List<String> task : result.getTaskList()) {
-                list.add(new Task(task));
+                taskList.add(new Task(task));
         }
     }
 
