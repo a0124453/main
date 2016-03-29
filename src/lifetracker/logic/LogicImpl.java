@@ -19,6 +19,10 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
+    
+    public enum CommandType {
+        DISPLAY, SAVE, EXIT, ERROR
+    }
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -26,11 +30,10 @@ public class LogicImpl implements Logic {
 
         commandParser = parser;
         calendarStorage = storage;
+        commandStack = new Stack<CommandObject>();
 
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
-
-        commandStack = new Stack<CommandObject>();
     }
 
     @Override
@@ -38,25 +41,23 @@ public class LogicImpl implements Logic {
         assert commandString != null;
         
         String[] commandContent = commandString.split(" ");
-
         ExecuteResult runResult = new CommandLineResult();
-        runResult.setType(commandString);
 
         if (commandString.equals("exit")) {
+            runResult.setType(CommandType.EXIT);
             return runResult;
-
         }
         
         else if (commandContent[0].equals("saveat")) {
             int position = commandString.indexOf(" ");
             String location = commandString.substring(position + 1);
-            
             try {
                 calendarStorage.setStore(location);
             } catch (IOException ex) {
                 System.err.println(ERROR_SAVE);
             }
             
+            runResult.setType(CommandType.SAVE);
             runResult.setComment(COMMENT_SAVE + location);
             return runResult;
         }
@@ -64,6 +65,8 @@ public class LogicImpl implements Logic {
         else {
             CommandObject commandToExecute;
             CalendarList executedState;
+            
+            runResult.setType(CommandType.DISPLAY);
 
             if (commandString.equals("undo")) {
                 
@@ -73,7 +76,7 @@ public class LogicImpl implements Logic {
                 } catch (EmptyStackException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
                     errorResult.setComment(ERROR_INVALID_COMMAND);
-                    errorResult.setType("ERROR");
+                    errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
 
@@ -85,7 +88,7 @@ public class LogicImpl implements Logic {
                 } catch (IllegalArgumentException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
                     errorResult.setComment(ERROR_INVALID_COMMAND);
-                    errorResult.setType("ERROR");
+                    errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
 

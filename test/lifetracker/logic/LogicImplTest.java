@@ -7,15 +7,21 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import lifetracker.calendar.CalendarList;
+import lifetracker.command.CommandObject;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class LogicImplTest {
     
     private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
     
-    private static Parser parser = new LogicParserStub();
-    private static Storage storage = new LogicStorageStub();
+    private static Parser parser = mock(Parser.class);
+    private static Storage storage = mock(Storage.class);
     private static LogicImpl logicTest;
     
     private static ExecuteResult expected1 = new CommandLineResult();
@@ -26,6 +32,8 @@ public class LogicImplTest {
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
+        when(storage.load()).thenReturn("");
+        
         logicTest = new LogicImpl(parser, storage);
         
         expected1.setComment("\"first meeting\" is added.");
@@ -43,7 +51,14 @@ public class LogicImplTest {
 
     @Test
     public void testAdd() {
+        
         //test adding valid floating task
+        
+        CommandObject object1 = mock(CommandObject.class);
+        CalendarList list1 = mock(CalendarList.class);
+        
+        when(parser.parse("add first meeting")).thenReturn(object1);
+        
         assertEquals(expected1.getComment(), logicTest.executeCommand("add first meeting").getComment());
         assertEquals(expected1.getEventList(), logicTest.executeCommand("add first meeting").getEventList());
         assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());

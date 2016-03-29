@@ -9,6 +9,8 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 
+import lifetracker.logic.LogicImpl.CommandType;
+
 public class CommandLineResult implements ExecuteResult {
 
     private String comment;
@@ -59,9 +61,14 @@ public class CommandLineResult implements ExecuteResult {
         record.add(name);
         record.add(Boolean.toString(isActive));
         
-        if(deadline != null) {
+        if(deadline == null) {
+            record.add("");
+        } else {
             record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
-            if(period != null) {
+            
+            if(period == null) {
+                record.add("");
+            } else {
                 record.add(convert(period));
             }
         }
@@ -78,7 +85,9 @@ public class CommandLineResult implements ExecuteResult {
         record.add(start.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
         record.add(end.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
         
-        if(period != null) {
+        if(period == null) {
+            record.add("");
+        } else {
             record.add(convert(period));
         }
         
@@ -121,20 +130,8 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public void setType(String commandString) {
-        if (commandString.equals("exit"))
-            this.commandType = CommandType.EXIT;
-        
-        else if (commandString.substring(0, 6).equals("saveat")) {
-            this.commandType = CommandType.SAVE;
-        }
-
-        else if (commandString.equals("ERROR")) {
-            this.commandType = CommandType.ERROR;
-        }
-        
-        else
-            this.commandType = CommandType.DISPLAY;
+    public void setType(CommandType type) {
+        this.commandType = type;
     }
 
     @Override

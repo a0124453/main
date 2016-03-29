@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 
-public interface ExecuteResult {
+import lifetracker.logic.LogicImpl.CommandType;
 
-    public enum CommandType {
-        DISPLAY, SAVE, EXIT, ERROR
-    }
+public interface ExecuteResult {
 
     String getComment();
 
@@ -24,5 +22,5 @@ public interface ExecuteResult {
 
     CommandType getType();
 
-    void setType(String commandString);
+    void setType(CommandType type);
 }
