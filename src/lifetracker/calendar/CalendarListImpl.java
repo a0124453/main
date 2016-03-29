@@ -142,7 +142,7 @@ public class CalendarListImpl implements CalendarList {
             taskList.remove(id);
             return copy;
         } else if (eventList.containsKey(id)) {
-            CalendarEntry copy = taskList.get(id);
+            CalendarEntry copy = eventList.get(id);
             eventList.remove(id);
             return copy;
         }
@@ -349,7 +349,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
+            if (treeMap.containsKey(i) && treeMap.get(i).getStart() != null) {
                 LocalDate entryStartDate = treeMap.get(i).getStart().toLocalDate();
                 if (!entryStartDate.equals(startDate)) {
                     treeMap.remove(i);
@@ -363,7 +363,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
+            if (treeMap.containsKey(i) && treeMap.get(i).getStart() != null) {
                 LocalTime entryStartTime = treeMap.get(i).getStartTime();
                 if (!entryStartTime.equals(startTime)) {
                     treeMap.remove(i);
@@ -377,7 +377,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
+            if (treeMap.containsKey(i) && treeMap.get(i).getEnd() != null) {
                 LocalDate entryEndDate = treeMap.get(i).getEnd().toLocalDate();
                 if (!entryEndDate.equals(endDate)) {
                     treeMap.remove(i);
@@ -391,7 +391,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
+            if (treeMap.containsKey(i) && treeMap.get(i).getEnd() != null) {
                 LocalTime entryEndTime = treeMap.get(i).getEndTime();
                 if (!entryEndTime.equals(endTime)) {
                     treeMap.remove(i);
