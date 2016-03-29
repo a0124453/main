@@ -37,7 +37,7 @@ public class UIController implements Initializable {
     @FXML TableColumn<ItemUI, String> columnEventName;
     @FXML TableColumn<ItemUI, String> columnEventStartTime;
     @FXML TableColumn<ItemUI, String> columnEventEndTime;
-
+    
     private static ObservableList<ItemUI> taskList = FXCollections.observableArrayList();
     private static ObservableList<ItemUI> eventList = FXCollections.observableArrayList();
     
@@ -61,6 +61,14 @@ public class UIController implements Initializable {
         List<List<String>> taskList = result.getTaskList();
         
         for (List<String> task: taskList) {
+            for(String line: task){
+                System.out.println(line);
+            }
+        }
+        
+        List<List<String>> eventList = result.getEventList();
+        
+        for (List<String> task: eventList) {
             for(String line: task){
                 System.out.println(line);
             }
@@ -108,25 +116,64 @@ public class UIController implements Initializable {
                     public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
                         return new ReadOnlyStringWrapper(param.getValue().getItem().get(2));
                     }
+                });      
+        
+        columnEventID.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(0));
+                    }
                 });
         
-        columnEventID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemUI,String>, ObservableValue<String>>() {
+        columnEventName.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
 
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                return null;
-            }
-        });
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(1));
+                    }
+                });
+        
+        columnEventStartTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(2));
+                    }
+                }); 
+        
+        columnEventEndTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(3));
+                    }
+                });
+                
         tableTask.setItems(taskList);
+        tableEvent.setItems(eventList);
     }
 
     public static void populateList() {
         ExecuteResult result;
         result = l.executeCommand("list");
+
         taskList.clear();
+
+        
         for (List<String> task : result.getTaskList()) {
-                taskList.add(new ItemUI(task));
+            taskList.add(new ItemUI(task));
         }
+
+        eventList.clear();
+        for (List<String> event : result.getEventList()) {
+            eventList.add(new ItemUI(event));
+        }
+        
     }
     
 

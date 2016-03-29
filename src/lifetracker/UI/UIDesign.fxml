@@ -13,7 +13,7 @@
         <columns>
           <TableColumn fx:id="columnEventID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
           <TableColumn fx:id="columnEventName" editable="false" prefWidth="312.0" sortable="false" text="EVENT" />
-            <TableColumn fx:id="columnEventSartTime" editable="false" minWidth="2.0" prefWidth="106.0" sortable="false" text="START TIME" />
+            <TableColumn fx:id="columnEventStartTime" editable="false" minWidth="2.0" prefWidth="106.0" sortable="false" text="START TIME" />
             <TableColumn fx:id="columnEventEndTime" editable="false" minWidth="2.0" prefWidth="106.0" sortable="false" text="END TIME" />
         </columns>
       </TableView>
