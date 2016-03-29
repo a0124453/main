@@ -129,10 +129,12 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void setType(String commandString) {
+        String[] commandContent = commandString.split(" "); 
+        
         if (commandString.equals("exit"))
             this.commandType = CommandType.EXIT;
         
-        else if (commandString.substring(0, 6).equals("saveat")) {
+        else if (commandContent[0].equals("saveat")) {
             this.commandType = CommandType.SAVE;
         }
 
