@@ -1,7 +1,6 @@
 package lifetracker.logic;
 
 import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarListImpl;
 import lifetracker.command.CommandObject;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
@@ -14,6 +13,7 @@ public class LogicImpl implements Logic {
 
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
+    private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
     private Storage calendarStorage;
@@ -27,7 +27,8 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
 
-        calendar = storage.load(new CalendarListImpl());
+        StorageAdapter storageAdapter = new StorageAdapter(storage);
+        calendar = storageAdapter.load();
 
         commandStack = new Stack<CommandObject>();
     }
@@ -35,6 +36,8 @@ public class LogicImpl implements Logic {
     @Override
     public ExecuteResult executeCommand(String commandString) {
         assert commandString != null;
+        
+        String[] commandContent = commandString.split(" ");
 
         ExecuteResult runResult = new CommandLineResult();
         runResult.setType(commandString);
@@ -42,7 +45,23 @@ public class LogicImpl implements Logic {
         if (commandString.equals("exit")) {
             return runResult;
 
-        } else {
+        }
+        
+        else if (commandContent[0].equals("saveat")) {
+            int position = commandString.indexOf(" ");
+            String location = commandString.substring(position + 1);
+            
+            try {
+                calendarStorage.setStore(location);
+            } catch (IOException ex) {
+                System.err.println(ERROR_SAVE);
+            }
+            
+            runResult.setComment(COMMENT_SAVE + location);
+            return runResult;
+        }
+        
+        else {
             CommandObject commandToExecute;
             CalendarList executedState;
 
@@ -74,7 +93,8 @@ public class LogicImpl implements Logic {
             }
 
             try {
-                calendarStorage.store(calendar);
+                StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
+                storageAdapter.store(calendar);
             } catch (IOException ex) {
                 System.err.println(ERROR_SAVE);
             }
@@ -92,12 +112,12 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             executedState.getTaskList()
-                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.getEnd()));
+                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(), task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
             executedState.getEventList().forEach(
-                    event -> runResult.addEventLine(event.getId(), event.getName(), event.getStart(), event.getEnd()));
+                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(), event.getEnd(), event.getPeriod()));
         }
 
         return runResult;
