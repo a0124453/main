@@ -28,18 +28,18 @@ public class UIController implements Initializable {
 
     @FXML TextField textInput;
     @FXML Label labelFeedback;
-    @FXML TableView<TaskUI> tableTask;
-    @FXML TableColumn<TaskUI, String> columnTaskID;
-    @FXML TableColumn<TaskUI, String> columnTaskName;
-    @FXML TableColumn<TaskUI, String> columnTaskTime;
-    @FXML TableView<TaskUI> tableEvent;
-    @FXML TableColumn<TaskUI, String> columnEventID;
-    @FXML TableColumn<TaskUI, String> columnEventName;
-    @FXML TableColumn<TaskUI, String> columnEventStartTime;
-    @FXML TableColumn<TaskUI, String> columnEventEndTime;
+    @FXML TableView<ItemUI> tableTask;
+    @FXML TableColumn<ItemUI, String> columnTaskID;
+    @FXML TableColumn<ItemUI, String> columnTaskName;
+    @FXML TableColumn<ItemUI, String> columnTaskTime;
+    @FXML TableView<ItemUI> tableEvent;
+    @FXML TableColumn<ItemUI, String> columnEventID;
+    @FXML TableColumn<ItemUI, String> columnEventName;
+    @FXML TableColumn<ItemUI, String> columnEventStartTime;
+    @FXML TableColumn<ItemUI, String> columnEventEndTime;
 
-    private static ObservableList<TaskUI> taskList = FXCollections.observableArrayList();
-    private static ObservableList<TaskUI> eventList = FXCollections.observableArrayList();
+    private static ObservableList<ItemUI> taskList = FXCollections.observableArrayList();
+    private static ObservableList<ItemUI> eventList = FXCollections.observableArrayList();
     
     @FXML
     public void getInput() {
@@ -84,36 +84,36 @@ public class UIController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         columnTaskID.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<TaskUI, String>, ObservableValue<String>>() {
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
 
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<TaskUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(0));
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(0));
                     }
                 });
 
         columnTaskName.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<TaskUI, String>, ObservableValue<String>>() {
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
 
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<TaskUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(1));
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(1));
                     }
                 });
 
         columnTaskTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<TaskUI, String>, ObservableValue<String>>() {
+                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
 
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<TaskUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(2));
+                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(2));
                     }
                 });
         
-        columnEventID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<TaskUI,String>, ObservableValue<String>>() {
+        columnEventID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemUI,String>, ObservableValue<String>>() {
 
             @Override
-            public ObservableValue<String> call(CellDataFeatures<TaskUI, String> param) {
+            public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
                 return null;
             }
         });
@@ -125,7 +125,7 @@ public class UIController implements Initializable {
         result = l.executeCommand("list");
         taskList.clear();
         for (List<String> task : result.getTaskList()) {
-                taskList.add(new TaskUI(task));
+                taskList.add(new ItemUI(task));
         }
     }
     
