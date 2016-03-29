@@ -11,9 +11,9 @@
    <children>
       <TableView fx:id="table" prefHeight="331.0" prefWidth="600.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
-          <TableColumn prefWidth="75.0" text="TASK" />
-            <TableColumn prefWidth="75.0" text="TIME" />
+          <TableColumn fx:id="columnID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
+          <TableColumn fx:id="columnTask" editable="false" prefWidth="75.0" sortable="false" text="TASK" />
+            <TableColumn fx:id="columnTime" editable="false" prefWidth="75.0" sortable="false" text="TIME" />
         </columns>
       </TableView>
       <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
