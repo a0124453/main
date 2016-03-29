@@ -99,12 +99,26 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public void mark() {
-        if (this.isActive()) {
-            this.isActive = false;
+        if (this.getType().equals(EntryType.FLOATING)) {
+            this.toggle();
+        } else if (this.getType().equals(EntryType.EVENT)) {
+            this.toggle();
         } else {
-            this.isActive = true;
+            assert this.getType().equals(EntryType.DEADLINE);
+            if (!this.isRecurring()) {
+                this.toggle();
+            } else if (this.isRecurring()) {
+                LocalDateTime newEnd = this.getEnd().plus(this.getPeriod());
+                while (newEnd.isBefore(LocalDateTime.now())) {
+                    newEnd = newEnd.plus(this.getPeriod());
+                }
+                this.setEnd(newEnd);
+                if (!this.isActive()) {
+                    this.toggle();
+                }
+            }
         }
-    };
+    }
 
     @Override
     public boolean isActive() {
@@ -202,6 +216,14 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     void setType(EntryType entryType) {
         this.entryType = entryType;
+    }
+
+    void toggle() {
+        if (this.isActive()) {
+            this.isActive = false;
+        } else {
+            this.isActive = true;
+        }
     }
 
 }

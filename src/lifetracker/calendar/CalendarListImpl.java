@@ -176,6 +176,47 @@ public class CalendarListImpl implements CalendarList {
         return copy;
     }
 
+    @Override
+    public CalendarEntry mark(int id) {
+        CalendarEntry entry;
+        if (this.taskList.containsKey(id)) {
+            entry = this.taskList.get(id);
+            assert entry.isActive();
+            entry.mark();
+            if (entry.getType().equals(EntryType.FLOATING)) {
+                this.archiveTask(id);
+            } else {
+                assert entry.getType().equals(EntryType.DEADLINE);
+                if (!entry.isRecurring()) {
+                    this.archiveTask(id);
+                }
+            }
+            return entry;
+        } else if (this.eventList.containsKey(id)) {
+            entry = this.eventList.get(id);
+            assert entry.isActive();
+            assert entry.getType().equals(EntryType.EVENT);
+            entry.mark();
+            this.archiveEvent(id);
+            return entry;
+        } else if (this.archivedTaskList.containsKey(id)) {
+            entry = this.archivedTaskList.get(id);
+            assert !entry.isActive();
+            entry.mark();
+            this.unarchiveTask(id);
+            return entry;
+        } else if (this.archivedEventList.containsKey(id)) {
+            entry = this.archivedEventList.get(id);
+            assert !entry.isActive();
+            assert entry.getType().equals(EntryType.EVENT);
+            entry.mark();
+            this.unarchiveEvent(id);
+            return entry;
+        } else {
+            return null;
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -357,6 +398,30 @@ public class CalendarListImpl implements CalendarList {
                 }
             }
         }
+    }
+
+    void archiveTask(int id) {
+        CalendarEntry task = this.taskList.get(id);
+        this.taskList.remove(id);
+        this.archivedTaskList.put(id, task);
+    }
+
+    void unarchiveTask(int id) {
+        CalendarEntry task = this.archivedTaskList.get(id);
+        this.archivedTaskList.remove(id);
+        this.taskList.put(id, task);
+    }
+
+    void archiveEvent(int id) {
+        CalendarEntry event = this.eventList.get(id);
+        this.eventList.remove(id);
+        this.archivedEventList.put(id, event);
+    }
+
+    void unarchiveEvent(int id) {
+        CalendarEntry event = this.archivedEventList.get(id);
+        this.archivedEventList.remove(id);
+        this.eventList.put(id, event);
     }
 
 }

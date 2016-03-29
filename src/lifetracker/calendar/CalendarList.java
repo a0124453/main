@@ -34,6 +34,8 @@ public interface CalendarList {
     CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             TemporalAmount newPeriod);
 
+    CalendarEntry mark(int id);
+
     CalendarList find(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime);
 
     CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
