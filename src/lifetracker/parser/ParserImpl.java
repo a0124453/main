@@ -42,7 +42,6 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
-
     }
 
     private final CommandParser cmdParser;
@@ -59,14 +58,10 @@ public class ParserImpl implements Parser {
     public CommandObject parse(String userInput) {
         List<String> commandSegments = cmdParser.parseFullCommand(userInput);
 
-        String command = commandSegments.get(0);
+        String command = commandSegments.get(0).toLowerCase();
         commandSegments.remove(0);
 
-        return processCommand(command, commandSegments);
-    }
-
-    private CommandObject processCommand(String command, List<String> commandBody) {
-        return commands.get(command).apply(commandBody);
+        return commands.get(command).apply(commandSegments);
     }
 
     private CommandObject processAdd(List<String> commandBody) {
