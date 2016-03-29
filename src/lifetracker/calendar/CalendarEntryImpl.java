@@ -27,9 +27,7 @@ public class CalendarEntryImpl implements CalendarEntry {
         this.isActive = true;
         if (start != null) {
             assert end != null;
-            if (start.isAfter(end)) {
-                throw new IllegalArgumentException("Start date/time cannot be after end date/time!");
-            }
+            CalendarEntry.checkStartBeforeEnd(start, end);
             this.entryType = EntryType.EVENT;
         } else if (start == null && end == null) {
             this.entryType = EntryType.FLOATING;
@@ -60,6 +58,21 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public LocalDateTime getNextStart() {
+        if (this.getStart() == null) {
+            return null;
+        }
+        assert this.getType().equals(EntryType.EVENT);
+        LocalDateTime result = this.getStart();
+        if (this.isRecurring()) {
+            while (result.isBefore(LocalDateTime.now())) {
+                result = result.plus(this.getPeriod());
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void setStart(LocalDateTime start) {
         this.startDateTime = start;
     }
@@ -67,6 +80,20 @@ public class CalendarEntryImpl implements CalendarEntry {
     @Override
     public LocalDateTime getEnd() {
         return endDateTime;
+    }
+
+    @Override
+    public LocalDateTime getNextEnd() {
+        if (!this.getType().equals(EntryType.EVENT)) {
+            return this.getEnd();
+        }
+        LocalDateTime result = this.getEnd();
+        if (this.isRecurring()) {
+            while (result.isBefore(LocalDateTime.now())) {
+                result = result.plus(this.getPeriod());
+            }
+        }
+        return result;
     }
 
     @Override
@@ -90,18 +117,37 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
-    public void setRecurring(TemporalAmount period) {
+    public void setPeriod(TemporalAmount period) {
         this.period = period;
     }
 
     @Override
-    public void mark() {
-        if (this.isActive()) {
-            this.isActive = false;
-        } else {
-            this.isActive = true;
-        }
+    public TemporalAmount getPeriod() {
+        return period;
     };
+
+    @Override
+    public void mark() {
+        if (this.getType().equals(EntryType.FLOATING)) {
+            this.toggle();
+        } else if (this.getType().equals(EntryType.EVENT)) {
+            this.toggle();
+        } else {
+            assert this.getType().equals(EntryType.DEADLINE);
+            if (!this.isRecurring()) {
+                this.toggle();
+            } else if (this.isRecurring()) {
+                LocalDateTime newEnd = this.getEnd().plus(this.getPeriod());
+                while (newEnd.isBefore(LocalDateTime.now())) {
+                    newEnd = newEnd.plus(this.getPeriod());
+                }
+                this.setEnd(newEnd);
+                if (!this.isActive()) {
+                    this.toggle();
+                }
+            }
+        }
+    }
 
     @Override
     public boolean isActive() {
@@ -195,6 +241,18 @@ public class CalendarEntryImpl implements CalendarEntry {
         int id = this.getId();
         CalendarEntry copy = new CalendarEntryImpl(name, start, end, id);
         return copy;
+    }
+
+    void setType(EntryType entryType) {
+        this.entryType = entryType;
+    }
+
+    void toggle() {
+        if (this.isActive()) {
+            this.isActive = false;
+        } else {
+            this.isActive = true;
+        }
     }
 
 }
