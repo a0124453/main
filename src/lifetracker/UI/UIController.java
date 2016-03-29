@@ -109,6 +109,14 @@ public class UIController implements Initializable {
                         return new ReadOnlyStringWrapper(param.getValue().getTask().get(2));
                     }
                 });
+        
+        columnEventID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task,String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
+                return null;
+            }
+        });
         tableTask.setItems(taskList);
     }
 
