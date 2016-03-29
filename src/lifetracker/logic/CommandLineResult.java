@@ -9,6 +9,8 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 
+import lifetracker.logic.LogicImpl.CommandType;
+
 public class CommandLineResult implements ExecuteResult {
 
     private String comment;
@@ -128,22 +130,8 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public void setType(String commandString) {
-        String[] commandContent = commandString.split(" "); 
-        
-        if (commandString.equals("exit"))
-            this.commandType = CommandType.EXIT;
-        
-        else if (commandContent[0].equals("saveat")) {
-            this.commandType = CommandType.SAVE;
-        }
-
-        else if (commandString.equals("ERROR")) {
-            this.commandType = CommandType.ERROR;
-        }
-        
-        else
-            this.commandType = CommandType.DISPLAY;
+    public void setType(CommandType type) {
+        this.commandType = type;
     }
 
     @Override
