@@ -36,7 +36,8 @@ public class UIController implements Initializable {
     @FXML TableView<Task> tableEvent;
     @FXML TableColumn<Task, String> columnEventID;
     @FXML TableColumn<Task, String> columnEventName;
-    @FXML TableColumn<Task, String> columnEventTime;
+    @FXML TableColumn<Task, String> columnEventStartTime;
+    @FXML TableColumn<Task, String> columnEventEndTime;
 
     private static ObservableList<Task> taskList = FXCollections.observableArrayList();
     private static ObservableList<Task> eventList = FXCollections.observableArrayList();
