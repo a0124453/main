@@ -401,24 +401,36 @@ public class CalendarListImpl implements CalendarList {
     }
 
     void archiveTask(int id) {
+        if (!this.taskList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+        }
         CalendarEntry task = this.taskList.get(id);
         this.taskList.remove(id);
         this.archivedTaskList.put(id, task);
     }
 
     void unarchiveTask(int id) {
+        if (!this.archivedTaskList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+        }
         CalendarEntry task = this.archivedTaskList.get(id);
         this.archivedTaskList.remove(id);
         this.taskList.put(id, task);
     }
 
     void archiveEvent(int id) {
+        if (!this.eventList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+        }
         CalendarEntry event = this.eventList.get(id);
         this.eventList.remove(id);
         this.archivedEventList.put(id, event);
     }
 
     void unarchiveEvent(int id) {
+        if (!this.archivedEventList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+        }
         CalendarEntry event = this.archivedEventList.get(id);
         this.archivedEventList.remove(id);
         this.eventList.put(id, event);
