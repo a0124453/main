@@ -1,18 +1,19 @@
 package lifetracker.logic;
 
-import java.io.IOException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import lifetracker.calendar.CalendarEntry;
+import lifetracker.calendar.CalendarEntryImplDeserializer;
 import lifetracker.calendar.CalendarList;
 import lifetracker.calendar.CalendarListImpl;
 import lifetracker.storage.Storage;
 
+import java.io.IOException;
+
 public class StorageAdapter {
-    
+
     private Storage calendarStorage;
-    
+
     public StorageAdapter(Storage storage) {
         this.calendarStorage = storage;
     }
@@ -22,11 +23,18 @@ public class StorageAdapter {
         String s = gson.toJson(calendar);
         calendarStorage.store(s);
     }
-    
+
     public CalendarList load() throws IOException {
         String l = calendarStorage.load();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        CalendarList calendar = gson.fromJson(l, CalendarListImpl.class);
-        return calendar;
+
+        if (l.isEmpty()) {
+            return new CalendarListImpl();
+        } else {
+            Gson gson = new GsonBuilder()
+                    .registerTypeHierarchyAdapter(CalendarEntry.class, new CalendarEntryImplDeserializer())
+                    .setPrettyPrinting().create();
+            CalendarList calendar = gson.fromJson(l, CalendarListImpl.class);
+            return calendar;
+        }
     }
 }
