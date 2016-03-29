@@ -39,6 +39,9 @@ public class ParserImpl implements Parser {
         commands.put("list", this::processFind);
         commands.put("find", this::processFind);
         commands.put("search", this::processFind);
+        commands.put("listall", this::processFindAll);
+        commands.put("findall", this::processFindAll);
+        commands.put("searchall", this::processFindAll);
 
     }
 
@@ -191,6 +194,16 @@ public class ParserImpl implements Parser {
 
         if (searchTerm.isEmpty()) {
             return commandObjectFactory.find();
+        } else {
+            return commandObjectFactory.find(searchTerm);
+        }
+    }
+
+    private CommandObject processFindAll(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.findAll();
         } else {
             return commandObjectFactory.find(searchTerm);
         }
