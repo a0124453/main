@@ -31,7 +31,7 @@ public class DurationParser {
     private DurationParser() {
     }
 
-    public boolean isValidDurationString(String durationString) {
+    public boolean isDurationString(String durationString) {
         try {
             parse(durationString);
         } catch (IllegalArgumentException ex) {

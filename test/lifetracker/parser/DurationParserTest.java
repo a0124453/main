@@ -100,16 +100,16 @@ public class DurationParserTest {
     @Test
     public void testIsValidMethod() throws Exception {
 
-        Assert.assertTrue(parser.isValidDurationString("2 weeks"));
-        Assert.assertTrue(parser.isValidDurationString("2 year"));
-        Assert.assertTrue(parser.isValidDurationString("month"));
+        Assert.assertTrue(parser.isDurationString("2 weeks"));
+        Assert.assertTrue(parser.isDurationString("2 year"));
+        Assert.assertTrue(parser.isDurationString("month"));
 
-        Assert.assertFalse(parser.isValidDurationString("abc"));
-        Assert.assertFalse(parser.isValidDurationString("2 days abc"));
-        Assert.assertFalse(parser.isValidDurationString("-1 days"));
-        Assert.assertFalse(parser.isValidDurationString("1.5 months"));
-        Assert.assertFalse(parser.isValidDurationString("2years"));
-        Assert.assertFalse(parser.isValidDurationString("0 day"));
-        Assert.assertFalse(parser.isValidDurationString(""));
+        Assert.assertFalse(parser.isDurationString("abc"));
+        Assert.assertFalse(parser.isDurationString("2 days abc"));
+        Assert.assertFalse(parser.isDurationString("-1 days"));
+        Assert.assertFalse(parser.isDurationString("1.5 months"));
+        Assert.assertFalse(parser.isDurationString("2years"));
+        Assert.assertFalse(parser.isDurationString("0 day"));
+        Assert.assertFalse(parser.isDurationString(""));
     }
 }
