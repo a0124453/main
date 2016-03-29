@@ -46,17 +46,7 @@ public class LogicImpl implements Logic {
         }
         
         else if (commandContent[0].equals("saveat")) {
-            int position = commandString.indexOf(" ");
-            String location = commandString.substring(position + 1);
-            try {
-                calendarStorage.setStore(location);
-            } catch (IOException ex) {
-                System.err.println(ERROR_SAVE);
-            }
-            
-            runResult.setType(CommandType.SAVE);
-            runResult.setComment(COMMENT_SAVE + location);
-            return runResult;
+            return processSaveatResults(commandString, runResult);
         }
         
         else {
@@ -91,15 +81,31 @@ public class LogicImpl implements Logic {
 
                 commandStack.push(commandToExecute);
             }
-
-            try {
-                StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
-                storageAdapter.store(calendar);
-            } catch (IOException ex) {
-                System.err.println(ERROR_SAVE);
-            }
-
+            store();
             return processExecutionResults(runResult, commandToExecute, executedState);
+        }
+    }
+
+    private ExecuteResult processSaveatResults(String commandString, ExecuteResult runResult) {
+        int position = commandString.indexOf(" ");
+        String location = commandString.substring(position + 1);
+        try {
+            calendarStorage.setStore(location);
+        } catch (IOException ex) {
+            System.err.println(ERROR_SAVE);
+        }
+        
+        runResult.setType(CommandType.SAVE);
+        runResult.setComment(COMMENT_SAVE + location);
+        return runResult;
+    }
+
+    private void store() {
+        try {
+            StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
+            storageAdapter.store(calendar);
+        } catch (IOException ex) {
+            System.err.println(ERROR_SAVE);
         }
     }
 
