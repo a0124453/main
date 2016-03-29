@@ -3,18 +3,20 @@ package lifetracker.logic;
 import java.util.List;
 
 import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Task {
 
-   SimpleListProperty<String> event;
+   SimpleListProperty<String> task;
 
-    public List<String> getEvent() {
-        return event.get();
+    public List<String> getTask() {
+        return task.get();
     }
 
-    public Task(List<String> event) {
+    public Task(List<String> task) {
         super();
-        this.event = new SimpleListProperty<String>((ObservableList<String>) event);
+        ObservableList<String> observableList = FXCollections.observableArrayList(task);
+        this.task = new SimpleListProperty<String>((ObservableList<String>) observableList);
     }
 }
