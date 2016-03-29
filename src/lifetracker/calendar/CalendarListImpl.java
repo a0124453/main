@@ -197,15 +197,25 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
             LocalTime endTime) {
-        // TODO Auto-generated method stub
-        return null;
+        CalendarListTemp result = new CalendarListTemp();
+        TreeMap<Integer, CalendarEntry> copyArchivedTaskList = this.filterList(this.archivedTaskList, toSearch,
+                startDate, startTime, endDate, endTime);
+        TreeMap<Integer, CalendarEntry> copyArchivedEventList = this.filterList(this.archivedEventList, toSearch,
+                startDate, startTime, endDate, endTime);
+        result.setArchivedTaskList(copyArchivedTaskList);
+        result.setArchivedEventList(copyArchivedEventList);
+        return result;
     }
 
     @Override
     public CalendarList findAll(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
             LocalTime endTime) {
-        // TODO Auto-generated method stub
-        return null;
+        CalendarListTemp result = (CalendarListTemp) this.find(toSearch, startDate, startTime, endDate, endTime);
+        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchived(toSearch, startDate, startTime, endDate,
+                endTime);
+        result.setArchivedTaskList(resultArchived.archivedTaskList);
+        result.setArchivedEventList(resultArchived.archivedEventList);
+        return result;
     }
 
     TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch,
