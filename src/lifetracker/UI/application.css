@@ -5,3 +5,11 @@
 #textAreaOutput *.text {
 	-fx-text-alignment: center;
 }
+
+.table-column {
+	-fx-alignment: CENTER;
+}
+
+#columnTaskName, #columnEventName {
+	-fx-alignment: CENTER-LEFT;
+}
