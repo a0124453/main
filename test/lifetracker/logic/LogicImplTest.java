@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import lifetracker.calendar.CalendarList;
 import lifetracker.command.CommandObject;
+import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
@@ -37,16 +38,16 @@ public class LogicImplTest {
         logicTest = new LogicImpl(parser, storage);
         
         expected1.setComment("\"first meeting\" is added.");
-        expected1.setType("add first meeting");
+        expected1.setType(CommandType.DISPLAY);
         
         expected2.setComment("\"second meeting\" is added.");
-        expected2.setType("add second meeting by 2016-12-31 23:59:59");
+        expected2.setType(CommandType.DISPLAY);
         
         expected3.setComment("\"third meeting\" is added.");
-        expected3.setType("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59");
+        expected3.setType(CommandType.DISPLAY);
         
         error.setComment(ERROR_INVALID_COMMAND);
-        error.setType("ERROR");
+        error.setType(CommandType.ERROR);
     }
 
     @Test
