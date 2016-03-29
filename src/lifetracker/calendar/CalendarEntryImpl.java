@@ -58,6 +58,21 @@ public class CalendarEntryImpl implements CalendarEntry {
     }
 
     @Override
+    public LocalDateTime getNextStart() {
+        if (this.getStart() == null) {
+            return null;
+        }
+        assert this.getType().equals(EntryType.EVENT);
+        LocalDateTime result = this.getStart();
+        if (this.isRecurring()) {
+            while (result.isBefore(LocalDateTime.now())) {
+                result = result.plus(this.getPeriod());
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void setStart(LocalDateTime start) {
         this.startDateTime = start;
     }
@@ -65,6 +80,12 @@ public class CalendarEntryImpl implements CalendarEntry {
     @Override
     public LocalDateTime getEnd() {
         return endDateTime;
+    }
+
+    @Override
+    public LocalDateTime getNextEnd() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
