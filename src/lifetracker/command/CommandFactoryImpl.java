@@ -64,6 +64,6 @@ public class CommandFactoryImpl implements CommandFactory {
     @Override
     public CommandObject edit(int id, String name, LocalDateTime startTime, LocalDateTime endTime,
             TemporalAmount recurringPeriod) {
-        return new EditCommand(id, name, startTime, endTime);
+        return new EditCommand(id, name, startTime, endTime, recurringPeriod);
     }
 }
