@@ -54,7 +54,15 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public LocalDateTime getStart() {
-        return startDateTime;
+        if (this.getType().equals(EntryType.EVENT) && this.isRecurring()) {
+            if (this.isOngoing()) {
+                return this.getPrevStart();
+            } else {
+                return this.getNextStart();
+            }
+        } else {
+            return startDateTime;
+        }
     }
 
     @Override
@@ -64,7 +72,11 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public LocalDateTime getEnd() {
-        return endDateTime;
+        if (this.getType().equals(EntryType.EVENT) && this.isRecurring()) {
+            return this.getNextEnd();
+        } else {
+            return endDateTime;
+        }
     }
 
     @Override
@@ -243,6 +255,27 @@ public class CalendarEntryImpl implements CalendarEntry {
         LocalDateTime result = this.endDateTime;
         while (result.isBefore(LocalDateTime.now())) {
             result = result.plus(this.getPeriod());
+        }
+        return result;
+    }
+
+    private LocalDateTime getPrevStart() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.getNextStart();
+        while (result.isAfter(LocalDateTime.now())) {
+            result = result.minus(this.getPeriod());
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unused")
+    private LocalDateTime getPrevEnd() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.getNextEnd();
+        while (result.isAfter(LocalDateTime.now())) {
+            result = result.minus(this.getPeriod());
         }
         return result;
     }
