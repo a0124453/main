@@ -59,9 +59,14 @@ public class CommandLineResult implements ExecuteResult {
         record.add(name);
         record.add(Boolean.toString(isActive));
         
-        if(deadline != null) {
+        if(deadline == null) {
+            record.add("");
+        } else {
             record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
-            if(period != null) {
+            
+            if(period == null) {
+                record.add("");
+            } else {
                 record.add(convert(period));
             }
         }
@@ -78,7 +83,9 @@ public class CommandLineResult implements ExecuteResult {
         record.add(start.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
         record.add(end.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
         
-        if(period != null) {
+        if(period == null) {
+            record.add("");
+        } else {
             record.add(convert(period));
         }
         
