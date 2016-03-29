@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import lifetracker.calendar.CalendarList;
+import lifetracker.command.CommandObject;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
@@ -49,7 +51,14 @@ public class LogicImplTest {
 
     @Test
     public void testAdd() {
+        
         //test adding valid floating task
+        
+        CommandObject object1 = mock(CommandObject.class);
+        CalendarList list1 = mock(CalendarList.class);
+        
+        when(parser.parse("add first meeting")).thenReturn(object1);
+        
         assertEquals(expected1.getComment(), logicTest.executeCommand("add first meeting").getComment());
         assertEquals(expected1.getEventList(), logicTest.executeCommand("add first meeting").getEventList());
         assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());
