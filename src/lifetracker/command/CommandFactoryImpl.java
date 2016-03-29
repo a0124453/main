@@ -33,22 +33,22 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject find() {
-        return new ListCommand();
+        return new FindCommand();
     }
 
     @Override
     public CommandObject find(String searchString) {
-        return null;
+        return new FindCommand(searchString);
     }
 
     @Override
     public CommandObject findAll() {
-        return null;
+        return new FindAllCommand();
     }
 
     @Override
     public CommandObject findAll(String searchString) {
-        return null;
+        return new FindAllCommand(searchString);
     }
 
     @Override

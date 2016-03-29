@@ -34,9 +34,14 @@ public class ParserImpl implements Parser {
 
     {
         commands.put("add", this::processAdd);
-        commands.put("list", this::processList);
         commands.put("delete", this::processDelete);
         commands.put("edit", this::processEdit);
+        commands.put("list", this::processFind);
+        commands.put("find", this::processFind);
+        commands.put("search", this::processFind);
+        commands.put("listall", this::processFindAll);
+        commands.put("findall", this::processFindAll);
+        commands.put("searchall", this::processFindAll);
     }
 
     private final CommandParser cmdParser;
@@ -53,14 +58,10 @@ public class ParserImpl implements Parser {
     public CommandObject parse(String userInput) {
         List<String> commandSegments = cmdParser.parseFullCommand(userInput);
 
-        String command = commandSegments.get(0);
+        String command = commandSegments.get(0).toLowerCase();
         commandSegments.remove(0);
 
-        return processCommand(command, commandSegments);
-    }
-
-    private CommandObject processCommand(String command, List<String> commandBody) {
-        return commands.get(command).apply(commandBody);
+        return commands.get(command).apply(commandSegments);
     }
 
     private CommandObject processAdd(List<String> commandBody) {
@@ -133,10 +134,6 @@ public class ParserImpl implements Parser {
                 || commandBodySectionMap.containsKey("every"));
     }
 
-    private CommandObject processList(List<String> commandBody) {
-        return commandObjectFactory.find();
-    }
-
     private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
 
         String idString = restoreCommandSections(commandBody);
@@ -184,6 +181,26 @@ public class ParserImpl implements Parser {
             return commandObjectFactory.edit(id, name, null, null, null);
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private CommandObject processFind(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.find();
+        } else {
+            return commandObjectFactory.find(searchTerm);
+        }
+    }
+
+    private CommandObject processFindAll(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.findAll();
+        } else {
+            return commandObjectFactory.find(searchTerm);
         }
     }
 
