@@ -33,9 +33,14 @@ public class UIController implements Initializable {
     @FXML TableColumn<Task, String> columnTaskID;
     @FXML TableColumn<Task, String> columnTaskName;
     @FXML TableColumn<Task, String> columnTaskTime;
+    @FXML TableView<Task> tableEvent;
+    @FXML TableColumn<Task, String> columnEventID;
+    @FXML TableColumn<Task, String> columnEventName;
+    @FXML TableColumn<Task, String> columnEventTime;
 
     private static ObservableList<Task> taskList = FXCollections.observableArrayList();
-
+    private static ObservableList<Task> eventList = FXCollections.observableArrayList();
+    
     @FXML
     public void getInput() {
         String userInput;
@@ -115,6 +120,7 @@ public class UIController implements Initializable {
                 taskList.add(new Task(task));
         }
     }
+    
 
     /*
      * private ObservableList<Task> parseUserList() { ExecuteResult result;
