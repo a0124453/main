@@ -10,12 +10,16 @@ import org.junit.Test;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class LogicImplTest {
     
     private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
     
-    private static Parser parser = new LogicParserStub();
-    private static Storage storage = new LogicStorageStub();
+    private static Parser parser = mock(Parser.class);
+    private static Storage storage = mock(Storage.class);
     private static LogicImpl logicTest;
     
     private static ExecuteResult expected1 = new CommandLineResult();
@@ -26,6 +30,8 @@ public class LogicImplTest {
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
+        when(storage.load()).thenReturn("");
+        
         logicTest = new LogicImpl(parser, storage);
         
         expected1.setComment("\"first meeting\" is added.");
