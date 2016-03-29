@@ -72,10 +72,13 @@ public class LogicImplTest {
         when(object.execute(any(CalendarList.class))).thenReturn(list);
         when(parser.parse("add first meeting")).thenReturn(object);
         
-        assertEquals(expected1.getComment(), logicTest.executeCommand("add first meeting").getComment());
-        assertEquals(expected1.getEventList(), logicTest.executeCommand("add first meeting").getEventList());
-        assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());
-        assertEquals(expected1.getType(), logicTest.executeCommand("add first meeting").getType());
+        ExecuteResult actual = logicTest.executeCommand("add first meeting");
+        verify(parser).parse("add first meeting");
+        
+        assertEquals(expected1.getComment(), actual.getComment());
+        assertEquals(expected1.getEventList(), actual.getEventList());
+        assertEquals(expected1.getTaskList(), actual.getTaskList());
+        assertEquals(expected1.getType(), actual.getType());
     }
         
     //This is the upper bound of the boundary case for the valid partition
@@ -88,10 +91,13 @@ public class LogicImplTest {
         when(object.execute(any(CalendarList.class))).thenReturn(list);
         when(parser.parse("add second meeting by 2016-12-31 23:59:59")).thenReturn(object);
         
-        assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getComment());
-        assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getEventList());
-        assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getTaskList());
-        assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getType());
+        ExecuteResult actual = logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59");
+        verify(parser).parse("add second meeting by 2016-12-31 23:59:59");
+        
+        assertEquals(expected2.getComment(), actual.getComment());
+        assertEquals(expected2.getEventList(), actual.getEventList());
+        assertEquals(expected2.getTaskList(), actual.getTaskList());
+        assertEquals(expected2.getType(), actual.getType());
     }
      
     //This is the lower bound of the boundary case for the valid partition
@@ -104,10 +110,13 @@ public class LogicImplTest {
         when(object.execute(any(CalendarList.class))).thenReturn(list);
         when(parser.parse("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59")).thenReturn(object);
         
-        assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getComment());
-        assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getEventList());
-        assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getTaskList());
-        assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getType());
+        ExecuteResult actual = logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59");
+        verify(parser).parse("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59");
+        
+        assertEquals(expected3.getComment(), actual.getComment());
+        assertEquals(expected3.getEventList(), actual.getEventList());
+        assertEquals(expected3.getTaskList(), actual.getTaskList());
+        assertEquals(expected3.getType(), actual.getType());
     }
         
     /*----------test adding error event----------*/
@@ -126,37 +135,62 @@ public class LogicImplTest {
         
         //test error month
         //This is the boundary case for the invalid partition
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59").getType());
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59").getType());
+        ExecuteResult actual1 = logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59");
+        verify(parser).parse("add error meeting by 2016-00-31 23:59:59");
+        assertEquals(error.getComment(), actual1.getComment());
+        assertEquals(error.getType(), actual1.getType());
+       
+        ExecuteResult actual2 = logicTest.executeCommand("add error meeting by 2016-13-31 23:59:59");
+        verify(parser).parse("add error meeting by 2016-13-31 23:59:59");
+        assertEquals(error.getComment(), actual2.getComment());
+        assertEquals(error.getType(), actual2.getType());
         
         //test error day
         //This is the boundary case for the invalid partition
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59").getType());
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59").getType());
+        ExecuteResult actual3 = logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59");
+        verify(parser).parse("add error meeting by 2016-12-00 23:59:59");
+        assertEquals(error.getComment(), actual3.getComment());
+        assertEquals(error.getType(), actual3.getType());
+        
+        ExecuteResult actual4 = logicTest.executeCommand("add error meeting by 2016-12-32 23:59:59");
+        verify(parser).parse("add error meeting by 2016-12-32 23:59:59");
+        assertEquals(error.getComment(), actual4.getComment());
+        assertEquals(error.getType(), actual4.getType());
         
         //test error hour
         //This is the boundary case for the invalid partition
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59").getType());
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59").getType());
+        ExecuteResult actual5 = logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59");
+        verify(parser).parse("add error meeting by 2016-12-31 -1:59:59");
+        assertEquals(error.getComment(), actual5.getComment());
+        assertEquals(error.getType(), actual5.getType());
+        
+        ExecuteResult actual6 = logicTest.executeCommand("add error meeting by 2016-12-31 24:59:59");
+        verify(parser).parse("add error meeting by 2016-12-31 24:59:59");
+        assertEquals(error.getComment(), actual6.getComment());
+        assertEquals(error.getType(), actual6.getType());
         
         //test error minute
         //This is the boundary case for the invalid partition
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59").getType());
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59").getType());
+        ExecuteResult actual7 = logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59");
+        verify(parser).parse("add error meeting by 2016-12-31 23:-1:59");
+        assertEquals(error.getComment(), actual7.getComment());
+        assertEquals(error.getType(), actual7.getType());
+        
+        ExecuteResult actual8 = logicTest.executeCommand("add error meeting by 2016-12-31 23:60:59");
+        verify(parser).parse("add error meeting by 2016-12-31 23:60:59");
+        assertEquals(error.getComment(), actual8.getComment());
+        assertEquals(error.getType(), actual8.getType());
         
         //test error second
         //This is the boundary case for the invalid partition
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1").getType());
-        assertEquals(error.getComment(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60").getComment());
-        assertEquals(error.getType(), logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60").getType());
+        ExecuteResult actual9 = logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1");
+        verify(parser).parse("add error meeting by 2016-12-31 23:59:-1");
+        assertEquals(error.getComment(), actual9.getComment());
+        assertEquals(error.getType(), actual9.getType());
+        
+        ExecuteResult actual10 = logicTest.executeCommand("add error meeting by 2016-12-31 23:59:60");
+        verify(parser).parse("add error meeting by 2016-12-31 23:59:60");
+        assertEquals(error.getComment(), actual10.getComment());
+        assertEquals(error.getType(), actual10.getType());
     }
 }
