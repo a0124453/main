@@ -1,6 +1,7 @@
 package lifetracker.UI;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -23,20 +24,18 @@ import lifetracker.logic.Logic;
 import lifetracker.logic.Task;
 
 public class UIController implements Initializable {
-    
+
     private static Logic l;
 
     @FXML TextField textInput;
     @FXML Label labelFeedback;
-    @FXML TableView<Task> table;
-    @FXML TableColumn<Task, String> columnID;
-    @FXML TableColumn<Task, String> columnTask; 
-    @FXML TableColumn<Task, String> columnTime;
-    
-    public ObservableList<String> task = FXCollections.observableArrayList("1","dinner", "7pm");
-    public ObservableList<Task> list = FXCollections.observableArrayList(
-            new Task(task)
-            );
+    @FXML TableView<Task> tableTask;
+    @FXML TableColumn<Task, String> columnTaskID;
+    @FXML TableColumn<Task, String> columnTaskName;
+    @FXML TableColumn<Task, String> columnTaskTime;
+
+    public ObservableList<String> task = FXCollections.observableArrayList("1", "dinner", "7pm");
+    public static ObservableList<Task> list = FXCollections.observableArrayList();
 
     @FXML
     public void getInput() {
@@ -53,8 +52,19 @@ public class UIController implements Initializable {
 
     private void process(String userInput) {
         ExecuteResult result;
-        
+
         result = l.executeCommand(userInput);
+        List<List<String>> taskList = result.getTaskList();
+        
+        for (List<String> task: taskList) {
+            for(String line: task){
+                System.out.println(line);
+            }
+        }
+        
+        if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
+            populateList();
+        }
         labelFeedback.setText(result.getComment());
     }
 
@@ -69,39 +79,48 @@ public class UIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        columnID.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task,String>, ObservableValue<String>>() {
+        columnTaskID.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
 
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
-                return new ReadOnlyStringWrapper(param.getValue().getTask().get(0));
-            }
-        });
-        
-        columnTask.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task,String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(0));
+                    }
+                });
 
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
-                return new ReadOnlyStringWrapper(param.getValue().getTask().get(1));
-            }
-        });
-        
-        columnTime.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task,String>, ObservableValue<String>>() {
+        columnTaskName.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
 
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
-                return new ReadOnlyStringWrapper(param.getValue().getTask().get(2));
-            }
-        });
-        
-        table.setItems(list);
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(1));
+                    }
+                });
+
+        columnTaskTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<Task, String> param) {
+                        return new ReadOnlyStringWrapper(param.getValue().getTask().get(2));
+                    }
+                });
+        tableTask.setItems(list);
     }
 
-    //private ObservableList<List<String>> parseUserList() {
-        //ExecuteResult result;
-        
-        //result = l.executeCommand("list");
-        //ObservableList<List<String>> list = FXCollections.observableArrayList();
-        //list.addAll(result.getTaskList());
-        //return list;
-    //}
+    public static void populateList() {
+        ExecuteResult result;
+        result = l.executeCommand("list");
+        list.clear();
+        for (List<String> task : result.getTaskList()) {
+                list.add(new Task(task));
+        }
+    }
+
+    /*
+     * private ObservableList<Task> parseUserList() { ExecuteResult result;
+     * 
+     * result = l.executeCommand("list"); return
+     * FXCollections.observableArrayList(new Task(this.task)); }
+     */
 }

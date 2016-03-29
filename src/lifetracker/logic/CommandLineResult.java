@@ -10,7 +10,7 @@ public class CommandLineResult implements ExecuteResult {
 
     private String comment;
     private List<List<String>> eventList;
-    private List<Task> taskList;
+    private List<List<String>> taskList;
     private CommandType commandType;
 
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
@@ -39,7 +39,7 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public List<Task> getTaskList() {
+    public List<List<String>> getTaskList() {
         return taskList;
     }
 
@@ -51,11 +51,11 @@ public class CommandLineResult implements ExecuteResult {
         
         if(deadline != null) {
             record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
+        } else {
+            record.add("");
         }
         
-        Task task = new Task(record);
-        
-        taskList.add(task);
+        taskList.add(record);
     }
 
     @Override

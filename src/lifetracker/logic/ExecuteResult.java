@@ -15,7 +15,7 @@ public interface ExecuteResult {
 
     List<List<String>> getEventList();
 
-    List<Task> getTaskList();
+    List<List<String>> getTaskList();
 
     void addTaskLine(int id, String name, LocalDateTime deadline);
 

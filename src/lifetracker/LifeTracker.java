@@ -31,6 +31,15 @@ public class LifeTracker extends Application {
     public static void main(String args[]) throws Exception {
 
         launch(args);
+        /*
+        try (Storage fileStorage = new ThreadedFileStorage()) {
+
+            setLogger();
+            Parser commandParser = new ParserImpl();
+            Logic programLogic = new LogicImpl(commandParser, fileStorage);
+            new UI(programLogic);
+            
+        }*/
 
     }
 
@@ -68,5 +77,6 @@ public class LifeTracker extends Application {
         }
         
         primaryStage.show();
+        UIController.populateList();
     }
 }

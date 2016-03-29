@@ -9,11 +9,11 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="470.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
    <children>
-      <TableView fx:id="table" prefHeight="331.0" prefWidth="600.0">
+      <TableView fx:id="tableTask" prefHeight="331.0" prefWidth="600.0">
         <columns>
-          <TableColumn fx:id="columnID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
-          <TableColumn fx:id="columnTask" editable="false" prefWidth="75.0" sortable="false" text="TASK" />
-            <TableColumn fx:id="columnTime" editable="false" prefWidth="75.0" sortable="false" text="TIME" />
+          <TableColumn fx:id="columnTaskID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
+          <TableColumn fx:id="columnTaskName" editable="false" prefWidth="312.0" sortable="false" text="TASK" />
+            <TableColumn fx:id="columnTaskTime" editable="false" minWidth="2.0" prefWidth="212.0" sortable="false" text="TIME" />
         </columns>
       </TableView>
       <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
