@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import lifetracker.calendar.CalendarList;
-import lifetracker.command.CommandObject;
+import lifetracker.command.AddCommand;
 import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
@@ -16,6 +16,8 @@ import lifetracker.storage.Storage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 
 public class LogicImplTest {
     
@@ -51,35 +53,65 @@ public class LogicImplTest {
     }
 
     @Test
-    public void testAdd() {
+    public void testAddFloating() {
+        AddCommand object = mock(AddCommand.class);
+        CalendarList list = mock(CalendarList.class);
         
-        //test adding valid floating task
-        
-        CommandObject object1 = mock(CommandObject.class);
-        CalendarList list1 = mock(CalendarList.class);
-        
-        when(parser.parse("add first meeting")).thenReturn(object1);
+        when(object.getComment()).thenReturn("\"first meeting\" is added.");
+        when(object.execute(any(CalendarList.class))).thenReturn(list);
+        when(parser.parse("add first meeting")).thenReturn(object);
         
         assertEquals(expected1.getComment(), logicTest.executeCommand("add first meeting").getComment());
         assertEquals(expected1.getEventList(), logicTest.executeCommand("add first meeting").getEventList());
         assertEquals(expected1.getTaskList(), logicTest.executeCommand("add first meeting").getTaskList());
         assertEquals(expected1.getType(), logicTest.executeCommand("add first meeting").getType());
+    }
         
-        //test adding valid deadline task
-        //This is the upper bound of the boundary case for the valid partition
+    //This is the upper bound of the boundary case for the valid partition
+    @Test
+    public void testAddDeadline() {
+        AddCommand object = mock(AddCommand.class);
+        CalendarList list = mock(CalendarList.class);
+        
+        when(object.getComment()).thenReturn("\"second meeting\" is added.");
+        when(object.execute(any(CalendarList.class))).thenReturn(list);
+        when(parser.parse("add second meeting by 2016-12-31 23:59:59")).thenReturn(object);
+        
         assertEquals(expected2.getComment(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getComment());
         assertEquals(expected2.getEventList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getEventList());
         assertEquals(expected2.getTaskList(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getTaskList());
         assertEquals(expected2.getType(), logicTest.executeCommand("add second meeting by 2016-12-31 23:59:59").getType());
+    }
+     
+    //This is the lower bound of the boundary case for the valid partition
+    @Test
+    public void testAddEvent() {
+        AddCommand object = mock(AddCommand.class);
+        CalendarList list = mock(CalendarList.class);
         
-        //test adding valid event
-        //This is the lower bound of the boundary case for the valid partition
+        when(object.getComment()).thenReturn("\"third meeting\" is added.");
+        when(object.execute(any(CalendarList.class))).thenReturn(list);
+        when(parser.parse("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59")).thenReturn(object);
+        
         assertEquals(expected3.getComment(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getComment());
         assertEquals(expected3.getEventList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getEventList());
         assertEquals(expected3.getTaskList(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getTaskList());
         assertEquals(expected3.getType(), logicTest.executeCommand("add third meeting from 2017-01-01 00:00:00 to 2017-01-01 23:59:59").getType());
+    }
         
-        /*----------test adding error event----------*/
+    /*----------test adding error event----------*/
+    @Test
+    public void testAddError() {
+        when(parser.parse("add error meeting by 2016-00-31 23:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-13-31 23:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-00 23:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-32 23:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 -1:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 24:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:-1:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:60:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:59:-1")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:59:60")).thenThrow(new IllegalArgumentException());
         
         //test error month
         //This is the boundary case for the invalid partition
