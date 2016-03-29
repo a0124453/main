@@ -17,7 +17,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 
 public class LogicImplTest {
     
@@ -31,6 +30,7 @@ public class LogicImplTest {
     private static ExecuteResult expected2 = new CommandLineResult();
     private static ExecuteResult expected3 = new CommandLineResult();
     
+    private static ExecuteResult saveat = new CommandLineResult();
     private static ExecuteResult error = new CommandLineResult();
     
     @BeforeClass
@@ -48,10 +48,21 @@ public class LogicImplTest {
         expected3.setComment("\"third meeting\" is added.");
         expected3.setType(CommandType.DISPLAY);
         
+        saveat.setComment("Calendar is saved at location");
+        saveat.setType(CommandType.SAVE);
+        
         error.setComment(ERROR_INVALID_COMMAND);
         error.setType(CommandType.ERROR);
     }
 
+    @Test
+    public void testSaveat() {
+        assertEquals(saveat.getComment(), logicTest.executeCommand("saveat location").getComment());
+        assertEquals(saveat.getEventList(), logicTest.executeCommand("saveat location").getEventList());
+        assertEquals(saveat.getTaskList(), logicTest.executeCommand("saveat location").getTaskList());
+        assertEquals(saveat.getType(), logicTest.executeCommand("saveat location").getType());
+    }
+    
     @Test
     public void testAddFloating() {
         AddCommand object = mock(AddCommand.class);
