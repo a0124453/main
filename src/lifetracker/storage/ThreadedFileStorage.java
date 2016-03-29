@@ -1,9 +1,7 @@
 package lifetracker.storage;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -76,14 +74,6 @@ public class ThreadedFileStorage implements Storage {
 
         if (!storageFile.exists()) {
             storageFile.createNewFile();
-
-            try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(storageFile))) {
-                fileWriter.write("0");
-                fileWriter.newLine();
-                fileWriter.write("0");
-                fileWriter.newLine();
-            }
-
         } else if (storageFile.isDirectory()) {
             throw new IOException(ERROR_FILE_IS_DIRECTORY);
         }
