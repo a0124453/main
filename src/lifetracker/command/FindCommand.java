@@ -27,14 +27,13 @@ public class FindCommand extends CommandObject {
     public CalendarList execute(CalendarList calendar) {
         originalCalendar = calendar;
 
-        if (!searchTerm.isEmpty()) {
-
+        if (searchTerm.isEmpty()) {
+            setComment(MESSAGE_SEARCH_ALL);
+            return calendar;
+        } else {
             setComment(String.format(MESSAGE_SEARCH_TERM, searchTerm));
 
             return calendar.find(searchTerm, LocalDate.MIN, LocalTime.MIN, LocalDate.MAX, LocalTime.MAX);
-        } else {
-            setComment(MESSAGE_SEARCH_ALL);
-            return calendar;
         }
     }
 
@@ -43,5 +42,9 @@ public class FindCommand extends CommandObject {
         setComment(MESSAGE_SEARCH_ALL);
 
         return originalCalendar;
+    }
+
+    String getSearchTerm(){
+        return searchTerm;
     }
 }
