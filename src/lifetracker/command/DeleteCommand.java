@@ -3,8 +3,6 @@ package lifetracker.command;
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
-import java.util.List;
-
 //@@author A0091173J
 public class DeleteCommand extends CommandObject {
 
@@ -24,13 +22,11 @@ public class DeleteCommand extends CommandObject {
 
         assert calendar != null;
 
-        entryDeleted = findEntry(calendar);
+        entryDeleted = calendar.delete(entryID);
 
         if (entryDeleted == null) {
             throw new IllegalArgumentException(String.format(MESSAGE_NOT_FOUND, entryID));
         }
-
-        calendar.delete(entryID);
 
         setComment(String.format(MESSAGE_DELETED, entryID));
 
@@ -44,28 +40,23 @@ public class DeleteCommand extends CommandObject {
                 calendar.add(entryDeleted.getName());
                 break;
             case DEADLINE :
-                calendar.add(entryDeleted.getName(), entryDeleted.getEnd());
+                if (entryDeleted.isRecurring()) {
+                    calendar.add(entryDeleted.getName(), entryDeleted.getEnd(), entryDeleted.getPeriod());
+                } else {
+                    calendar.add(entryDeleted.getName(), entryDeleted.getEnd());
+                }
                 break;
             case EVENT :
-                calendar.add(entryDeleted.getName(), entryDeleted.getStart(), entryDeleted.getEnd());
-
+                if (entryDeleted.isRecurring()) {
+                    calendar.add(entryDeleted.getName(), entryDeleted.getStart(), entryDeleted.getEnd(),
+                            entryDeleted.getPeriod());
+                } else {
+                    calendar.add(entryDeleted.getName(), entryDeleted.getStart(), entryDeleted.getEnd());
+                }
         }
 
         setComment(String.format(MESSAGE_UNDO, entryDeleted.getName()));
 
         return super.undo(calendar);
-    }
-
-    private CalendarEntry findEntry(CalendarList calendar) {
-        List<CalendarEntry> entriesList = calendar.getEventList();
-        entriesList.addAll(calendar.getTaskList());
-
-        for (CalendarEntry entry : entriesList) {
-            if (entry.getId() == entryID) {
-                return entry;
-            }
-        }
-
-        return null;
     }
 }
