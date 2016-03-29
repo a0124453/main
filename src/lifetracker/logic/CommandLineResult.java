@@ -9,8 +9,6 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 
-import lifetracker.logic.LogicImpl.CommandType;
-
 public class CommandLineResult implements ExecuteResult {
 
     private String comment;
