@@ -2,6 +2,7 @@ package lifetracker.logic;
 
 import lifetracker.calendar.CalendarList;
 import lifetracker.command.CommandObject;
+import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
@@ -19,10 +20,6 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
-    
-    public enum CommandType {
-        DISPLAY, SAVE, EXIT, ERROR
-    }
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
