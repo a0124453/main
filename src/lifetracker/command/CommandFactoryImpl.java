@@ -58,7 +58,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject mark(int id) {
-        return null;
+        return new MarkCommand(id);
     }
 
     @Override
