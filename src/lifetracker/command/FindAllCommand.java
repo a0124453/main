@@ -2,9 +2,6 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 //@@author A0091173J
 public class FindAllCommand extends FindCommand {
     public FindAllCommand() {
@@ -23,7 +20,7 @@ public class FindAllCommand extends FindCommand {
         if (searchTerm.isEmpty()) {
             return calendar;
         } else {
-            return calendar.findAll(getSearchTerm(), LocalDate.MIN, LocalTime.MIN, LocalDate.MAX, LocalTime.MAX);
+            return calendar.findAll(getSearchTerm(), null, null, null, null);
         }
     }
 }
