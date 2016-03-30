@@ -18,12 +18,13 @@ public class CommandLineResult implements ExecuteResult {
 
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
     private static final FormatStyle TIME_STYLE = FormatStyle.SHORT;
-    
-    private static final String ZERO_YEARS_MONTHS_AND_DAYS_PATTERN = "00Y00M00D";
-    private static final String ZERO_HOURS_MINUTES_AND_SECONDS_PATTERN = "00H00M00S";
-    
-    private static final long SECONDS_PER_HOUR = 3600;
-    private static final long SECONDS_PER_MINUTE = 60;
+
+    private static final String DAY_FIELD = "day(s)";
+    private static final String MONTH_FIELD = "month(s)";
+    private static final String YEAR_FIELD = "year(s)";
+
+    private static final String MINUTE_FIELD = "minute(s)";
+    private static final String HOUR_FIELD = "hour(s)";
 
     public CommandLineResult() {
         this.eventList = new ArrayList<>();
@@ -58,73 +59,71 @@ public class CommandLineResult implements ExecuteResult {
         record.add(String.valueOf(id));
         record.add(name);
         record.add(Boolean.toString(isActive));
-        
-        if(deadline == null) {
+
+        if (deadline == null) {
             record.add("");
         } else {
             record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
-            
-            if(period == null) {
+
+            if (period == null) {
                 record.add("");
             } else {
                 record.add(convert(period));
             }
         }
-        
+
         taskList.add(record);
     }
 
     @Override
-    public void addEventLine(int id, String name, boolean isActive, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+    public void addEventLine(int id, String name, boolean isActive, LocalDateTime start, LocalDateTime end,
+            TemporalAmount period) {
         List<String> record = new ArrayList<>();
         record.add(String.valueOf(id));
         record.add(name);
         record.add(Boolean.toString(isActive));
         record.add(start.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
         record.add(end.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
-        
-        if(period == null) {
+
+        if (period == null) {
             record.add("");
         } else {
             record.add(convert(period));
         }
-        
+
         eventList.add(record);
     }
-    
+
     public String convert(TemporalAmount temporalAmount) {
         if (temporalAmount != null) {
-            if (temporalAmount instanceof Period) {
-                Period period = ((Period) temporalAmount).normalized();
-                return new StringBuilder("P").append(normalizeString(period.getYears())).append("Y")
-                        .append(normalizeString(period.getMonths())).append("M")
-                        .append(normalizeString(period.getDays())).append("D").append("T")
-                        .append(ZERO_HOURS_MINUTES_AND_SECONDS_PATTERN).toString();
+            if (temporalAmount.equals(Period.ZERO) || temporalAmount.equals(Duration.ZERO)) {
+                return "";
+            } else if (temporalAmount instanceof Period) {
+                return convertPeriodToString(((Period) temporalAmount).normalized());
             } else {
                 return convertDurationToString((Duration) temporalAmount);
             }
         }
-        return null;
+        return "";
     }
-    
+
+    private String convertPeriodToString(Period period) {
+        int years = period.getYears();
+        int months = period.getMonths();
+        int days = period.getDays();
+
+        return formatDuration(years, YEAR_FIELD) + formatDuration(months, MONTH_FIELD) + formatDuration(days, DAY_FIELD);
+    }
+
     private String convertDurationToString(Duration duration) {
-        long hours = duration.getSeconds() / SECONDS_PER_HOUR;
-        int minutes = (int) ((duration.getSeconds() % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-        int seconds = (int) (duration.getSeconds() % SECONDS_PER_MINUTE);
-        return new StringBuilder("P").append(ZERO_YEARS_MONTHS_AND_DAYS_PATTERN).append("T").append(String.valueOf(hours))
-                .append("H").append(normalizeString(minutes)).append("M").append(normalizeString(seconds)).append("S")
-                .toString();
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+
+        return formatDuration(hours, HOUR_FIELD) + formatDuration(minutes, MINUTE_FIELD);
     }
-    
-    private String normalizeString(int amount) {
-        return normalizeString(String.valueOf(amount));
-    }
-    
-    private String normalizeString(String result) {
-        if (result.length() == 1) {
-            result = "0" + result;
-        }
-        return result;
+
+    private String formatDuration(long duration, String label) {
+        return duration == 0 ? "" : duration + " " + label + " ";
     }
 
     @Override

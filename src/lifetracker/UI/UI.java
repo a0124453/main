@@ -12,8 +12,8 @@ public class UI {
     private static final String MESSAGE_WELCOME = "Welcome to the Life Tracker, Spend less time planning so you always know what's next.";
     private static final String MESSAGE_INPUT = "Command: ";
 
-    private static final String[] EVENT_HEADERS = {"ID", "Name", "Start", "End"};
-    private static final String[] TASK_HEADERS = {"ID", "Name", "Due"};
+    private static final String[] EVENT_HEADERS = {"ID", "Name", "Active?", "Start", "End", "Every"};
+    private static final String[] TASK_HEADERS = {"ID", "Name", "Active?","Due", "Every"};
 
     private static final String EVENT_TITLE = "Events: ";
     private static final String TASK_TITLE = "Tasks: ";
