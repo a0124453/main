@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -20,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
+import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.logic.Logic;
 
 public class UIController implements Initializable {
@@ -53,8 +55,12 @@ public class UIController implements Initializable {
 
     private void process(String userInput) {
         ExecuteResult result;
-
         result = l.executeCommand(userInput);
+        
+        if (result.getType() == ExecuteResult.CommandType.EXIT) {
+            Platform.exit();
+        }
+        
         List<List<String>> taskList = result.getTaskList();
         
         for (List<String> task: taskList) {
