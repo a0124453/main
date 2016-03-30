@@ -72,9 +72,7 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public int add(String name) {
         assert name != null && !name.isEmpty();
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int idToSet = Math.max(eventMax, taskMax) + 1;
+        int idToSet = this.getNextId();
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
         return idToSet;
@@ -90,9 +88,7 @@ public class CalendarListImpl implements CalendarList {
     public int add(String name, LocalDateTime deadline) {
         assert name != null && !name.isEmpty();
         assert deadline != null;
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int idToSet = Math.max(taskMax, eventMax) + 1;
+        int idToSet = this.getNextId();
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
         return idToSet;
@@ -115,11 +111,9 @@ public class CalendarListImpl implements CalendarList {
     public int add(String name, LocalDateTime start, LocalDateTime end) {
         assert start != null;
         assert end != null;
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int idToSet = Math.max(eventMax, taskMax) + 1;
-        CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
-        eventList.put(idToSet, e);
+        int idToSet = this.getNextId();
+        CalendarEntryImpl event = new CalendarEntryImpl(name, start, end, idToSet);
+        eventList.put(idToSet, event);
         return idToSet;
     }
 
@@ -440,6 +434,18 @@ public class CalendarListImpl implements CalendarList {
         CalendarEntry event = this.archivedEventList.get(id);
         this.archivedEventList.remove(id);
         this.eventList.put(id, event);
+    }
+
+    private int getNextId() {
+        int taskMax = this.taskList.isEmpty() ? 0 : this.taskList.lastKey();
+        int eventMax = this.eventList.isEmpty() ? 0 : this.eventList.lastKey();
+        int archivedTaskMax = this.archivedTaskList.isEmpty() ? 0 : this.archivedTaskList.lastKey();
+        int archivedEventMax = this.archivedEventList.isEmpty() ? 0 : this.archivedEventList.lastKey();
+        int idToSet = Math.max(taskMax, eventMax);
+        idToSet = Math.max(idToSet, archivedTaskMax);
+        idToSet = Math.max(idToSet, archivedEventMax);
+        idToSet += 1;
+        return idToSet;
     }
 
 }
