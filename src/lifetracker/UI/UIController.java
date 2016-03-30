@@ -75,7 +75,7 @@ public class UIController implements Initializable {
         }
         
         if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
-            populateList();
+            populateList(result);
         }
         labelFeedback.setText(result.getComment());
     }
@@ -158,10 +158,7 @@ public class UIController implements Initializable {
         tableEvent.setItems(eventList);
     }
 
-    public static void populateList() {
-        ExecuteResult result;
-        result = l.executeCommand("list");
-
+    public static void populateList(ExecuteResult result) {
         taskList.clear();
 
         
