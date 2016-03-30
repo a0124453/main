@@ -349,10 +349,14 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i) && treeMap.get(i).getStart() != null) {
-                LocalDate entryStartDate = treeMap.get(i).getStart().toLocalDate();
-                if (!entryStartDate.equals(startDate)) {
+            if (treeMap.containsKey(i)) {
+                if (treeMap.get(i).getStart() == null) {
                     treeMap.remove(i);
+                } else {
+                    LocalDate entryStartDate = treeMap.get(i).getStart().toLocalDate();
+                    if (!entryStartDate.equals(startDate)) {
+                        treeMap.remove(i);
+                    }
                 }
             }
         }
@@ -363,10 +367,14 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i) && treeMap.get(i).getStart() != null) {
-                LocalTime entryStartTime = treeMap.get(i).getStartTime();
-                if (!entryStartTime.equals(startTime)) {
+            if (treeMap.containsKey(i)) {
+                if (treeMap.get(i).getStart() == null) {
                     treeMap.remove(i);
+                } else {
+                    LocalTime entryStartTime = treeMap.get(i).getStartTime();
+                    if (!entryStartTime.equals(startTime)) {
+                        treeMap.remove(i);
+                    }
                 }
             }
         }
@@ -377,10 +385,14 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i) && treeMap.get(i).getEnd() != null) {
-                LocalDate entryEndDate = treeMap.get(i).getEnd().toLocalDate();
-                if (!entryEndDate.equals(endDate)) {
+            if (treeMap.containsKey(i)) {
+                if (treeMap.get(i).getEnd() == null) {
                     treeMap.remove(i);
+                } else {
+                    LocalDate entryEndDate = treeMap.get(i).getEnd().toLocalDate();
+                    if (!entryEndDate.equals(endDate)) {
+                        treeMap.remove(i);
+                    }
                 }
             }
         }
@@ -391,10 +403,14 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i) && treeMap.get(i).getEnd() != null) {
-                LocalTime entryEndTime = treeMap.get(i).getEndTime();
-                if (!entryEndTime.equals(endTime)) {
+            if (treeMap.containsKey(i)) {
+                if (treeMap.get(i).getEnd() == null) {
                     treeMap.remove(i);
+                } else {
+                    LocalTime entryEndTime = treeMap.get(i).getEndTime();
+                    if (!entryEndTime.equals(endTime)) {
+                        treeMap.remove(i);
+                    }
                 }
             }
         }
