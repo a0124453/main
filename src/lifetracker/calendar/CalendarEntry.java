@@ -28,13 +28,9 @@ public interface CalendarEntry {
 
     LocalDateTime getStart();
 
-    LocalDateTime getNextStart();
-
     void setStart(LocalDateTime start);
 
     LocalDateTime getEnd();
-
-    LocalDateTime getNextEnd();
 
     void setEnd(LocalDateTime end);
 

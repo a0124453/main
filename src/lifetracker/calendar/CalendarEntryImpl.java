@@ -54,22 +54,15 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public LocalDateTime getStart() {
-        return startDateTime;
-    }
-
-    @Override
-    public LocalDateTime getNextStart() {
-        if (this.getStart() == null) {
-            return null;
-        }
-        assert this.getType().equals(EntryType.EVENT);
-        LocalDateTime result = this.getStart();
-        if (this.isRecurring()) {
-            while (result.isBefore(LocalDateTime.now())) {
-                result = result.plus(this.getPeriod());
+        if (this.getType().equals(EntryType.EVENT) && this.isRecurring()) {
+            if (this.isOngoing()) {
+                return this.getPrevStart();
+            } else {
+                return this.getNextStart();
             }
+        } else {
+            return startDateTime;
         }
-        return result;
     }
 
     @Override
@@ -79,21 +72,11 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public LocalDateTime getEnd() {
-        return endDateTime;
-    }
-
-    @Override
-    public LocalDateTime getNextEnd() {
-        if (!this.getType().equals(EntryType.EVENT)) {
-            return this.getEnd();
+        if (this.getType().equals(EntryType.EVENT) && this.isRecurring()) {
+            return this.getNextEnd();
+        } else {
+            return endDateTime;
         }
-        LocalDateTime result = this.getEnd();
-        if (this.isRecurring()) {
-            while (result.isBefore(LocalDateTime.now())) {
-                result = result.plus(this.getPeriod());
-            }
-        }
-        return result;
     }
 
     @Override
@@ -183,21 +166,22 @@ public class CalendarEntryImpl implements CalendarEntry {
 
     @Override
     public boolean isOngoing() {
-        if (entryType.equals(EntryType.FLOATING)) {
+        if (this.entryType.equals(EntryType.FLOATING)) {
             return true;
         }
 
-        else if (entryType.equals(EntryType.EVENT)) {
-            LocalDateTime now = LocalDateTime.now();
-            boolean hasStarted = now.isAfter(startDateTime);
-            return (hasStarted && !isOver());
-        }
-
-        else {
-            assert entryType.equals(EntryType.DEADLINE);
+        else if (this.entryType.equals(EntryType.DEADLINE)) {
             return (!isOver());
+        } else {
+            assert this.entryType.equals(EntryType.EVENT);
+            if (this.isRecurring()) {
+                return this.getNextEnd().isBefore(this.getNextStart());
+            } else {
+                LocalDateTime now = LocalDateTime.now();
+                boolean hasStarted = now.isAfter(startDateTime);
+                return (hasStarted && !isOver());
+            }
         }
-
     }
 
     @Override
@@ -253,6 +237,47 @@ public class CalendarEntryImpl implements CalendarEntry {
         } else {
             this.isActive = true;
         }
+    }
+
+    private LocalDateTime getNextStart() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.startDateTime;
+        while (result.isBefore(LocalDateTime.now())) {
+            result = result.plus(this.getPeriod());
+        }
+        return result;
+    }
+
+    private LocalDateTime getNextEnd() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.endDateTime;
+        while (result.isBefore(LocalDateTime.now())) {
+            result = result.plus(this.getPeriod());
+        }
+        return result;
+    }
+
+    private LocalDateTime getPrevStart() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.getNextStart();
+        while (result.isAfter(LocalDateTime.now())) {
+            result = result.minus(this.getPeriod());
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unused")
+    private LocalDateTime getPrevEnd() {
+        assert this.getType().equals(EntryType.EVENT);
+        assert this.isRecurring();
+        LocalDateTime result = this.getNextEnd();
+        while (result.isAfter(LocalDateTime.now())) {
+            result = result.minus(this.getPeriod());
+        }
+        return result;
     }
 
 }
