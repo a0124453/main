@@ -248,8 +248,8 @@ public class CalendarListImpl implements CalendarList {
         CalendarListTemp result = (CalendarListTemp) this.find(toSearch, startDate, startTime, endDate, endTime);
         CalendarListTemp resultArchived = (CalendarListTemp) this.findArchived(toSearch, startDate, startTime, endDate,
                 endTime);
-        result.setArchivedTaskList(resultArchived.archivedTaskList);
-        result.setArchivedEventList(resultArchived.archivedEventList);
+        result.taskList.putAll(resultArchived.archivedTaskList);
+        result.eventList.putAll(resultArchived.archivedEventList);
         return result;
     }
 
