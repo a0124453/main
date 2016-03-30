@@ -146,4 +146,22 @@ public class ParserImplTest {
         parser.parse("edit 7 > sleep");
         verify(cmdFactory).edit(7, "sleep", null, null, null);
     }
+
+    @Test
+    public void testSearch() throws Exception {
+        //Partition: find all non-archived
+        parser.parse("find");
+        verify(cmdFactory).find();
+
+        //Partition with search term
+        parser.parse("search something");
+        verify(cmdFactory).find("something");
+
+        parser.parse("find something else");
+        verify(cmdFactory).find("something else");
+
+        //Boundary: with separators
+        parser.parse("list something in the water > ?? > !!");
+        verify(cmdFactory).find("something in the water > ?? > !!");
+    }
 }
