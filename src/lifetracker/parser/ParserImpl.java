@@ -101,7 +101,7 @@ public class ParserImpl implements Parser {
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
-            if(!commandBodySectionsMap.containsKey("by")){
+            if (!commandBodySectionsMap.containsKey("by")) {
                 commandBodySectionsMap.put("by", "");
             }
 
@@ -174,6 +174,14 @@ public class ParserImpl implements Parser {
         }
 
         if (validAddEventMap(editSectionMap)) {
+            if (!editSectionMap.containsKey("from")) {
+                editSectionMap.put("from", "");
+            }
+
+            if (!editSectionMap.containsKey("to")) {
+                editSectionMap.put("to", "");
+            }
+
             List<LocalDateTime> dateTimes = DATE_TIME_PARSER
                     .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
 

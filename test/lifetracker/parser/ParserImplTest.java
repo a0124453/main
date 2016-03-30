@@ -112,4 +112,38 @@ public class ParserImplTest {
     public void testInvalidOptions() throws Exception {
         parser.parse("imagination from today 2pm to 3pm by tomorrow");
     }
+
+    @Test
+    public void testEdit() throws Exception {
+        //Partition: Edit task
+        parser.parse("edit 1 > new name from tomorrow 3pm to 4pm every 2 days");
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(16, 0));
+
+        verify(cmdFactory).edit(1, "new name", startTime, endTime, Period.ofDays(2));
+
+        //Boundary: Missing options
+        parser.parse("edit 2 > some other talk from tomorrow 3pm to 4pm");
+        verify(cmdFactory).edit(2, "some other talk", startTime, endTime, null);
+
+        //Boundary: Missing end date time
+        parser.parse("edit 3 > run from tomorrow 3pm");
+        verify(cmdFactory).edit(3, "run", startTime, endTime, null);
+
+        //Boundary: Missing name
+        parser.parse("edit 4 > from tomorrow 3pm to 4pm");
+        verify(cmdFactory).edit(4, "", startTime, endTime, null);
+
+        //Partition: Edit deadline task
+        parser.parse("edit 5 > homework by tomorrow 4pm");
+        verify(cmdFactory).edit(5, "homework", null, endTime, null);
+
+        //Boundary: Invalid deadline date time
+        parser.parse("edit 6 > drop by school from home");
+        verify(cmdFactory).edit(6, "drop by school from home", null, null, null);
+
+        //Partition: Name only
+        parser.parse("edit 7 > sleep");
+        verify(cmdFactory).edit(7, "sleep", null, null, null);
+    }
 }
