@@ -30,11 +30,15 @@ public class AddRecurringCommand extends AddCommand {
     public CalendarList execute(CalendarList calendar) {
         assert calendar != null;
 
+        int entryID;
+
         if (getStartDateTime() == null) {
-            calendar.add(getName(), getEndDateTime(), recurringPeriod);
+            entryID = calendar.add(getName(), getEndDateTime(), recurringPeriod);
         } else {
-            calendar.add(getName(), getStartDateTime(), getEndDateTime(), recurringPeriod);
+            entryID = calendar.add(getName(), getStartDateTime(), getEndDateTime(), recurringPeriod);
         }
+
+        setAddedEntryID(entryID);
 
         setExecuted(true);
 
