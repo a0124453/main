@@ -41,4 +41,8 @@ public abstract class CommandObject {
     protected boolean isExecuted() {
         return executed;
     }
+
+    protected void setExecuted(boolean executed) {
+        this.executed = executed;
+    }
 }
