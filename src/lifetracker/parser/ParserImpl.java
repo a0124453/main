@@ -101,6 +101,10 @@ public class ParserImpl implements Parser {
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
+            if(!commandBodySectionsMap.containsKey("by")){
+                commandBodySectionsMap.put("by", "");
+            }
+
             LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
             if (commandBodySectionsMap.containsKey("every")) {
@@ -124,7 +128,7 @@ public class ParserImpl implements Parser {
     }
 
     private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
-        return commandBodySectionMap.containsKey("by")
+        return (commandBodySectionMap.containsKey("by") || commandBodySectionMap.containsKey("every"))
                 && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
     }
 
