@@ -61,9 +61,6 @@ public class UIController implements Initializable {
             Platform.exit();
         }
 
-        if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
-            populateList(result);
-        }
         labelFeedback.setText(result.getComment());
     }
 
@@ -159,11 +156,4 @@ public class UIController implements Initializable {
         
     }
     
-
-    /*
-     * private ObservableList<Task> parseUserList() { ExecuteResult result;
-     * 
-     * result = l.executeCommand("list"); return
-     * FXCollections.observableArrayList(new Task(this.task)); }
-     */
 }
