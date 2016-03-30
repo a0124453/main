@@ -15,8 +15,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import com.sun.j3d.utils.scenegraph.io.retained.Controller;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -73,9 +71,10 @@ public class LifeTracker extends Application {
             Parser commandParser = new ParserImpl();
             Logic programLogic = new LogicImpl(commandParser, fileStorage);
             UIController.setLogic(programLogic);
-            
+            UIController.populateList(programLogic.executeCommand("list"));
         }
         
         primaryStage.show();
+
     }
 }

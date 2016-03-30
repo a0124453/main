@@ -161,7 +161,6 @@ public class UIController implements Initializable {
     public static void populateList(ExecuteResult result) {
         taskList.clear();
 
-        
         for (List<String> task : result.getTaskList()) {
             taskList.add(new ItemUI(task));
         }
