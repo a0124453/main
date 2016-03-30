@@ -60,23 +60,7 @@ public class UIController implements Initializable {
         if (result.getType() == ExecuteResult.CommandType.EXIT) {
             Platform.exit();
         }
-        
-        List<List<String>> taskList = result.getTaskList();
-        
-        for (List<String> task: taskList) {
-            for(String line: task){
-                System.out.println(line);
-            }
-        }
-        
-        List<List<String>> eventList = result.getEventList();
-        
-        for (List<String> task: eventList) {
-            for(String line: task){
-                System.out.println(line);
-            }
-        }
-        
+
         if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
             populateList(result);
         }
