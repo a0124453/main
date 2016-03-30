@@ -42,6 +42,7 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
+        commands.put("mark", this::processMark);
     }
 
     private final CommandParser cmdParser;
@@ -202,6 +203,14 @@ public class ParserImpl implements Parser {
         } else {
             return commandObjectFactory.find(searchTerm);
         }
+    }
+
+    private CommandObject processMark(List<String> commandBody) {
+        String idString = restoreCommandSections(commandBody);
+
+        int id = Integer.parseInt(idString);
+
+        return commandObjectFactory.mark(id);
     }
 
     private String restoreCommandSections(List<String> stringList) {
