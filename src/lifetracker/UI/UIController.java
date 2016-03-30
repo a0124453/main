@@ -45,13 +45,10 @@ public class UIController implements Initializable {
     public void getInput() {
         String userInput;
 
-        if (!textInput.getText().toLowerCase().equals("exit")) {
-            userInput = textInput.getText();
-            process(userInput);
-            textInput.setText("");
-        } else {
-            System.exit(0);
-        }
+        userInput = textInput.getText();
+        process(userInput);
+        textInput.setText("");
+
     }
 
     private void process(String userInput) {

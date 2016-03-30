@@ -25,6 +25,7 @@ public class LifeTracker extends Application {
 
     private static final String LOG_FOLDER = "logs/";
     private static final String LOG_FILE = "lifetracker.log";
+    private Storage fileStorage;
 
     public static void main(String args[]) throws Exception {
 
@@ -63,18 +64,18 @@ public class LifeTracker extends Application {
         scene.getStylesheets().add(getClass().getResource("/lifetracker/UI/application.css").toExternalForm());
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
-        
-        
-        try (Storage fileStorage = new ThreadedFileStorage()) {
-
-            setLogger();
-            Parser commandParser = new ParserImpl();
-            Logic programLogic = new LogicImpl(commandParser, fileStorage);
-            UIController.setLogic(programLogic);
-            UIController.populateList(programLogic.executeCommand("list"));
-        }
-        
+        fileStorage = new ThreadedFileStorage();
+        setLogger();
+        Parser commandParser = new ParserImpl();
+        Logic programLogic = new LogicImpl(commandParser, fileStorage);
+        UIController.setLogic(programLogic);
+        UIController.populateList(programLogic.executeCommand("list"));
         primaryStage.show();
 
+    }
+    
+    @Override
+    public void stop() throws Exception{
+        fileStorage.close();
     }
 }
