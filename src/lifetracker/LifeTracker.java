@@ -1,8 +1,12 @@
 package lifetracker;
 
-import lifetracker.UI.UI;
-import lifetracker.command.CommandFactoryImpl;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import lifetracker.UI.UIController;
+import lifetracker.command.CommandFactoryImpl;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicImpl;
 import lifetracker.parser.Parser;
@@ -16,12 +20,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 public class LifeTracker extends Application {
 
     private static final String LOG_FOLDER = "logs/";
@@ -29,18 +27,7 @@ public class LifeTracker extends Application {
     private Storage fileStorage;
 
     public static void main(String args[]) throws Exception {
-
         launch(args);
-        /*
-        try (Storage fileStorage = new ThreadedFileStorage()) {
-
-            setLogger();
-            Parser commandParser = new ParserImpl();
-            Logic programLogic = new LogicImpl(commandParser, fileStorage);
-            new UI(programLogic);
-            
-        }*/
-
     }
 
     private static void setLogger() throws IOException {
@@ -67,7 +54,7 @@ public class LifeTracker extends Application {
         primaryStage.setScene(scene);
         fileStorage = new ThreadedFileStorage();
         setLogger();
-        Parser commandParser = new ParserImpl();
+        Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
         UIController.setLogic(programLogic);
         UIController.populateList(programLogic.executeCommand("list"));

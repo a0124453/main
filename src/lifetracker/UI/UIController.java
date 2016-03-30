@@ -1,14 +1,7 @@
 package lifetracker.UI;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,33 +9,52 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
-import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.logic.Logic;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class UIController implements Initializable {
 
     private static Logic l;
 
-    @FXML TextField textInput;
-    @FXML Label labelFeedback;
-    @FXML TableView<ItemUI> tableTask;
-    @FXML TableColumn<ItemUI, String> columnTaskID;
-    @FXML TableColumn<ItemUI, String> columnTaskName;
-    @FXML TableColumn<ItemUI, String> columnTaskTime;
-    @FXML TableView<ItemUI> tableEvent;
-    @FXML TableColumn<ItemUI, String> columnEventID;
-    @FXML TableColumn<ItemUI, String> columnEventName;
-    @FXML TableColumn<ItemUI, String> columnEventStartTime;
-    @FXML TableColumn<ItemUI, String> columnEventEndTime;
-    
+    @FXML
+    TextField textInput;
+    @FXML
+    Label labelFeedback;
+    @FXML
+    TableView<ItemUI> tableTask;
+    @FXML
+    TableColumn<ItemUI, String> columnTaskID;
+    @FXML
+    TableColumn<ItemUI, String> columnTaskName;
+    @FXML
+    TableColumn<ItemUI, String> columnTaskActive;
+    @FXML
+    TableColumn<ItemUI, String> columnTaskTime;
+    @FXML
+    TableColumn<ItemUI, String> columnTaskRecurring;
+    @FXML
+    TableView<ItemUI> tableEvent;
+    @FXML
+    TableColumn<ItemUI, String> columnEventID;
+    @FXML
+    TableColumn<ItemUI, String> columnEventName;
+    @FXML
+    TableColumn<ItemUI, String> columnEventActive;
+    @FXML
+    TableColumn<ItemUI, String> columnEventStartTime;
+    @FXML
+    TableColumn<ItemUI, String> columnEventEndTime;
+    @FXML
+    TableColumn<ItemUI, String> columnEventRecurring;
+
     private static ObservableList<ItemUI> taskList = FXCollections.observableArrayList();
     private static ObservableList<ItemUI> eventList = FXCollections.observableArrayList();
-    
+
     @FXML
     public void getInput() {
         String userInput;
@@ -56,12 +68,16 @@ public class UIController implements Initializable {
     private void process(String userInput) {
         ExecuteResult result;
         result = l.executeCommand(userInput);
-        
+
         if (result.getType() == ExecuteResult.CommandType.EXIT) {
             Platform.exit();
         }
 
         labelFeedback.setText(result.getComment());
+
+        if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
+            populateList(result);
+        }
     }
 
     public static Logic getLogic() {
@@ -75,69 +91,28 @@ public class UIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        columnTaskID.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(0));
-                    }
-                });
+        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
 
-        columnTaskName.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnTaskActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(1));
-                    }
-                });
+        columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
 
-        columnTaskTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnTaskRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(2));
-                    }
-                });      
-        
-        columnEventID.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(0));
-                    }
-                });
-        
-        columnEventName.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(1));
-                    }
-                });
-        
-        columnEventStartTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnEventActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(2));
-                    }
-                }); 
-        
-        columnEventEndTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<ItemUI, String>, ObservableValue<String>>() {
+        columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
 
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ItemUI, String> param) {
-                        return new ReadOnlyStringWrapper(param.getValue().getItem().get(3));
-                    }
-                });
-                
+        columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+
+        columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
+
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
     }
@@ -153,7 +128,7 @@ public class UIController implements Initializable {
         for (List<String> event : result.getEventList()) {
             eventList.add(new ItemUI(event));
         }
-        
+
     }
-    
+
 }

@@ -62,6 +62,7 @@ public class CommandLineResult implements ExecuteResult {
 
         if (deadline == null) {
             record.add("");
+            record.add("");
         } else {
             record.add(deadline.format(DateTimeFormatter.ofLocalizedDateTime(DATE_STYLE, TIME_STYLE)));
 

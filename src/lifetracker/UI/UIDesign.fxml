@@ -7,21 +7,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="690.0" prefWidth="684.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="690.0" prefWidth="884.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
    <children>
-      <TableView fx:id="tableEvent" prefHeight="280.0" prefWidth="600.0">
+      <TableView fx:id="tableEvent" prefHeight="280.0" prefWidth="800.0">
         <columns>
           <TableColumn fx:id="columnEventID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
-          <TableColumn fx:id="columnEventName" editable="false" prefWidth="312.0" sortable="false" text="EVENT" />
-            <TableColumn fx:id="columnEventStartTime" editable="false" minWidth="2.0" prefWidth="148.0" sortable="false" text="START TIME" />
-            <TableColumn fx:id="columnEventEndTime" editable="false" minWidth="2.0" prefWidth="148.0" sortable="false" text="END TIME" />
+          <TableColumn fx:id="columnEventName" editable="false" prefWidth="278.0" sortable="false" text="EVENT" />
+            <TableColumn fx:id="columnEventActive" editable="false" prefWidth="75.0" sortable="false" text="ACTIVE?" />
+            <TableColumn fx:id="columnEventStartTime" editable="false" minWidth="2.0" prefWidth="155.0" sortable="false" text="START TIME" />
+            <TableColumn fx:id="columnEventEndTime" editable="false" minWidth="2.0" prefWidth="155.0" sortable="false" text="END TIME" />
+            <TableColumn fx:id="columnEventRecurring" editable="false" minWidth="2.0" prefWidth="148.0" sortable="false" text="EVERY" />
         </columns>
       </TableView>
-      <TableView fx:id="tableTask" prefHeight="280.0" prefWidth="600.0">
+      <TableView fx:id="tableTask" prefHeight="280.0" prefWidth="800.0">
          <columns>
             <TableColumn fx:id="columnTaskID" editable="false" prefWidth="75.0" sortable="false" text="ID" />
             <TableColumn fx:id="columnTaskName" editable="false" prefWidth="312.0" sortable="false" text="TASK" />
+            <TableColumn fx:id="columnTaskActive" editable="false" prefWidth="75.0" sortable="false" text="ACTIVE?" />
             <TableColumn fx:id="columnTaskTime" editable="false" minWidth="2.0" prefWidth="296.0" resizable="false" sortable="false" text="TIME" />
+            <TableColumn fx:id="columnTaskRecurring" editable="false" prefWidth="124.0" sortable="false" text="EVERY" />
          </columns>
       </TableView>
       <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
