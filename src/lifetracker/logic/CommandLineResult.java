@@ -71,7 +71,7 @@ public class CommandLineResult implements ExecuteResult {
                 record.add(convert(period));
             }
         }
-
+        
         taskList.add(record);
     }
 
