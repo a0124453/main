@@ -213,7 +213,7 @@ public class ParserImpl implements Parser {
         if (searchTerm.isEmpty()) {
             return commandObjectFactory.findAll();
         } else {
-            return commandObjectFactory.find(searchTerm);
+            return commandObjectFactory.findAll(searchTerm);
         }
     }
 
