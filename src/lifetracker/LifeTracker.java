@@ -77,6 +77,5 @@ public class LifeTracker extends Application {
         }
         
         primaryStage.show();
-        UIController.populateList();
     }
 }
