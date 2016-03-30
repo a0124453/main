@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import lifetracker.calendar.CalendarEntry.EntryType;
@@ -328,10 +330,12 @@ public class CalendarListImpl implements CalendarList {
         if (toSearch == null || toSearch.isEmpty()) {
             return;
         }
-        for (int id : treeMap.keySet()) {
-            String entryName = treeMap.get(id).getName();
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        for (; iterator.hasNext();) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            String entryName = entry.getValue().getName();
             if (!entryName.contains(toSearch)) {
-                treeMap.remove(id);
+                iterator.remove();
             }
         }
     }
@@ -340,13 +344,15 @@ public class CalendarListImpl implements CalendarList {
         if (startDate == null) {
             return;
         }
-        for (int id : treeMap.keySet()) {
-            if (treeMap.get(id).getStart() == null) {
-                treeMap.remove(id);
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getStart() == null) {
+                iterator.remove();
             } else {
-                LocalDate entryStartDate = treeMap.get(id).getStart().toLocalDate();
+                LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
                 if (!entryStartDate.equals(startDate)) {
-                    treeMap.remove(id);
+                    iterator.remove();
                 }
             }
         }
@@ -356,13 +362,15 @@ public class CalendarListImpl implements CalendarList {
         if (startTime == null) {
             return;
         }
-        for (int id : treeMap.keySet()) {
-            if (treeMap.get(id).getStart() == null) {
-                treeMap.remove(id);
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getStart() == null) {
+                iterator.remove();
             } else {
-                LocalTime entryStartTime = treeMap.get(id).getStartTime();
+                LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
                 if (!entryStartTime.equals(startTime)) {
-                    treeMap.remove(id);
+                    iterator.remove();
                 }
             }
         }
@@ -372,13 +380,15 @@ public class CalendarListImpl implements CalendarList {
         if (endDate == null) {
             return;
         }
-        for (int id : treeMap.keySet()) {
-            if (treeMap.get(id).getEnd() == null) {
-                treeMap.remove(id);
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getEnd() == null) {
+                iterator.remove();
             } else {
-                LocalDate entryEndDate = treeMap.get(id).getEnd().toLocalDate();
+                LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
                 if (!entryEndDate.equals(endDate)) {
-                    treeMap.remove(id);
+                    iterator.remove();
                 }
             }
         }
@@ -388,13 +398,15 @@ public class CalendarListImpl implements CalendarList {
         if (endTime == null) {
             return;
         }
-        for (int id : treeMap.keySet()) {
-            if (treeMap.get(id).getEnd() == null) {
-                treeMap.remove(id);
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getEnd() == null) {
+                iterator.remove();
             } else {
-                LocalTime entryEndTime = treeMap.get(id).getEndTime();
+                LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
                 if (!entryEndTime.equals(endTime)) {
-                    treeMap.remove(id);
+                    iterator.remove();
                 }
             }
         }
