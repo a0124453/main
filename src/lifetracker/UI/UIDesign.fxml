@@ -28,7 +28,7 @@
             <TableColumn fx:id="columnTaskRecurring" editable="false" prefWidth="124.0" sortable="false" text="EVERY" />
          </columns>
       </TableView>
-      <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="600.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
+      <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="61.0" prefWidth="916.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="24.0" />
          </font>
