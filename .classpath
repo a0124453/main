@@ -10,8 +10,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/j-text-utils-0.3.3.jar" sourcepath="lib/j-text-utils-0.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-all-2.0.2-beta.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mockito-all-2.0.2-beta"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/gson-2.6.2"/>	
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/gson-2.6.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-lang3-3.4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,6 +1,7 @@
 package lifetracker.calendar;
 
 import lifetracker.calendar.CalendarEntry.EntryType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -356,7 +357,7 @@ public class CalendarListImpl implements CalendarList {
         for (; iterator.hasNext(); ) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
-            if (!entryName.contains(toSearch)) {
+            if (!StringUtils.containsIgnoreCase(entryName, toSearch)) {
                 iterator.remove();
             }
         }
