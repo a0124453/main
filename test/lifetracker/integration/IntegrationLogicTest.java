@@ -42,10 +42,6 @@ public class IntegrationLogicTest {
 
     @AfterClass
     public static void tearDownTestFile() throws Exception {
-        File testFile = new File(DEFAULT_FILENAME);
-
-        testFile.delete();
-
         File origFile = new File(ALT_FILENAME);
 
         if (origFile.exists()) {
@@ -64,10 +60,12 @@ public class IntegrationLogicTest {
     @After
     public void tearDown() throws Exception {
         storage.close();
+        File testFile = new File(DEFAULT_FILENAME);
+        testFile.delete();
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAddFloating() throws Exception {
         ExecuteResult actual;
         ExecuteResult expected = new CommandLineResult();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
@@ -97,18 +95,49 @@ public class IntegrationLogicTest {
         error.setComment("Invalid Command: Task/Event's name cannot be empty!");
         assertExecuteResult(error, actual);
 
-        //Partition: Floating tasks
-        actual = logic.executeCommand("meeting by today 3.30pm");
-        expected.addTaskLine(4, "meeting", true, LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 30)), null);
+    }
+
+    @Test
+    public void testAddDeadLine() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+
+        //Partition: Deadline tasks
+        actual = logic.executeCommand("meeting by 12-5-16 3.30pm");
+        expected.addTaskLine(1, "meeting", true, LocalDateTime.of(LocalDate.of(2016,5, 12), LocalTime.of(15, 30)), null);
         expected.setComment(String.format(MESSAGE_ADD, "meeting"));
         assertExecuteResult(expected, actual);
 
+        //Boundary: Missing date
+        actual = logic.executeCommand("assignment by 1534");
+        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(15,34));
+        if(expectedDateTime.isBefore(LocalDateTime.now())){
+            expectedDateTime = expectedDateTime.plusDays(1);
+        }
+        expected.addTaskLine(2, "assignment", true, expectedDateTime, null);
+        expected.setComment(String.format(MESSAGE_ADD, "assignment"));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Missing Time
+        actual = logic.executeCommand("code review by tomorrow");
+        expectedDateTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT.minusMinutes(1));
+        expected.addTaskLine(3,"code review", true,expectedDateTime, null);
+        expected.setComment(String.format(MESSAGE_ADD, "code review"));
+        assertExecuteResult(expected,actual);
+
         //Boundary: Invalid identifier
         actual = logic.executeCommand("meeting by boss");
-        expected.addTaskLine(5, "meeting by boss", true, null, null);
+        expected.addTaskLine(4, "meeting by boss", true, null, null);
         expected.setComment(String.format(MESSAGE_ADD, "meeting by boss"));
         assertExecuteResult(expected, actual);
 
+        //Boundary: Missing name
+        actual = logic.executeCommand("by 2pm");
+        ExecuteResult error = new CommandLineResult();
+        error.setType(ExecuteResult.CommandType.ERROR);
+        error.setComment("Invalid Command: Task/Event's name cannot be empty!");
+        assertExecuteResult(error, actual);
     }
 
     public void assertExecuteResult(ExecuteResult expected, ExecuteResult actual) {
