@@ -253,7 +253,7 @@ public class IntegrationLogicTest {
         actual = logic.executeCommand("search xyzt");
         expected.addTaskLine(2, "xyzt", true, null, null);
         expected.addEventLine(3, "xyzt", true, LocalDateTime.of(2016,3,22,14,0), LocalDateTime.of(2016,3,22,15,0), null);
-        expected.setComment("Displaying entries with : \"xyzt\".");
+        expected.setComment("Displaying entries with: \"xyzt\".");
         assertExecuteResult(expected,actual);
 
         //Boundary: With other keywords
@@ -266,16 +266,25 @@ public class IntegrationLogicTest {
         //Boundary: With spaces
         actual = logic.executeCommand("search bcd ef");
         expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
         expected.addTaskLine(1, "abcd efg", true, null, null);
-        expected.setComment("Displaying entries with : \"bcd ef\".");
+        expected.setComment("Displaying entries with: \"bcd ef\".");
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Case insensitivity
+        actual = logic.executeCommand("search BCD EF");
+        expected.setComment("Displaying entries with: \"BCD EF\".");
+        assertExecuteResult(expected, actual);
 
         //Partition: Search all
         actual = logic.executeCommand("find");
         expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
         expected.addTaskLine(1, "abcd efg", true, null, null);
-        expected.addTaskLine(2, "xytz", true, null, null);
+        expected.addTaskLine(2, "xyzt", true, null, null);
         expected.addEventLine(3, "xyzt", true, LocalDateTime.of(2016,3,22,14,0), LocalDateTime.of(2016,3,22,15,0), null);
         expected.setComment("Displaying all entries.");
+        assertExecuteResult(expected, actual);
 
         //Boundary: With other keywords
         actual = logic.executeCommand("search");
