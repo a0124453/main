@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 
 public class ParserImpl implements Parser {
 
+    private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
+
     private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
 
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
@@ -139,22 +141,30 @@ public class ParserImpl implements Parser {
                 || commandBodySectionMap.containsKey("every"));
     }
 
-    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
-
+    private CommandObject processDelete(List<String> commandBody) {
         String idString = restoreCommandSections(commandBody);
+        try {
+            int id = Integer.parseInt(idString);
 
-        int id = Integer.parseInt(idString);
-
-        return commandObjectFactory.delete(id);
+            return commandObjectFactory.delete(id);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
     }
 
-    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException {
+    private CommandObject processEdit(List<String> commandBody) {
         if (commandBody.size() < 2) {
             throw new IllegalArgumentException();
         }
 
         String idString = commandBody.get(0);
-        int id = Integer.parseInt(idString);
+        int id;
+
+        try {
+            id = Integer.parseInt(idString);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
@@ -220,9 +230,12 @@ public class ParserImpl implements Parser {
     private CommandObject processMark(List<String> commandBody) {
         String idString = restoreCommandSections(commandBody);
 
-        int id = Integer.parseInt(idString);
-
-        return commandObjectFactory.mark(id);
+        try {
+            int id = Integer.parseInt(idString);
+            return commandObjectFactory.mark(id);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
     }
 
     private String restoreCommandSections(List<String> stringList) {
