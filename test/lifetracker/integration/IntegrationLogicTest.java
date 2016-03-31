@@ -16,6 +16,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 //@@author A0091173J
 public class IntegrationLogicTest {
@@ -67,19 +70,43 @@ public class IntegrationLogicTest {
     public void testAdd() throws Exception {
         ExecuteResult actual;
         ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: floating task
         actual = logic.executeCommand("add floating");
         expected.addTaskLine(1, "floating", true, null, null);
         expected.setComment(String.format(MESSAGE_ADD, "floating"));
-
         assertExecuteResult(expected, actual);
 
         //Boundary: no command
         actual = logic.executeCommand("free floating");
         expected.addTaskLine(2, "free floating", true, null, null);
         expected.setComment(String.format(MESSAGE_ADD, "free floating"));
+        assertExecuteResult(expected, actual);
 
+        //Boundary: reserved words
+        actual = logic.executeCommand("add add");
+        expected.addTaskLine(3, "add", true, null, null);
+        expected.setComment(String.format(MESSAGE_ADD, "add"));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Empty name
+        actual = logic.executeCommand("add");
+        ExecuteResult error = new CommandLineResult();
+        error.setType(ExecuteResult.CommandType.ERROR);
+        error.setComment("Invalid Command: Task/Event's name cannot be empty!");
+        assertExecuteResult(error, actual);
+
+        //Partition: Floating tasks
+        actual = logic.executeCommand("meeting by today 3.30pm");
+        expected.addTaskLine(4, "meeting", true, LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 30)), null);
+        expected.setComment(String.format(MESSAGE_ADD, "meeting"));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Invalid identifier
+        actual = logic.executeCommand("meeting by boss");
+        expected.addTaskLine(5, "meeting by boss", true, null, null);
+        expected.setComment(String.format(MESSAGE_ADD, "meeting by boss"));
         assertExecuteResult(expected, actual);
 
     }
@@ -88,5 +115,6 @@ public class IntegrationLogicTest {
         Assert.assertEquals(expected.getTaskList(), actual.getTaskList());
         Assert.assertEquals(expected.getTaskList(), actual.getTaskList());
         Assert.assertEquals(expected.getComment(), actual.getComment());
+        Assert.assertEquals(expected.getType(), actual.getType());
     }
 }
