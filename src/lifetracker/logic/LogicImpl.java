@@ -13,7 +13,8 @@ import java.util.Stack;
 public class LogicImpl implements Logic {
 
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
-    private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
+    private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
+    private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
     private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
@@ -36,33 +37,29 @@ public class LogicImpl implements Logic {
     @Override
     public ExecuteResult executeCommand(String commandString) {
         assert commandString != null;
-        
+
         String[] commandContent = commandString.split(" ");
         ExecuteResult runResult = new CommandLineResult();
 
         if (commandString.equals("exit")) {
             runResult.setType(CommandType.EXIT);
             return runResult;
-        }
-        
-        else if (commandContent[0].equals("saveat")) {
+        } else if (commandContent[0].equals("saveat")) {
             return processSaveatResults(commandString, runResult);
-        }
-        
-        else {
+        } else {
             CommandObject commandToExecute;
             CalendarList executedState;
-            
+
             runResult.setType(CommandType.DISPLAY);
 
             if (commandString.equals("undo")) {
-                
+
                 try {
                     commandToExecute = commandStack.pop();
                     executedState = commandToExecute.undo(calendar);
                 } catch (EmptyStackException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
-                    errorResult.setComment(ERROR_INVALID_COMMAND);
+                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
@@ -74,7 +71,7 @@ public class LogicImpl implements Logic {
                     executedState = commandToExecute.execute(calendar);
                 } catch (IllegalArgumentException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
-                    errorResult.setComment(ERROR_INVALID_COMMAND);
+                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
@@ -94,7 +91,7 @@ public class LogicImpl implements Logic {
         } catch (IOException ex) {
             System.err.println(ERROR_SAVE);
         }
-        
+
         runResult.setType(CommandType.SAVE);
         runResult.setComment(COMMENT_SAVE + location);
         return runResult;
@@ -118,12 +115,14 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             executedState.getTaskList()
-                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(), task.getPeriod()));
+                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(),
+                            task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
             executedState.getEventList().forEach(
-                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(), event.getEnd(), event.getPeriod()));
+                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(),
+                            event.getEnd(), event.getPeriod()));
         }
 
         return runResult;

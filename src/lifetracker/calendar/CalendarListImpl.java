@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.CalendarEntry.EntryType;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lifetracker.calendar.CalendarEntry.EntryType;
-
 public class CalendarListImpl implements CalendarList {
+
+    private static final String ERROR_EMPTY_NAME = "Task/Event's name cannot be empty!";
 
     // variables
     protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
@@ -73,7 +75,12 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        assert name != null && !name.isEmpty();
+        assert name != null;
+
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
         int idToSet = this.getNextId();
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
@@ -88,8 +95,13 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
-        assert name != null && !name.isEmpty();
+        assert name != null;
         assert deadline != null;
+
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
         int idToSet = this.getNextId();
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
@@ -98,6 +110,8 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime deadline, TemporalAmount period) {
+        assert period != null;
+
         int idToSet = this.add(name, deadline);
         this.taskList.get(idToSet).setPeriod(period);
         return idToSet;
@@ -111,8 +125,14 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
+        assert name !=null;
         assert start != null;
         assert end != null;
+
+        if(name.isEmpty()){
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
         int idToSet = this.getNextId();
         CalendarEntryImpl event = new CalendarEntryImpl(name, start, end, idToSet);
         eventList.put(idToSet, event);
@@ -121,6 +141,8 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+        assert period!=null;
+
         int idToSet = this.add(name, start, end);
         this.eventList.get(idToSet).setPeriod(period);
         return idToSet;
@@ -331,7 +353,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        for (; iterator.hasNext();) {
+        for (; iterator.hasNext(); ) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
             if (!entryName.contains(toSearch)) {

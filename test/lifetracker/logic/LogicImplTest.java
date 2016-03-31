@@ -1,26 +1,24 @@
 package lifetracker.logic;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import lifetracker.calendar.CalendarList;
 import lifetracker.command.AddCommand;
 import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
 
 public class LogicImplTest {
     
-    private static final String ERROR_INVALID_COMMAND = "Error: Command was not a valid command!";
+    private static final String ERROR_INVALID_COMMAND = "Invalid Command: null";
     
     private static Parser parser = mock(Parser.class);
     private static Storage storage = mock(Storage.class);
