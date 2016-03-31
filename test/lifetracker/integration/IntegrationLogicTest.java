@@ -25,6 +25,7 @@ import java.time.Period;
 public class IntegrationLogicTest {
 
     private static final String MESSAGE_ADD = "\"%1$s\" is added.";
+    private static final String MESSAGE_DELETE = "%1$d is deleted.";
 
     private static final String DEFAULT_FILENAME = "lifetracker.dat";
     private static final String ALT_FILENAME = "lifetracker.dat.orig";
@@ -150,7 +151,7 @@ public class IntegrationLogicTest {
         actual = logic.executeCommand("add report by 2pm every 2 days");
         LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
         if (expectedDateTime.isBefore(LocalDateTime.now())) {
-            expectedDateTime.plusDays(1);
+            expectedDateTime = expectedDateTime.plusDays(1);
         }
         expected.addTaskLine(1, "report", true, expectedDateTime, Period.ofDays(2));
         expected.setComment(String.format(MESSAGE_ADD, "report"));
@@ -207,6 +208,80 @@ public class IntegrationLogicTest {
         }
         expected.addEventLine(1, "tutorial", true, expectedStartDateTime, expectedEndDateTime, expectedRecurringPeriod);
         expected.setComment(String.format(MESSAGE_ADD, "tutorial"));
+        assertExecuteResult(expected, actual);
+    }
+
+    @Test
+    public void testDeleteEntries() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+
+        logic.executeCommand("add floating task 1");
+        logic.executeCommand("add floating task 2");
+
+        //Partition: Delete existing entry
+        actual = logic.executeCommand("delete 1");
+        expected.addTaskLine(2, "floating task 2", true, null, null);
+        expected.setComment(String.format(MESSAGE_DELETE, 1));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Delete non-existent entry
+        actual = logic.executeCommand("delete 100");
+        ExecuteResult error = new CommandLineResult();
+        error.setType(ExecuteResult.CommandType.ERROR);
+        error.setComment("Invalid Command: 100 cannot be found!");
+        assertExecuteResult(error, actual);
+
+        //Boundary: Invalid ID
+        actual = logic.executeCommand("delete");
+        error.setComment("Invalid Command: \"\" is not a valid ID!");
+        assertExecuteResult(error, actual);
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+
+        logic.executeCommand("abcd efg");
+        logic.executeCommand("xyzt");
+        logic.executeCommand("xyzt from 22/3/16 2pm to 3pm");
+
+        //Partition: keyword search
+        actual = logic.executeCommand("search xyzt");
+        expected.addTaskLine(2, "xyzt", true, null, null);
+        expected.addEventLine(3, "xyzt", true, LocalDateTime.of(2016,3,22,14,0), LocalDateTime.of(2016,3,22,15,0), null);
+        expected.setComment("Displaying entries with : \"xyzt\".");
+        assertExecuteResult(expected,actual);
+
+        //Boundary: With other keywords
+        actual = logic.executeCommand("find xyzt");
+        assertExecuteResult(expected, actual);
+
+        actual = logic.executeCommand("list xyzt");
+        assertExecuteResult(expected, actual);
+
+        //Boundary: With spaces
+        actual = logic.executeCommand("search bcd ef");
+        expected = new CommandLineResult();
+        expected.addTaskLine(1, "abcd efg", true, null, null);
+        expected.setComment("Displaying entries with : \"bcd ef\".");
+
+        //Partition: Search all
+        actual = logic.executeCommand("find");
+        expected = new CommandLineResult();
+        expected.addTaskLine(1, "abcd efg", true, null, null);
+        expected.addTaskLine(2, "xytz", true, null, null);
+        expected.addEventLine(3, "xyzt", true, LocalDateTime.of(2016,3,22,14,0), LocalDateTime.of(2016,3,22,15,0), null);
+        expected.setComment("Displaying all entries.");
+
+        //Boundary: With other keywords
+        actual = logic.executeCommand("search");
+        assertExecuteResult(expected, actual);
+
+        actual = logic.executeCommand("list");
         assertExecuteResult(expected, actual);
     }
 
