@@ -170,6 +170,46 @@ public class IntegrationLogicTest {
         assertExecuteResult(expected, actual);
     }
 
+    @Test
+    public void testAddEvents() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        LocalDateTime expectedStartDateTime;
+        LocalDateTime expectedEndDateTime;
+
+        //Partition: Add events
+        actual = logic.executeCommand("add interview from 22/3/16 2.30pm to 22/3/16 4pm");
+        expectedStartDateTime = LocalDateTime.of(2016, 3, 22, 14, 30);
+        expectedEndDateTime = LocalDateTime.of(2016, 3, 22, 16, 0);
+        expected.addEventLine(1, "interview", true, expectedStartDateTime, expectedEndDateTime, null);
+        expected.setComment(String.format(MESSAGE_ADD, "interview"));
+        assertExecuteResult(expected, actual);
+    }
+
+    @Test
+    public void testAddRecurringEvents() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        LocalDateTime expectedStartDateTime;
+        LocalDateTime expectedEndDateTime;
+        Period expectedRecurringPeriod;
+
+        //Partition: Add recurring events
+        actual = logic.executeCommand("add tutorial from 24/3/16 3pm to 4pm every week");
+        expectedStartDateTime = LocalDateTime.of(2016, 3, 24, 15, 0);
+        expectedEndDateTime = expectedStartDateTime.plusHours(1);
+        expectedRecurringPeriod = Period.ofWeeks(1);
+        while (expectedEndDateTime.isBefore(LocalDateTime.now())) {
+            expectedStartDateTime = expectedStartDateTime.plus(expectedRecurringPeriod);
+            expectedEndDateTime = expectedEndDateTime.plus(expectedRecurringPeriod);
+        }
+        expected.addEventLine(1, "tutorial", true, expectedStartDateTime, expectedEndDateTime, expectedRecurringPeriod);
+        expected.setComment(String.format(MESSAGE_ADD, "tutorial"));
+        assertExecuteResult(expected, actual);
+    }
+
     public void assertExecuteResult(ExecuteResult expected, ExecuteResult actual) {
         Assert.assertEquals(expected.getTaskList(), actual.getTaskList());
         Assert.assertEquals(expected.getTaskList(), actual.getTaskList());
