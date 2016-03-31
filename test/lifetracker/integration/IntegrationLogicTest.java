@@ -19,6 +19,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 
 //@@author A0091173J
 public class IntegrationLogicTest {
@@ -52,9 +53,7 @@ public class IntegrationLogicTest {
     @Before
     public void setUp() throws Exception {
         storage = new ThreadedFileStorage(DEFAULT_FILENAME);
-
         logic = new LogicImpl(new ParserImpl(new CommandFactoryImpl()), storage);
-
     }
 
     @After
@@ -70,7 +69,7 @@ public class IntegrationLogicTest {
         ExecuteResult expected = new CommandLineResult();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
-        //Partition: floating task
+        //Partition: Add floating task
         actual = logic.executeCommand("add floating");
         expected.addTaskLine(1, "floating", true, null, null);
         expected.setComment(String.format(MESSAGE_ADD, "floating"));
@@ -103,16 +102,17 @@ public class IntegrationLogicTest {
         ExecuteResult expected = new CommandLineResult();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
-        //Partition: Deadline tasks
+        //Partition: Add deadline tasks
         actual = logic.executeCommand("meeting by 12-5-16 3.30pm");
-        expected.addTaskLine(1, "meeting", true, LocalDateTime.of(LocalDate.of(2016,5, 12), LocalTime.of(15, 30)), null);
+        expected.addTaskLine(1, "meeting", true, LocalDateTime.of(LocalDate.of(2016, 5, 12), LocalTime.of(15, 30)),
+                null);
         expected.setComment(String.format(MESSAGE_ADD, "meeting"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Missing date
         actual = logic.executeCommand("assignment by 1534");
-        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(15,34));
-        if(expectedDateTime.isBefore(LocalDateTime.now())){
+        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 34));
+        if (expectedDateTime.isBefore(LocalDateTime.now())) {
             expectedDateTime = expectedDateTime.plusDays(1);
         }
         expected.addTaskLine(2, "assignment", true, expectedDateTime, null);
@@ -122,9 +122,9 @@ public class IntegrationLogicTest {
         //Boundary: Missing Time
         actual = logic.executeCommand("code review by tomorrow");
         expectedDateTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT.minusMinutes(1));
-        expected.addTaskLine(3,"code review", true,expectedDateTime, null);
+        expected.addTaskLine(3, "code review", true, expectedDateTime, null);
         expected.setComment(String.format(MESSAGE_ADD, "code review"));
-        assertExecuteResult(expected,actual);
+        assertExecuteResult(expected, actual);
 
         //Boundary: Invalid identifier
         actual = logic.executeCommand("meeting by boss");
@@ -138,6 +138,36 @@ public class IntegrationLogicTest {
         error.setType(ExecuteResult.CommandType.ERROR);
         error.setComment("Invalid Command: Task/Event's name cannot be empty!");
         assertExecuteResult(error, actual);
+    }
+
+    @Test
+    public void testAddRecurringDeadlineTask() throws Exception {
+        ExecuteResult actual;
+        ExecuteResult expected = new CommandLineResult();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+
+        //Partition: Add recurring deadline tasks
+        actual = logic.executeCommand("add report by 2pm every 2 days");
+        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
+        if (expectedDateTime.isBefore(LocalDateTime.now())) {
+            expectedDateTime.plusDays(1);
+        }
+        expected.addTaskLine(1, "report", true, expectedDateTime, Period.ofDays(2));
+        expected.setComment(String.format(MESSAGE_ADD, "report"));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Missing date time
+        actual = logic.executeCommand("pump bicycle wheels every 2 weeks");
+        expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
+        expected.addTaskLine(2, "pump bicycle wheels", true, expectedDateTime, Period.ofWeeks(2));
+        expected.setComment(String.format(MESSAGE_ADD, "pump bicycle wheels"));
+        assertExecuteResult(expected, actual);
+
+        //Boundary: Invalid recurring period identifier
+        actual = logic.executeCommand("meeting every now and then");
+        expected.addTaskLine(3, "meeting every now and then", true, null, null);
+        expected.setComment(String.format(MESSAGE_ADD, "meeting every now and then"));
+        assertExecuteResult(expected, actual);
     }
 
     public void assertExecuteResult(ExecuteResult expected, ExecuteResult actual) {
