@@ -6,26 +6,32 @@ public class LogicFloatingImpl implements LogicFloating {
     private int id;
     private boolean isDone;
     
-    public void setName(String recordName) {
-        this.name = recordName;
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
     
+    @Override
     public String getName() {
         return name;
     }
     
-    public void setId(int recordId) {
-        this.id = recordId;
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
     
+    @Override
     public int getId() {
         return id;
     }
     
-    public void setDone(boolean recordDone) {
-        this.isDone = recordDone;
+    @Override
+    public void setDone(boolean isDone) {
+        this.isDone = isDone;
     }
     
+    @Override
     public boolean isDone() {
         return isDone;
     }

@@ -2,15 +2,15 @@ package lifetracker.logic;
 
 public interface LogicFloating {
 
-    void setName(String recordName);
+    void setName(String name);
     
     String getName();
     
-    void setId(int recordId);
+    void setId(int id);
     
     int getId();
     
-    void setDone(boolean recordDone);
+    void setDone(boolean isDone);
     
     boolean isDone();
 }
