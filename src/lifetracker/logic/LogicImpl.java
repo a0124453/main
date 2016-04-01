@@ -15,6 +15,7 @@ public class LogicImpl implements Logic {
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
+    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
     private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
@@ -70,9 +71,16 @@ public class LogicImpl implements Logic {
             }
             
             else if (commandString.equals("redo")) {
-                commandToExecute = redoStack.pop();
-                commandStack.push(commandToExecute);
-                executedState = commandToExecute.execute(calendar);
+                try {
+                    commandToExecute = redoStack.pop();
+                    commandStack.push(commandToExecute);
+                    executedState = commandToExecute.execute(calendar);
+                } catch (EmptyStackException ex) {
+                    ExecuteResult errorResult = new CommandLineResult();
+                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
+                    errorResult.setType(CommandType.ERROR);
+                    return errorResult;
+                }
             }
             
             else {
