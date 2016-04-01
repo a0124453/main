@@ -243,39 +243,33 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#find(String)
      */
     @Override
-    public CalendarList find(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
+    public CalendarList findByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
-        TreeMap<Integer, CalendarEntry> copyTaskList = this.filterList(this.taskList, toSearch, startDate, startTime,
-                endDate, endTime);
-        TreeMap<Integer, CalendarEntry> copyEventList = this.filterList(this.eventList, toSearch, startDate, startTime,
-                endDate, endTime);
+        TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
+        copyTaskList.putAll(this.taskList);
+        filterByName(copyTaskList, toSearch);
+        TreeMap<Integer, CalendarEntry> copyEventList = new TreeMap<>();
+        copyEventList.putAll(this.eventList);
+        filterByName(copyEventList, toSearch);
         result.setTaskList(copyTaskList);
         result.setEventList(copyEventList);
         return result;
     }
 
     @Override
-    public CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
+    public CalendarList findArchivedByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
-        TreeMap<Integer, CalendarEntry> copyArchivedTaskList = this.filterList(this.archivedTaskList, toSearch,
-                startDate, startTime, endDate, endTime);
-        TreeMap<Integer, CalendarEntry> copyArchivedEventList = this.filterList(this.archivedEventList, toSearch,
-                startDate, startTime, endDate, endTime);
-        result.setArchivedTaskList(copyArchivedTaskList);
-        result.setArchivedEventList(copyArchivedEventList);
-        return result;
+        result.setTaskList(this.archivedTaskList);
+        result.setEventList(this.archivedEventList);
+        return result.findByName(toSearch);
     }
 
     @Override
-    public CalendarList findAll(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
-        CalendarListTemp result = (CalendarListTemp) this.find(toSearch, startDate, startTime, endDate, endTime);
-        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchived(toSearch, startDate, startTime, endDate,
-                endTime);
-        result.taskList.putAll(resultArchived.archivedTaskList);
-        result.eventList.putAll(resultArchived.archivedEventList);
+    public CalendarList findAllByName(String toSearch) {
+        CalendarListTemp result = (CalendarListTemp) this.findByName(toSearch);
+        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchivedByName(toSearch);
+        result.taskList.putAll(resultArchived.taskList);
+        result.eventList.putAll(resultArchived.eventList);
         return result;
     }
 

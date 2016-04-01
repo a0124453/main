@@ -1,8 +1,6 @@
 package lifetracker.calendar;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 
@@ -39,12 +37,10 @@ public interface CalendarList {
 
     CalendarEntry mark(int id);
 
-    CalendarList find(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime);
+    CalendarList findByName(String toSearch);
 
-    CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime);
+    CalendarList findArchivedByName(String toSearch);
 
-    CalendarList findAll(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime);
+    CalendarList findAllByName(String toSearch);
 
 }
