@@ -1,8 +1,5 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.CalendarEntry.EntryType;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,6 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lifetracker.calendar.CalendarEntry.EntryType;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -126,11 +127,11 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
-        assert name !=null;
+        assert name != null;
         assert start != null;
         assert end != null;
 
-        if(name.isEmpty()){
+        if (name.isEmpty()) {
             throw new IllegalArgumentException(ERROR_EMPTY_NAME);
         }
 
@@ -142,7 +143,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
-        assert period!=null;
+        assert period != null;
 
         int idToSet = this.add(name, start, end);
         this.eventList.get(idToSet).setPeriod(period);
@@ -242,39 +243,33 @@ public class CalendarListImpl implements CalendarList {
      * @see lifetracker.calendar.CalenderList#find(String)
      */
     @Override
-    public CalendarList find(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
+    public CalendarList findByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
-        TreeMap<Integer, CalendarEntry> copyTaskList = this.filterList(this.taskList, toSearch, startDate, startTime,
-                endDate, endTime);
-        TreeMap<Integer, CalendarEntry> copyEventList = this.filterList(this.eventList, toSearch, startDate, startTime,
-                endDate, endTime);
+        TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
+        copyTaskList.putAll(this.taskList);
+        filterByName(copyTaskList, toSearch);
+        TreeMap<Integer, CalendarEntry> copyEventList = new TreeMap<>();
+        copyEventList.putAll(this.eventList);
+        filterByName(copyEventList, toSearch);
         result.setTaskList(copyTaskList);
         result.setEventList(copyEventList);
         return result;
     }
 
     @Override
-    public CalendarList findArchived(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
+    public CalendarList findArchivedByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
-        TreeMap<Integer, CalendarEntry> copyArchivedTaskList = this.filterList(this.archivedTaskList, toSearch,
-                startDate, startTime, endDate, endTime);
-        TreeMap<Integer, CalendarEntry> copyArchivedEventList = this.filterList(this.archivedEventList, toSearch,
-                startDate, startTime, endDate, endTime);
-        result.setArchivedTaskList(copyArchivedTaskList);
-        result.setArchivedEventList(copyArchivedEventList);
-        return result;
+        result.setTaskList(this.archivedTaskList);
+        result.setEventList(this.archivedEventList);
+        return result.findByName(toSearch);
     }
 
     @Override
-    public CalendarList findAll(String toSearch, LocalDate startDate, LocalTime startTime, LocalDate endDate,
-            LocalTime endTime) {
-        CalendarListTemp result = (CalendarListTemp) this.find(toSearch, startDate, startTime, endDate, endTime);
-        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchived(toSearch, startDate, startTime, endDate,
-                endTime);
-        result.taskList.putAll(resultArchived.archivedTaskList);
-        result.eventList.putAll(resultArchived.archivedEventList);
+    public CalendarList findAllByName(String toSearch) {
+        CalendarListTemp result = (CalendarListTemp) this.findByName(toSearch);
+        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchivedByName(toSearch);
+        result.taskList.putAll(resultArchived.taskList);
+        result.eventList.putAll(resultArchived.eventList);
         return result;
     }
 
@@ -354,10 +349,10 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        for (; iterator.hasNext(); ) {
+        while (iterator.hasNext()) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
-            if (!StringUtils.containsIgnoreCase(entryName, toSearch)) {
+            if (containsAnyWord(entryName, toSearch)) {
                 iterator.remove();
             }
         }
@@ -481,6 +476,16 @@ public class CalendarListImpl implements CalendarList {
         idToSet = Math.max(idToSet, archivedEventMax);
         idToSet += 1;
         return idToSet;
+    }
+
+    boolean containsAnyWord(String entryName, String toSearch) {
+        String[] arrayOfWords = toSearch.split(" ");
+        for (String word : arrayOfWords) {
+            if (StringUtils.containsIgnoreCase(entryName, word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
