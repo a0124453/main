@@ -6,12 +6,20 @@ import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.EmptyStackException;
+import java.util.Properties;
 import java.util.Stack;
 
 public class LogicImpl implements Logic {
 
+    private static final String FILE_NAME = "lifetracker.dat";
+    private static final String SAVEFILE = "savefile";
+    private static final String CONFIG_PROPERTIES = "config.properties";
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
@@ -23,16 +31,26 @@ public class LogicImpl implements Logic {
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
     private Stack<CommandObject> redoStack;
+    private Properties property;
+    private File propertyFile;
 
-    public LogicImpl(Parser parser, Storage storage) throws IOException {
+    public LogicImpl(Parser parser, Storage storage, File pFile) throws IOException {
         assert parser != null;
         assert storage != null;
 
         commandParser = parser;
         calendarStorage = storage;
-        commandStack = new Stack<CommandObject>();
-        redoStack = new Stack<CommandObject>();
+        propertyFile = pFile;
 
+        File file = new File(CONFIG_PROPERTIES);
+        if(!file.exists()) {
+            file.createNewFile();
+        }
+        InputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
+        property.load(fileInputStream);
+        String location = property.getProperty(SAVEFILE, FILE_NAME);
+
+        calendarStorage.setStoreAndStart(location);
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
     }
@@ -71,6 +89,7 @@ public class LogicImpl implements Logic {
             }
             
             else if (commandString.equals("redo")) {
+                
                 try {
                     commandToExecute = redoStack.pop();
                     commandStack.push(commandToExecute);
@@ -81,6 +100,7 @@ public class LogicImpl implements Logic {
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
+                
             }
             
             else {
