@@ -15,12 +15,14 @@ public class LogicImpl implements Logic {
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
+    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
     private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
     private Storage calendarStorage;
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
+    private Stack<CommandObject> redoStack;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -29,6 +31,7 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
         commandStack = new Stack<CommandObject>();
+        redoStack = new Stack<CommandObject>();
 
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
@@ -56,6 +59,7 @@ public class LogicImpl implements Logic {
 
                 try {
                     commandToExecute = commandStack.pop();
+                    redoStack.push(commandToExecute);
                     executedState = commandToExecute.undo(calendar);
                 } catch (EmptyStackException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
@@ -64,7 +68,22 @@ public class LogicImpl implements Logic {
                     return errorResult;
                 }
 
-            } else {
+            }
+            
+            else if (commandString.equals("redo")) {
+                try {
+                    commandToExecute = redoStack.pop();
+                    commandStack.push(commandToExecute);
+                    executedState = commandToExecute.execute(calendar);
+                } catch (EmptyStackException ex) {
+                    ExecuteResult errorResult = new CommandLineResult();
+                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
+                    errorResult.setType(CommandType.ERROR);
+                    return errorResult;
+                }
+            }
+            
+            else {
 
                 try {
                     commandToExecute = commandParser.parse(commandString);
@@ -77,6 +96,7 @@ public class LogicImpl implements Logic {
                 }
 
                 commandStack.push(commandToExecute);
+                redoStack.clear();
             }
             store();
             return processExecutionResults(runResult, commandToExecute, executedState);
