@@ -21,6 +21,7 @@ public class LogicImpl implements Logic {
     private Storage calendarStorage;
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
+    private Stack<CommandObject> redoStack;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -29,6 +30,7 @@ public class LogicImpl implements Logic {
         commandParser = parser;
         calendarStorage = storage;
         commandStack = new Stack<CommandObject>();
+        redoStack = new Stack<CommandObject>();
 
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
@@ -56,6 +58,7 @@ public class LogicImpl implements Logic {
 
                 try {
                     commandToExecute = commandStack.pop();
+                    redoStack.push(commandToExecute);
                     executedState = commandToExecute.undo(calendar);
                 } catch (EmptyStackException ex) {
                     ExecuteResult errorResult = new CommandLineResult();
@@ -64,7 +67,15 @@ public class LogicImpl implements Logic {
                     return errorResult;
                 }
 
-            } else {
+            }
+            
+            else if (commandString.equals("redo")) {
+                commandToExecute = redoStack.pop();
+                commandStack.push(commandToExecute);
+                executedState = commandToExecute.execute(calendar);
+            }
+            
+            else {
 
                 try {
                     commandToExecute = commandParser.parse(commandString);
@@ -77,6 +88,7 @@ public class LogicImpl implements Logic {
                 }
 
                 commandStack.push(commandToExecute);
+                redoStack.clear();
             }
             store();
             return processExecutionResults(runResult, commandToExecute, executedState);
