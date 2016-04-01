@@ -358,7 +358,7 @@ public class CalendarListImpl implements CalendarList {
         while (iterator.hasNext()) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
-            if (!StringUtils.containsIgnoreCase(entryName, toSearch)) {
+            if (containsAnyWord(entryName, toSearch)) {
                 iterator.remove();
             }
         }
@@ -482,6 +482,16 @@ public class CalendarListImpl implements CalendarList {
         idToSet = Math.max(idToSet, archivedEventMax);
         idToSet += 1;
         return idToSet;
+    }
+
+    boolean containsAnyWord(String entryName, String toSearch) {
+        String[] arrayOfWords = toSearch.split(" ");
+        for (String word : arrayOfWords) {
+            if (StringUtils.containsIgnoreCase(entryName, word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
