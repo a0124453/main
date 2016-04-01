@@ -30,7 +30,7 @@ public class FindCommand extends CommandObject {
         } else {
             setComment(String.format(MESSAGE_SEARCH_TERM, searchTerm));
 
-            return calendar.find(searchTerm, null, null, null, null);
+            return calendar.findByName(searchTerm);
         }
     }
 
