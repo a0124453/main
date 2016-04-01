@@ -6,12 +6,23 @@ import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
 import lifetracker.storage.Storage;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.EmptyStackException;
+import java.util.Properties;
 import java.util.Stack;
 
 public class LogicImpl implements Logic {
 
+    private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";
+    private static final String SAVE_FILE_PROPERTY = "savefile";
+    private static final String CONFIG_FILE_NAME = "config.properties";
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
@@ -23,6 +34,8 @@ public class LogicImpl implements Logic {
     private CalendarList calendar;
     private Stack<CommandObject> commandStack;
     private Stack<CommandObject> redoStack;
+    private Properties property;
+    private File propertyFile;
 
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
@@ -30,9 +43,19 @@ public class LogicImpl implements Logic {
 
         commandParser = parser;
         calendarStorage = storage;
-        commandStack = new Stack<CommandObject>();
-        redoStack = new Stack<CommandObject>();
+        commandStack = new Stack<>();
+        redoStack = new Stack<>();
 
+        property = new Properties();
+        propertyFile = new File(CONFIG_FILE_NAME);
+        if(!propertyFile.exists()) {
+            propertyFile.createNewFile();
+        }
+        InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propertyFile));
+        property.load(fileInputStream);
+        String location = property.getProperty(SAVE_FILE_PROPERTY, DEFAULT_SAVE_FILE_NAME);
+        calendarStorage.setStoreAndStart(location);
+        
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
     }
@@ -71,6 +94,7 @@ public class LogicImpl implements Logic {
             }
             
             else if (commandString.equals("redo")) {
+                
                 try {
                     commandToExecute = redoStack.pop();
                     commandStack.push(commandToExecute);
@@ -81,6 +105,7 @@ public class LogicImpl implements Logic {
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
+                
             }
             
             else {
@@ -108,6 +133,9 @@ public class LogicImpl implements Logic {
         String location = commandString.substring(position + 1);
         try {
             calendarStorage.setStoreAndStart(location);
+            property.setProperty(SAVE_FILE_PROPERTY, location);
+            OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(propertyFile));
+            property.store(fileOutputStream, "");
         } catch (IOException ex) {
             System.err.println(ERROR_SAVE);
         }
