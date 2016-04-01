@@ -107,7 +107,7 @@ public class LogicImpl implements Logic {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
         try {
-            calendarStorage.setStore(location);
+            calendarStorage.setStoreAndStart(location);
         } catch (IOException ex) {
             System.err.println(ERROR_SAVE);
         }

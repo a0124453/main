@@ -27,7 +27,7 @@ public class ThreadedFileStorage implements Storage {
     }
 
     @Override
-    public void setStore(String destination) throws IOException {
+    public void setStoreAndStart(String destination) throws IOException {
         try {
             stopThread();
         } catch (InterruptedException e) {

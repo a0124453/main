@@ -12,7 +12,7 @@ public interface Storage extends AutoCloseable {
      *
      * @param destination The destination string.
      */
-    void setStore(String destination) throws IOException;
+    void setStoreAndStart(String destination) throws IOException;
 
     void store(String storeJsonString) throws IOException;
 

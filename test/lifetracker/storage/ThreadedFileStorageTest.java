@@ -41,7 +41,7 @@ public class ThreadedFileStorageTest {
 
         storage.store(testString);
 
-        storage.setStore(ALT_TEST_FILE_NAME);
+        storage.setStoreAndStart(ALT_TEST_FILE_NAME);
 
         Assert.assertEquals(true, new File(ALT_TEST_FILE_NAME).exists());
 
@@ -58,7 +58,7 @@ public class ThreadedFileStorageTest {
         testString = "New Line 1\nNew Line 2";
 
         storage.store(testString);
-        storage.setStore(ALT_TEST_FILE_NAME);
+        storage.setStoreAndStart(ALT_TEST_FILE_NAME);
         storage.store(testString);
         storage.close();
 
