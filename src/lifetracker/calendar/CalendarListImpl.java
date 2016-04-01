@@ -1,8 +1,5 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.CalendarEntry.EntryType;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,6 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lifetracker.calendar.CalendarEntry.EntryType;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -126,11 +127,11 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
-        assert name !=null;
+        assert name != null;
         assert start != null;
         assert end != null;
 
-        if(name.isEmpty()){
+        if (name.isEmpty()) {
             throw new IllegalArgumentException(ERROR_EMPTY_NAME);
         }
 
@@ -142,7 +143,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
-        assert period!=null;
+        assert period != null;
 
         int idToSet = this.add(name, start, end);
         this.eventList.get(idToSet).setPeriod(period);
@@ -354,7 +355,7 @@ public class CalendarListImpl implements CalendarList {
             return;
         }
         Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        for (; iterator.hasNext(); ) {
+        while (iterator.hasNext()) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
             if (!StringUtils.containsIgnoreCase(entryName, toSearch)) {
