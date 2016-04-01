@@ -114,7 +114,7 @@ class DateTimeParser {
         dateTime = fillDefaultDateTime(dateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1)),
                 parseElements);
 
-        dateTime = adjustDateToAfterReference(dateTime, LocalDateTime.now(), parseElements);
+        dateTime = adjustDateToAfterReference(dateTime, LocalDateTime.now().withNano(0), parseElements);
 
         return dateTime;
     }
@@ -124,7 +124,7 @@ class DateTimeParser {
 
         LocalDateTime[] adjustedDateTimes = new LocalDateTime[2];
 
-        adjustedDateTimes[0] = fillDefaultDateTime(startDateTime, LocalDateTime.now(), startParseElements);
+        adjustedDateTimes[0] = fillDefaultDateTime(startDateTime, LocalDateTime.now().withNano(0), startParseElements);
 
         adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0], endParseElements);
 
@@ -137,8 +137,8 @@ class DateTimeParser {
             Set<String> jointParse = new HashSet<>(startParseElements);
             jointParse.addAll(endParseElements);
 
-            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now(), jointParse);
-            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now(), jointParse);
+            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now().withNano(0), jointParse);
+            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now().withNano(0), jointParse);
         }
 
         return adjustedDateTimes;

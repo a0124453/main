@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 //@@author A0091173J
 public class AddCommand extends CommandObject {
 
-    private static final String MESSAGE_ADDED = "\"%1$s\" is added.";
     private static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
+    static final String MESSAGE_ADDED = "\"%1$s\" is added.";
 
     private final String name;
     private final LocalDateTime startDateTime;
@@ -71,5 +71,21 @@ public class AddCommand extends CommandObject {
         setComment(String.format(MESSAGE_UNDO, addedEntryID, name));
 
         return super.undo(calendar);
+    }
+
+    protected String getName() {
+        return name;
+    }
+
+    protected LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    protected LocalDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    protected void setAddedEntryID(int addedEntryID) {
+        this.addedEntryID = addedEntryID;
     }
 }

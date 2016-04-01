@@ -49,11 +49,12 @@ public class CommandParser {
         components[0] = augmentDefaultToFullCommand(components[0]);
 
         String command = getFirstWord(components[0]);
-        components[0] = components[0].replaceFirst(command + " ", "");
 
         //If command was split without space
         if(components[0].equals(command)){
             components[0] = "";
+        } else{
+            components[0] = components[0].replaceFirst(command + " ", "");
         }
 
         List<String> parsedComponents = new ArrayList<>();

@@ -2,14 +2,11 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 //@@author A0091173J
 public class FindCommand extends CommandObject {
 
-    private static final String MESSAGE_SEARCH_TERM = "Displaying entries with : \"%1$s\".";
-    private static final String MESSAGE_SEARCH_ALL = " Displaying all entries.";
+    private static final String MESSAGE_SEARCH_TERM = "Displaying entries with: \"%1$s\".";
+    private static final String MESSAGE_SEARCH_ALL = "Displaying all entries.";
 
     private final String searchTerm;
 
@@ -33,7 +30,7 @@ public class FindCommand extends CommandObject {
         } else {
             setComment(String.format(MESSAGE_SEARCH_TERM, searchTerm));
 
-            return calendar.find(searchTerm, LocalDate.MIN, LocalTime.MIN, LocalDate.MAX, LocalTime.MAX);
+            return calendar.find(searchTerm, null, null, null, null);
         }
     }
 

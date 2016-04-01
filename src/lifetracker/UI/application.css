@@ -1,0 +1,15 @@
+#textInput {
+	-fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+
+#textAreaOutput *.text {
+	-fx-text-alignment: center;
+}
+
+.table-column {
+	-fx-alignment: CENTER;
+}
+
+#columnTaskName, #columnEventName {
+	-fx-alignment: CENTER-LEFT;
+}

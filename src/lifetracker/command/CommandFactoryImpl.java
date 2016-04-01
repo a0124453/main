@@ -17,7 +17,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject addRecurringDeadlineTask(String name, LocalDateTime deadLine, TemporalAmount recurringPeriod) {
-        return null;
+        return new AddRecurringCommand(name, deadLine, recurringPeriod);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class CommandFactoryImpl implements CommandFactory {
     @Override
     public CommandObject addRecurringEvent(String name, LocalDateTime startTime, LocalDateTime endTime,
             TemporalAmount recurringPeriod) {
-        return null;
+        return new AddRecurringCommand(name, startTime, endTime, recurringPeriod);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject mark(int id) {
-        return null;
+        return new MarkCommand(id);
     }
 
     @Override

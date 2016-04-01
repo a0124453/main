@@ -1,16 +1,21 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.CalendarEntry.EntryType;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
-import lifetracker.calendar.CalendarEntry.EntryType;
-
 public class CalendarListImpl implements CalendarList {
+
+    private static final String ERROR_EMPTY_NAME = "Task/Event's name cannot be empty!";
 
     // variables
     protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
@@ -71,10 +76,13 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        assert name != null && !name.isEmpty();
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int idToSet = Math.max(eventMax, taskMax) + 1;
+        assert name != null;
+
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
+        int idToSet = this.getNextId();
         CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
         taskList.put(idToSet, ft);
         return idToSet;
@@ -88,11 +96,14 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
-        assert name != null && !name.isEmpty();
+        assert name != null;
         assert deadline != null;
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int idToSet = Math.max(taskMax, eventMax) + 1;
+
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
+        int idToSet = this.getNextId();
         CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
         taskList.put(idToSet, dt);
         return idToSet;
@@ -100,6 +111,8 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public int add(String name, LocalDateTime deadline, TemporalAmount period) {
+        assert period != null;
+
         int idToSet = this.add(name, deadline);
         this.taskList.get(idToSet).setPeriod(period);
         return idToSet;
@@ -113,18 +126,24 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
+        assert name !=null;
         assert start != null;
         assert end != null;
-        int eventMax = eventList.isEmpty() ? 0 : eventList.lastKey();
-        int taskMax = taskList.isEmpty() ? 0 : taskList.lastKey();
-        int idToSet = Math.max(eventMax, taskMax) + 1;
-        CalendarEntryImpl e = new CalendarEntryImpl(name, start, end, idToSet);
-        eventList.put(idToSet, e);
+
+        if(name.isEmpty()){
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
+        int idToSet = this.getNextId();
+        CalendarEntryImpl event = new CalendarEntryImpl(name, start, end, idToSet);
+        eventList.put(idToSet, event);
         return idToSet;
     }
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+        assert period!=null;
+
         int idToSet = this.add(name, start, end);
         this.eventList.get(idToSet).setPeriod(period);
         return idToSet;
@@ -142,7 +161,7 @@ public class CalendarListImpl implements CalendarList {
             taskList.remove(id);
             return copy;
         } else if (eventList.containsKey(id)) {
-            CalendarEntry copy = taskList.get(id);
+            CalendarEntry copy = eventList.get(id);
             eventList.remove(id);
             return copy;
         }
@@ -254,8 +273,8 @@ public class CalendarListImpl implements CalendarList {
         CalendarListTemp result = (CalendarListTemp) this.find(toSearch, startDate, startTime, endDate, endTime);
         CalendarListTemp resultArchived = (CalendarListTemp) this.findArchived(toSearch, startDate, startTime, endDate,
                 endTime);
-        result.setArchivedTaskList(resultArchived.archivedTaskList);
-        result.setArchivedEventList(resultArchived.archivedEventList);
+        result.taskList.putAll(resultArchived.archivedTaskList);
+        result.eventList.putAll(resultArchived.archivedEventList);
         return result;
     }
 
@@ -334,12 +353,12 @@ public class CalendarListImpl implements CalendarList {
         if (toSearch == null || toSearch.isEmpty()) {
             return;
         }
-        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
-                String entryName = treeMap.get(i).getName();
-                if (!entryName.contains(toSearch)) {
-                    treeMap.remove(i);
-                }
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        for (; iterator.hasNext(); ) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            String entryName = entry.getValue().getName();
+            if (!StringUtils.containsIgnoreCase(entryName, toSearch)) {
+                iterator.remove();
             }
         }
     }
@@ -348,11 +367,15 @@ public class CalendarListImpl implements CalendarList {
         if (startDate == null) {
             return;
         }
-        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
-                LocalDate entryStartDate = treeMap.get(i).getStart().toLocalDate();
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getStart() == null) {
+                iterator.remove();
+            } else {
+                LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
                 if (!entryStartDate.equals(startDate)) {
-                    treeMap.remove(i);
+                    iterator.remove();
                 }
             }
         }
@@ -362,11 +385,15 @@ public class CalendarListImpl implements CalendarList {
         if (startTime == null) {
             return;
         }
-        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
-                LocalTime entryStartTime = treeMap.get(i).getStartTime();
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getStart() == null) {
+                iterator.remove();
+            } else {
+                LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
                 if (!entryStartTime.equals(startTime)) {
-                    treeMap.remove(i);
+                    iterator.remove();
                 }
             }
         }
@@ -376,11 +403,15 @@ public class CalendarListImpl implements CalendarList {
         if (endDate == null) {
             return;
         }
-        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
-                LocalDate entryEndDate = treeMap.get(i).getEnd().toLocalDate();
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getEnd() == null) {
+                iterator.remove();
+            } else {
+                LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
                 if (!entryEndDate.equals(endDate)) {
-                    treeMap.remove(i);
+                    iterator.remove();
                 }
             }
         }
@@ -390,38 +421,66 @@ public class CalendarListImpl implements CalendarList {
         if (endTime == null) {
             return;
         }
-        for (int i = treeMap.firstKey(); i < treeMap.lastKey() + 1; i++) {
-            if (treeMap.containsKey(i)) {
-                LocalTime entryEndTime = treeMap.get(i).getEndTime();
+        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+            if (entry.getValue().getEnd() == null) {
+                iterator.remove();
+            } else {
+                LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
                 if (!entryEndTime.equals(endTime)) {
-                    treeMap.remove(i);
+                    iterator.remove();
                 }
             }
         }
     }
 
     void archiveTask(int id) {
+        if (!this.taskList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+        }
         CalendarEntry task = this.taskList.get(id);
         this.taskList.remove(id);
         this.archivedTaskList.put(id, task);
     }
 
     void unarchiveTask(int id) {
+        if (!this.archivedTaskList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+        }
         CalendarEntry task = this.archivedTaskList.get(id);
         this.archivedTaskList.remove(id);
         this.taskList.put(id, task);
     }
 
     void archiveEvent(int id) {
+        if (!this.eventList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+        }
         CalendarEntry event = this.eventList.get(id);
         this.eventList.remove(id);
         this.archivedEventList.put(id, event);
     }
 
     void unarchiveEvent(int id) {
+        if (!this.archivedEventList.containsKey(id)) {
+            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+        }
         CalendarEntry event = this.archivedEventList.get(id);
         this.archivedEventList.remove(id);
         this.eventList.put(id, event);
+    }
+
+    private int getNextId() {
+        int taskMax = this.taskList.isEmpty() ? 0 : this.taskList.lastKey();
+        int eventMax = this.eventList.isEmpty() ? 0 : this.eventList.lastKey();
+        int archivedTaskMax = this.archivedTaskList.isEmpty() ? 0 : this.archivedTaskList.lastKey();
+        int archivedEventMax = this.archivedEventList.isEmpty() ? 0 : this.archivedEventList.lastKey();
+        int idToSet = Math.max(taskMax, eventMax);
+        idToSet = Math.max(idToSet, archivedTaskMax);
+        idToSet = Math.max(idToSet, archivedEventMax);
+        idToSet += 1;
+        return idToSet;
     }
 
 }

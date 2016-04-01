@@ -171,14 +171,14 @@ public class DateTimeParserTest {
 
         //Partition: When start time is missing
         actualDateTimeList = parser.parseDoubleDateTime("24/3/16", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.of(LocalDate.of(2016, 3, 24), LocalTime.now());
+        expectedStart = LocalDateTime.of(LocalDate.of(2016, 3, 24), LocalTime.now().withNano(0));
         expectedDateTimeList.set(0, expectedStart);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
         //Partition: Both start date and time are missing
         actualDateTimeList = parser.parseDoubleDateTime("", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.now();
+        expectedStart = LocalDateTime.now().withNano(0);
         expectedDateTimeList.set(0, expectedStart);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
@@ -215,8 +215,8 @@ public class DateTimeParserTest {
 
         //Partition: When both are blanks
         actualDateTimeList = parser.parseDoubleDateTime("", "");
-        expectedStart = LocalDateTime.now();
-        expectedEnd = LocalDateTime.now().plusHours(1);
+        expectedStart = LocalDateTime.now().withNano(0);
+        expectedEnd = expectedStart.plusHours(1);
 
         expectedDateTimeList.set(0, expectedStart);
         expectedDateTimeList.set(1, expectedEnd);
@@ -225,7 +225,7 @@ public class DateTimeParserTest {
 
         //Partition: Start time and end date missing
         actualDateTimeList = parser.parseDoubleDateTime("today", "11:59pm");
-        expectedStart = LocalDateTime.now();
+        expectedStart = LocalDateTime.now().withNano(0);
         expectedEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
 
         expectedDateTimeList.set(0, expectedStart);
@@ -235,7 +235,7 @@ public class DateTimeParserTest {
 
         //Boundary: When end time is before now
         actualDateTimeList = parser.parseDoubleDateTime("today", "12am");
-        expectedStart = LocalDateTime.now();
+        expectedStart = LocalDateTime.now().withNano(0);
         expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
 
         expectedDateTimeList.set(0, expectedStart);

@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 
 public class ParserImpl implements Parser {
 
+    private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
+
     private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
 
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
@@ -42,6 +44,7 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
+        commands.put("mark", this::processMark);
     }
 
     private final CommandParser cmdParser;
@@ -100,6 +103,10 @@ public class ParserImpl implements Parser {
 
         } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
 
+            if (!commandBodySectionsMap.containsKey("by")) {
+                commandBodySectionsMap.put("by", "");
+            }
+
             LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
             if (commandBodySectionsMap.containsKey("every")) {
@@ -123,7 +130,7 @@ public class ParserImpl implements Parser {
     }
 
     private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
-        return commandBodySectionMap.containsKey("by")
+        return (commandBodySectionMap.containsKey("by") || commandBodySectionMap.containsKey("every"))
                 && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
     }
 
@@ -134,22 +141,30 @@ public class ParserImpl implements Parser {
                 || commandBodySectionMap.containsKey("every"));
     }
 
-    private CommandObject processDelete(List<String> commandBody) throws NumberFormatException {
-
+    private CommandObject processDelete(List<String> commandBody) {
         String idString = restoreCommandSections(commandBody);
+        try {
+            int id = Integer.parseInt(idString);
 
-        int id = Integer.parseInt(idString);
-
-        return commandObjectFactory.delete(id);
+            return commandObjectFactory.delete(id);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
     }
 
-    private CommandObject processEdit(List<String> commandBody) throws NumberFormatException {
+    private CommandObject processEdit(List<String> commandBody) {
         if (commandBody.size() < 2) {
             throw new IllegalArgumentException();
         }
 
         String idString = commandBody.get(0);
-        int id = Integer.parseInt(idString);
+        int id;
+
+        try {
+            id = Integer.parseInt(idString);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
@@ -169,6 +184,14 @@ public class ParserImpl implements Parser {
         }
 
         if (validAddEventMap(editSectionMap)) {
+            if (!editSectionMap.containsKey("from")) {
+                editSectionMap.put("from", "");
+            }
+
+            if (!editSectionMap.containsKey("to")) {
+                editSectionMap.put("to", "");
+            }
+
             List<LocalDateTime> dateTimes = DATE_TIME_PARSER
                     .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
 
@@ -200,7 +223,18 @@ public class ParserImpl implements Parser {
         if (searchTerm.isEmpty()) {
             return commandObjectFactory.findAll();
         } else {
-            return commandObjectFactory.find(searchTerm);
+            return commandObjectFactory.findAll(searchTerm);
+        }
+    }
+
+    private CommandObject processMark(List<String> commandBody) {
+        String idString = restoreCommandSections(commandBody);
+
+        try {
+            int id = Integer.parseInt(idString);
+            return commandObjectFactory.mark(id);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
         }
     }
 
