@@ -1,9 +1,19 @@
-#textInput {
-	-fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+@font-face {
+	src: url('/lifetracker/UI/Lato-Regular.ttf');
 }
 
-#textAreaOutput *.text {
-	-fx-text-alignment: center;
+.root {
+	-fx-font-family: "Lato";
+}
+
+#textInput {
+	-fx-font-family: "Lato";
+	-fx-prompt-text-fill: derive(-fx-control-inner-background,-30.0%);
+}
+
+
+#textAreaOutput {
+	-fx-font-family: "Lato";
 }
 
 .table-column {
@@ -15,5 +25,6 @@
 }
 
 .table-view .column-header {
+	-fx-font-weight: bold;
 	-fx-background-color: #4FC1E9;
 }

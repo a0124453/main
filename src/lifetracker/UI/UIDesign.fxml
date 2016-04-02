@@ -30,7 +30,7 @@
       </TableView>
       <Label fx:id="labelFeedback" alignment="CENTER" contentDisplay="CENTER" prefHeight="59.0" prefWidth="977.0" text="Welcome to the Life Tracker, Spend less time planning so you always know what's next." textAlignment="CENTER" wrapText="true">
          <font>
-            <Font size="24.0" />
+            <Font name="Lato Light" size="24.0" />
          </font>
       </Label>
       <TextField fx:id="textInput" alignment="CENTER" onAction="#getInput" prefHeight="0.0" prefWidth="600.0" promptText="Enter Command">
