@@ -67,4 +67,12 @@ public class RecurringEvent extends RecurringTask {
         }
     }
 
+    @Override
+    public void updateToNext() {
+        if (hasNext()) {
+            this.startDateTime = startDateTime.plus(getPeriod());
+        }
+        super.updateToNext();
+    }
+
 }
