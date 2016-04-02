@@ -103,7 +103,7 @@ public class UIController implements Initializable {
         
         columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
 
-        columnTaskActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
+        //columnTaskActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
         columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
 
@@ -113,7 +113,7 @@ public class UIController implements Initializable {
 
         columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
 
-        columnEventActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
+        //columnEventActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
         columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
 
@@ -136,7 +136,6 @@ public class UIController implements Initializable {
 
     public static void populateList(ExecuteResult result) {
         taskList.clear();
-
         for (List<String> task : result.getTaskList()) {
             taskList.add(new ItemUI(task));
         }
