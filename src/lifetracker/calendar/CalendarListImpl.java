@@ -12,9 +12,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mockito.cglib.core.Local;
-
-import static javafx.scene.input.KeyCode.R;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -28,62 +25,31 @@ public class CalendarListImpl implements CalendarList {
 
     // get() and set() functions for variables
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#getTaskList()
-     */
     @Override
     public List<CalendarEntry> getTaskList() {
         return new ArrayList<>(taskList.values());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#getEventList()
-     */
     @Override
     public List<CalendarEntry> getEventList() {
         return new ArrayList<>(eventList.values());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#getArchivedTaskList()
-     */
     @Override
     public List<CalendarEntry> getArchivedTaskList() {
         return new ArrayList<>(archivedTaskList.values());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#getArchivedEventList()
-     */
     @Override
     public List<CalendarEntry> getArchivedEventList() {
         return new ArrayList<>(archivedEventList.values());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#add(java.lang.String)
-     */
     @Override
     public int add(String name) {
         return add(new GenericEntry(name));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#add(java.lang.String,
-     * java.time.LocalDateTime)
-     */
     @Override
     public int add(String name, LocalDateTime deadline) {
         return add(new DeadlineTask(name, deadline));
@@ -149,13 +115,9 @@ public class CalendarListImpl implements CalendarList {
                 archivedEventList.put(entry.getId(), entry);
             }
         }
+        return entry.getId();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#delete(int)
-     */
     @Override
     public CalendarEntry delete(int id) {
         if (taskList.containsKey(id)) {
@@ -170,11 +132,6 @@ public class CalendarListImpl implements CalendarList {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#update(int, java.lang.String)
-     */
     @Override
     public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod) {
@@ -238,11 +195,6 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#find(String)
-     */
     @Override
     public CalendarList findByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
