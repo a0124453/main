@@ -48,7 +48,7 @@ public class LogicImpl implements Logic {
         redoStack = new Stack<>();
 
         configureFile();
-        
+
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
     }
@@ -56,14 +56,14 @@ public class LogicImpl implements Logic {
     private void configureFile() throws IOException, FileNotFoundException {
         property = new Properties();
         propertyFile = new File(CONFIG_FILE_NAME);
-        
-        if(!propertyFile.exists()) {
+
+        if (!propertyFile.exists()) {
             propertyFile.createNewFile();
         }
-        
+
         InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propertyFile));
         property.load(fileInputStream);
-        
+
         String location = property.getProperty(SAVE_FILE_PROPERTY, DEFAULT_SAVE_FILE_NAME);
         calendarStorage.setStoreAndStart(location);
     }
@@ -100,9 +100,9 @@ public class LogicImpl implements Logic {
                 }
 
             }
-            
+
             else if (commandString.equals("redo")) {
-                
+
                 try {
                     commandToExecute = redoStack.pop();
                     commandStack.push(commandToExecute);
@@ -113,9 +113,9 @@ public class LogicImpl implements Logic {
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
-                
+
             }
-            
+
             else {
 
                 try {
@@ -170,15 +170,13 @@ public class LogicImpl implements Logic {
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
-            executedState.getTaskList()
-                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(),
-                            task.getPeriod()));
+            executedState.getTaskList().forEach(task -> runResult.addTaskLine(task.getId(), task.getName(),
+                    task.getEnd(), task.isOver(), task.isActive(), task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
-            executedState.getEventList().forEach(
-                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(),
-                            event.getEnd(), event.getPeriod()));
+            executedState.getEventList().forEach(event -> runResult.addEventLine(event.getId(), event.getName(),
+                    event.getStart(), event.getEnd(), event.isOver(), event.isActive(), event.getPeriod()));
         }
 
         return runResult;

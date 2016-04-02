@@ -40,23 +40,24 @@ public class CommandLineResult implements ExecuteResult {
     public List<LogicDeadline> getDeadlineList() {
         return deadlineList;
     }
-    
+
     @Override
     public List<LogicFloating> getFloatingList() {
         return floatingList;
     }
 
     @Override
-    public void addFloatingLine(int id, String name, boolean isDone) {
-        LogicFloating record = new LogicFloatingImpl();
-        record.setId(id);
-        record.setName(name);
-        record.setDone(isDone);
-        floatingList.add(record);
+    public void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
+            TemporalAmount period) {
+        if (deadline == null) {
+            addFloatingLine(id, name, isDone);
+        } else {
+            addDeadlineLine(id, name, deadline, isOverdue, isDone, period);
+        }
     }
-    
-    @Override
-    public void addDeadlineLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone, TemporalAmount period) {
+
+    private void addDeadlineLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
+            TemporalAmount period) {
         LogicDeadline record = new LogicDeadlineImpl();
         record.setId(id);
         record.setName(name);
@@ -66,9 +67,18 @@ public class CommandLineResult implements ExecuteResult {
         record.setPeriod(period);
         deadlineList.add(record);
     }
-    
+
+    private void addFloatingLine(int id, String name, boolean isDone) {
+        LogicFloating record = new LogicFloatingImpl();
+        record.setId(id);
+        record.setName(name);
+        record.setDone(isDone);
+        floatingList.add(record);
+    }
+
     @Override
-    public void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue, boolean isDone, TemporalAmount period) {
+    public void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue,
+            boolean isDone, TemporalAmount period) {
         LogicEvent record = new LogicEventImpl();
         record.setId(id);
         record.setName(name);
