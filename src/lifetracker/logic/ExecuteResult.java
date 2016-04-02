@@ -14,13 +14,17 @@ public interface ExecuteResult {
 
     void setComment(String comment);
 
-    List<List<String>> getEventList();
+    List<LogicEvent> getEventList();
 
-    List<List<String>> getTaskList();
+    List<LogicDeadline> getDeadlineList();
+    
+    List<LogicFloating> getFloatingList();
 
-    void addTaskLine(int id, String name, boolean isActive, LocalDateTime deadline, TemporalAmount period);
+    void addFloatingLine(int id, String name, boolean isDone);
+    
+    void addDeadlineLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone, TemporalAmount period);
 
-    void addEventLine(int id, String name, boolean isActive, LocalDateTime start, LocalDateTime end, TemporalAmount period);
+    void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue, boolean isDone, TemporalAmount period);
 
     CommandType getType();
 

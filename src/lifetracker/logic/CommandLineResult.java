@@ -12,8 +12,9 @@ import java.util.List;
 public class CommandLineResult implements ExecuteResult {
 
     private String comment;
-    private List<List<String>> eventList;
-    private List<List<String>> taskList;
+    private List<LogicEvent> eventList;
+    private List<LogicDeadline> deadlineList;
+    private List<LogicFloating> floatingList;
     private CommandType commandType;
 
     private static final FormatStyle DATE_STYLE = FormatStyle.MEDIUM;
@@ -28,7 +29,8 @@ public class CommandLineResult implements ExecuteResult {
 
     public CommandLineResult() {
         this.eventList = new ArrayList<>();
-        this.taskList = new ArrayList<>();
+        this.deadlineList = new ArrayList<>();
+        this.floatingList = new ArrayList<>();
     }
 
     @Override
