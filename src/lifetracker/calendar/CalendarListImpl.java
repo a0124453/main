@@ -13,8 +13,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import lifetracker.calendar.CalendarEntryOld.EntryType;
-
 public class CalendarListImpl implements CalendarList {
 
     private static final String ERROR_EMPTY_NAME = "Task/Event's name cannot be empty!";
@@ -78,16 +76,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name) {
-        assert name != null;
-
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
-        }
-
-        int idToSet = this.getNextId();
-        CalendarEntryImpl ft = new CalendarEntryImpl(name, null, null, idToSet);
-        taskList.put(idToSet, ft);
-        return idToSet;
+        return add(new GenericEntry(name));
     }
 
     /*
@@ -98,27 +87,14 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public int add(String name, LocalDateTime deadline) {
-        assert name != null;
-        assert deadline != null;
-
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
-        }
-
-        int idToSet = this.getNextId();
-        CalendarEntryImpl dt = new CalendarEntryImpl(name, null, deadline, idToSet);
-        taskList.put(idToSet, dt);
-        return idToSet;
+        return add(new DeadlineTask(name, deadline));
     }
 
     @Override
     public int add(String name, LocalDateTime deadline, Period period) {
-        assert period != null;
-
-        int idToSet = this.add(name, deadline);
-        this.taskList.get(idToSet).setPeriod(period);
-        return idToSet;
+        return add(new RecurringTask(name, deadline, period));
     }
+
 
     /*
      * (non-Javadoc)
@@ -154,6 +130,12 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public int add(CalendarEntry entry) {
         assert entry != null;
+        assert entry.getName() != null;
+
+        if (entry.getName().isEmpty()) {
+            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
+        }
+
         if (!isValidId(entry.getId())) {
             entry.setId(getNextId());
         }
@@ -516,6 +498,7 @@ public class CalendarListImpl implements CalendarList {
         isValid &= !eventList.containsKey(id);
         isValid &= !archivedTaskList.containsKey(id);
         isValid &= !archivedEventList.containsKey(id);
+        isValid &= id > 0;
         return isValid;
     }
 
