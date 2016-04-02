@@ -6,21 +6,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
 
 public class UIController implements Initializable {
@@ -119,23 +120,6 @@ public class UIController implements Initializable {
         columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
 
         columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
-        
-        final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
-        tableEvent.setRowFactory(new Callback<TableView<ItemUI>, TableRow<ItemUI>>() {
-                    @Override
-                    public TableRow<ItemUI> call(TableView<ItemUI> tableEventView) {
-                        return new TableRow<ItemUI>() {
-                            @Override
-                            protected void updateItem(ItemUI event, boolean b) {
-                                super.updateItem(event, b);
-                                boolean overdue = (event != null) && event.getItem().get(0).toString().equals("1");
-                                pseudoClassStateChanged(overduePseudoClass, overdue);
-                            }
-
-
-                        };
-                    }
-                });
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);

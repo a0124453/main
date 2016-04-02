@@ -119,12 +119,6 @@
     -fx-padding: 0;
     -fx-shape: null;
 }
-
-/* OVERDUE CELL */
-.table-row-cell:overdue {
- /* styles specific for overdue cell*/
- 	-fx-background-color: rgba(255, 159, 160, .4);
-} 
 /*
 #columnTaskID, #columnEventID {
 	-fx-border-radius: 10 0 0 0;
