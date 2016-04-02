@@ -11,10 +11,10 @@ public class RecurringTask extends DeadlineTask {
     private static final String MESSAGE_ERROR_NEGATIVE_LIMIT = "Number of occurences must be positive!";
     private static final String MESSAGE_ERROR_INVALID_LIMIT_DATE = "Deadline cannot be before limit date!";
 
-    Period period;
-    int currentOccurence = 1;
-    int limitOccurences;
-    LocalDate limitDate;
+    private Period period;
+    private int currentOccurence = 1;
+    private int limitOccurences;
+    private LocalDate limitDate;
 
     public RecurringTask(String name, LocalDateTime deadline, Period period) {
         super(name, deadline);
