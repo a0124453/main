@@ -28,3 +28,17 @@
 	-fx-font-weight: bold;
 	-fx-background-color: #4FC1E9;
 }
+
+.table-view {
+	-fx-background-color: transparent; 
+}
+
+#columnTaskID, #columnEventID {
+	-fx-border-radius: 10 0 0 0;
+    -fx-background-radius: 10 0 0 0;
+}
+
+#columnTaskRecurring, #columnEventRecurring {
+	-fx-border-radius: 0 10 0 0;
+    -fx-background-radius: 0 10 0 0;
+}
