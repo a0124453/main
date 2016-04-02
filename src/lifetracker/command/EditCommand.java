@@ -2,9 +2,10 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarProperty;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 
 //@@author A0091173J
 public class EditCommand extends CommandObject {
@@ -17,12 +18,12 @@ public class EditCommand extends CommandObject {
     private final String name;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
-    private final TemporalAmount recurringTime;
+    private final Period recurringTime;
 
     private CalendarEntry oldEntry;
 
     public EditCommand(int entryID, String name, LocalDateTime startTime, LocalDateTime endTime,
-            TemporalAmount recurringTime) {
+            Period recurringTime) {
         this.entryID = entryID;
         this.name = name;
         this.startTime = startTime;
@@ -47,7 +48,7 @@ public class EditCommand extends CommandObject {
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        calendar.update(entryID, oldEntry.getName(), oldEntry.getStart(), oldEntry.getEnd(), oldEntry.getPeriod());
+        calendar.update(entryID, oldEntry.getName(), oldEntry.getDateTime(CalendarProperty.START), oldEntry.getDateTime(CalendarProperty.END), oldEntry.getPeriod());
 
         setComment(String.format(MESSAGE_UNDO, entryID));
 
