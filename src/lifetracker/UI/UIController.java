@@ -123,7 +123,16 @@ public class UIController implements Initializable {
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
+        
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                textInput.requestFocus();
+            }
+        });
     }
+    
 
     public static void populateList(ExecuteResult result) {
         taskList.clear();

@@ -6,6 +6,13 @@
 	-fx-font-family: "Lato-Regular";
 }
 
+#labelTitle {
+	-fx-background-color: #4B77BE;
+	-fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 5 5 5 5;
+    -fx-text-fill: white;
+}
+
 #textInput {
 	-fx-prompt-text-fill: derive(-fx-control-inner-background,-30.0%);
 }
@@ -29,7 +36,7 @@
 }  
 
 .table-view .column-header {
-	-fx-background-color: #4FC1E9;
+	-fx-background-color: #89C4F4;
 	-fx-border-radius: 5 5 0 0;
     -fx-background-radius: 5 5 0 0;
     -fx-pref-height: 45.0px;
@@ -37,7 +44,7 @@
 
 .table-view .filler{  
     -fx-background-radius: 0.0 5.0 0.0 0.0;    
-    -fx-background-color: #4FC1E9;      
+    -fx-background-color: #89C4F4;      
     -fx-size: 45.0px;  
     -fx-min-height: 45.0px;      
 }  
@@ -56,7 +63,7 @@
 
 .table-view .column-header-background {  
     -fx-background-radius: 5.0 5.0 0.0 0.0;  
-    -fx-background-color: #4FC1E9;  
+    -fx-background-color: #89C4F4;  
 } 
 
 /* EACH ROW */
