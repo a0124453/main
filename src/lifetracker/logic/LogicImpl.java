@@ -10,6 +10,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,18 +47,25 @@ public class LogicImpl implements Logic {
         commandStack = new Stack<>();
         redoStack = new Stack<>();
 
-        property = new Properties();
-        propertyFile = new File(CONFIG_FILE_NAME);
-        if(!propertyFile.exists()) {
-            propertyFile.createNewFile();
-        }
-        InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propertyFile));
-        property.load(fileInputStream);
-        String location = property.getProperty(SAVE_FILE_PROPERTY, DEFAULT_SAVE_FILE_NAME);
-        calendarStorage.setStoreAndStart(location);
+        configureFile();
         
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
+    }
+
+    private void configureFile() throws IOException, FileNotFoundException {
+        property = new Properties();
+        propertyFile = new File(CONFIG_FILE_NAME);
+        
+        if(!propertyFile.exists()) {
+            propertyFile.createNewFile();
+        }
+        
+        InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propertyFile));
+        property.load(fileInputStream);
+        
+        String location = property.getProperty(SAVE_FILE_PROPERTY, DEFAULT_SAVE_FILE_NAME);
+        calendarStorage.setStoreAndStart(location);
     }
 
     @Override
