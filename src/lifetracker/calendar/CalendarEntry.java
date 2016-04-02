@@ -1,17 +1,12 @@
 package lifetracker.calendar;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 
 public interface CalendarEntry {
 
     public static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
     public static final String MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT = "A task cannot be changed into an event!";
-
-    public enum EntryType {
-        FLOATING, DEADLINE, EVENT
-    }
 
     public static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
@@ -26,35 +21,17 @@ public interface CalendarEntry {
 
     void setName(String name);
 
-    LocalDateTime getStart();
+    LocalDateTime getDateTime(CalendarProperty property);
 
-    void setStart(LocalDateTime start);
+    void setDateTime(CalendarProperty property, LocalDateTime dateTime);
 
-    LocalDateTime getEnd();
+    void setPeriod(Period period);
 
-    void setEnd(LocalDateTime end);
-
-    LocalTime getStartTime();
-
-    LocalTime getEndTime();
-
-    EntryType getType();
-
-    void setPeriod(TemporalAmount period);
-
-    TemporalAmount getPeriod();
+    Period getPeriod();
 
     void mark();
 
-    boolean isActive();
-
-    boolean isRecurring();
-
-    boolean isToday();
-
-    boolean isOngoing();
-
-    boolean isOver();
+    boolean isProperty(CalendarProperty property);
 
     boolean equals(CalendarEntry entry);
 
