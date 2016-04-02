@@ -1,6 +1,7 @@
 package lifetracker.command;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
 //@@author A0091173J
@@ -63,7 +64,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject edit(int id, String name, LocalDateTime startTime, LocalDateTime endTime,
-            TemporalAmount recurringPeriod) {
+            Period recurringPeriod) {
         return new EditCommand(id, name, startTime, endTime, recurringPeriod);
     }
 }

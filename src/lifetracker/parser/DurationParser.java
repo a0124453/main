@@ -1,7 +1,6 @@
 package lifetracker.parser;
 
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -40,7 +39,7 @@ public class DurationParser {
         return true;
     }
 
-    public TemporalAmount parse(String durationString) {
+    public Period parse(String durationString) {
 
         if (!isValidFormat(durationString)) {
             throw new IllegalArgumentException(FORMAT_ERROR);

@@ -4,6 +4,7 @@ import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +178,7 @@ public class ParserImpl implements Parser {
 
         String name = editSectionMap.get("name");
 
-        TemporalAmount recurringAmount = null;
+        Period recurringAmount = null;
 
         if (editSectionMap.containsKey("every")) {
             recurringAmount = DURATION_PARSER.parse(editSectionMap.get("every"));
