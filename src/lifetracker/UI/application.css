@@ -13,3 +13,7 @@
 #columnTaskName, #columnEventName {
 	-fx-alignment: CENTER-LEFT;
 }
+
+.table-view .column-header {
+	-fx-background-color: #4FC1E9;
+}
