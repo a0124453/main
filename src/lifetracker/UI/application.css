@@ -27,12 +27,22 @@
 .table-view .column-header {
 	-fx-font-weight: bold;
 	-fx-background-color: #4FC1E9;
+	-fx-border-radius: 5 5 0 0;
+    -fx-background-radius: 5 5 0 0;
 }
 
 .table-view {
-	-fx-background-color: transparent; 
+	-fx-background-color: transparent;
+	-fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 5 5 5 5; 
 }
 
+.table-view .column-header-background {  
+    -fx-background-radius: 5.0 5.0 0.0 0.0;  
+    -fx-background-color: #4FC1E9;  
+} 
+
+/*
 #columnTaskID, #columnEventID {
 	-fx-border-radius: 10 0 0 0;
     -fx-background-radius: 10 0 0 0;
@@ -41,4 +51,4 @@
 #columnTaskRecurring, #columnEventRecurring {
 	-fx-border-radius: 0 10 0 0;
     -fx-background-radius: 0 10 0 0;
-}
+}*/
