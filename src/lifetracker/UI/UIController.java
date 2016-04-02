@@ -2,7 +2,9 @@ package lifetracker.UI;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
@@ -19,7 +21,7 @@ import lifetracker.logic.Logic;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 
 public class UIController implements Initializable {
 
@@ -118,7 +120,7 @@ public class UIController implements Initializable {
 
         columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
         
-        final PseudoClass lowPriorityPseudoClass = PseudoClass.getPseudoClass("priority-low");
+        final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
         tableEvent.setRowFactory(new Callback<TableView<ItemUI>, TableRow<ItemUI>>() {
                     @Override
                     public TableRow<ItemUI> call(TableView<ItemUI> tableEventView) {
@@ -126,8 +128,8 @@ public class UIController implements Initializable {
                             @Override
                             protected void updateItem(ItemUI event, boolean b) {
                                 super.updateItem(event, b);
-                                boolean lowPriority = event != null && event.getDone();
-                                pseudoClassStateChanged(lowPriorityPseudoClass, lowPriority);
+                                boolean overdue = (event != null) && event.getItem().get(0).toString().equals("1");
+                                pseudoClassStateChanged(overduePseudoClass, overdue);
                             }
 
 
