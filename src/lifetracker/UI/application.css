@@ -23,6 +23,7 @@
 
 #columnTaskName, #columnEventName {
 	-fx-alignment: CENTER-LEFT;
+	-fx-padding: 0 0 0 15;
 }
 
 .table-view .column-header .label { 
