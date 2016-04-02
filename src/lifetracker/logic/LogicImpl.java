@@ -1,6 +1,7 @@
 package lifetracker.logic;
 
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarProperty;
 import lifetracker.command.CommandObject;
 import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
@@ -48,14 +49,14 @@ public class LogicImpl implements Logic {
 
         property = new Properties();
         propertyFile = new File(CONFIG_FILE_NAME);
-        if(!propertyFile.exists()) {
+        if (!propertyFile.exists()) {
             propertyFile.createNewFile();
         }
         InputStream fileInputStream = new BufferedInputStream(new FileInputStream(propertyFile));
         property.load(fileInputStream);
         String location = property.getProperty(SAVE_FILE_PROPERTY, DEFAULT_SAVE_FILE_NAME);
         calendarStorage.setStoreAndStart(location);
-        
+
         StorageAdapter storageAdapter = new StorageAdapter(storage);
         calendar = storageAdapter.load();
     }
@@ -91,10 +92,8 @@ public class LogicImpl implements Logic {
                     return errorResult;
                 }
 
-            }
-            
-            else if (commandString.equals("redo")) {
-                
+            } else if (commandString.equals("redo")) {
+
                 try {
                     commandToExecute = redoStack.pop();
                     commandStack.push(commandToExecute);
@@ -105,10 +104,8 @@ public class LogicImpl implements Logic {
                     errorResult.setType(CommandType.ERROR);
                     return errorResult;
                 }
-                
-            }
-            
-            else {
+
+            } else {
 
                 try {
                     commandToExecute = commandParser.parse(commandString);
@@ -163,14 +160,23 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             executedState.getTaskList()
-                    .forEach(task -> runResult.addTaskLine(task.getId(), task.getName(), task.isActive(), task.getEnd(),
-                            task.getPeriod()));
+                    .forEach(task -> runResult
+                            .addTaskLine(task.getId(),
+                                    task.getName(),
+                                    task.isProperty(CalendarProperty.ACTIVE),
+                                    task.getDateTime(CalendarProperty.END),
+                                    task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
             executedState.getEventList().forEach(
-                    event -> runResult.addEventLine(event.getId(), event.getName(), event.isActive(), event.getStart(),
-                            event.getEnd(), event.getPeriod()));
+                    event -> runResult
+                            .addEventLine(event.getId(),
+                                    event.getName(),
+                                    event.isProperty(CalendarProperty.ACTIVE),
+                                    event.getDateTime(CalendarProperty.START),
+                                    event.getDateTime(CalendarProperty.END),
+                                    event.getPeriod()));
         }
 
         return runResult;
