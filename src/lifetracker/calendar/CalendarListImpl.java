@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mockito.cglib.core.Local;
+
+import static javafx.scene.input.KeyCode.R;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -32,8 +35,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getTaskList() {
-        List<CalendarEntry> list = new ArrayList<CalendarEntry>(taskList.values());
-        return list;
+        return new ArrayList<>(taskList.values());
     }
 
     /*
@@ -43,8 +45,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getEventList() {
-        List<CalendarEntry> list = new ArrayList<CalendarEntry>(eventList.values());
-        return list;
+        return new ArrayList<>(eventList.values());
     }
 
     /*
@@ -54,8 +55,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getArchivedTaskList() {
-        List<CalendarEntry> list = new ArrayList<CalendarEntry>(archivedTaskList.values());
-        return list;
+        return new ArrayList<>(archivedTaskList.values());
     }
 
     /*
@@ -65,8 +65,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public List<CalendarEntry> getArchivedEventList() {
-        List<CalendarEntry> list = new ArrayList<CalendarEntry>(archivedEventList.values());
-        return list;
+        return new ArrayList<>(archivedEventList.values());
     }
 
     /*
@@ -95,36 +94,34 @@ public class CalendarListImpl implements CalendarList {
         return add(new RecurringTask(name, deadline, period));
     }
 
+    @Override
+    public int add(String name, LocalDateTime deadline, Period period, int limit) {
+        return add(new RecurringTask(name, deadline, period, limit));
+    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see lifetracker.calendar.CalenderList#add(java.lang.String,
-     * java.time.LocalDateTime, java.time.LocalDateTime)
-     */
+    @Override
+    public int add(String name, LocalDateTime deadline, Period period, LocalDate limitDate) {
+        return add(new RecurringTask(name, deadline, period, limitDate));
+    }
+
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end) {
-        assert name != null;
-        assert start != null;
-        assert end != null;
-
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY_NAME);
-        }
-
-        int idToSet = this.getNextId();
-        CalendarEntryImpl event = new CalendarEntryImpl(name, start, end, idToSet);
-        eventList.put(idToSet, event);
-        return idToSet;
+        return add(new Event(name, start, end));
     }
 
     @Override
     public int add(String name, LocalDateTime start, LocalDateTime end, Period period) {
-        assert period != null;
+        return add(new RecurringEvent(name, start, end, period));
+    }
 
-        int idToSet = this.add(name, start, end);
-        this.eventList.get(idToSet).setPeriod(period);
-        return idToSet;
+    @Override
+    public int add(String name, LocalDateTime start, LocalDateTime end, Period period, int limit) {
+        return add(new RecurringEvent(name, start, end, period, limit));
+    }
+
+    @Override
+    public int add(String name, LocalDateTime start, LocalDateTime end, Period period, LocalDate limitDate) {
+        return add(new RecurringEvent(name, start, end, period, limitDate));
     }
 
     @Override
