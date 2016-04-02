@@ -17,6 +17,8 @@ public interface CalendarEntry {
     // get() and set() functions for variables
     int getId();
 
+    void setId(int id);
+
     String getName();
 
     void setName(String name);

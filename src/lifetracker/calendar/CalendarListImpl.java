@@ -3,6 +3,7 @@ package lifetracker.calendar;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import lifetracker.calendar.CalendarEntry.EntryType;
+import lifetracker.calendar.CalendarEntryOld.EntryType;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -111,7 +112,7 @@ public class CalendarListImpl implements CalendarList {
     }
 
     @Override
-    public int add(String name, LocalDateTime deadline, TemporalAmount period) {
+    public int add(String name, LocalDateTime deadline, Period period) {
         assert period != null;
 
         int idToSet = this.add(name, deadline);
@@ -142,12 +143,33 @@ public class CalendarListImpl implements CalendarList {
     }
 
     @Override
-    public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+    public int add(String name, LocalDateTime start, LocalDateTime end, Period period) {
         assert period != null;
 
         int idToSet = this.add(name, start, end);
         this.eventList.get(idToSet).setPeriod(period);
         return idToSet;
+    }
+
+    @Override
+    public int add(CalendarEntry entry) {
+        assert entry != null;
+        if (!isValidId(entry.getId())) {
+            entry.setId(getNextId());
+        }
+        if (entry.isProperty(CalendarProperty.ACTIVE)) {
+            if (entry.getDateTime(CalendarProperty.START) == null) {
+                taskList.put(entry.getId(), entry);
+            } else {
+                eventList.put(entry.getId(), entry);
+            }
+        } else {
+            if (entry.getDateTime(CalendarProperty.START) == null) {
+                archivedTaskList.put(entry.getId(), entry);
+            } else {
+                archivedEventList.put(entry.getId(), entry);
+            }
+        }
     }
 
     /*
@@ -176,7 +198,7 @@ public class CalendarListImpl implements CalendarList {
      */
     @Override
     public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            TemporalAmount newPeriod) {
+            Period newPeriod) {
         CalendarEntry toUpdate;
         CalendarEntry copy;
         if (taskList.containsKey(id)) {
@@ -486,6 +508,15 @@ public class CalendarListImpl implements CalendarList {
             }
         }
         return false;
+    }
+
+    private boolean isValidId(int id) {
+        boolean isValid = true;
+        isValid &= !taskList.containsKey(id);
+        isValid &= !eventList.containsKey(id);
+        isValid &= !archivedTaskList.containsKey(id);
+        isValid &= !archivedEventList.containsKey(id);
+        return isValid;
     }
 
 }
