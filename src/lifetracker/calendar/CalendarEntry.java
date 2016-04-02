@@ -5,8 +5,7 @@ import java.time.Period;
 
 public interface CalendarEntry {
 
-    public static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
-    public static final String MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT = "A task cannot be changed into an event!";
+    static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
 
     public static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
