@@ -50,6 +50,20 @@ public class RecurringTask extends DeadlineTask {
     }
 
     @Override
+    public LocalDateTime getDateTime(CalendarProperty property) {
+        switch (property) {
+            case LIMIT :
+                if (limitOccurences == DATE_LIMIT) {
+                    return this.limitDate.atStartOfDay();
+                } else {
+                    return null;
+                }
+            default :
+                return super.getDateTime(property);
+        }
+    }
+
+    @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
             case LIMIT :
