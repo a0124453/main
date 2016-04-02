@@ -35,8 +35,4 @@ public interface CalendarEntry {
 
     boolean isProperty(CalendarProperty property);
 
-    boolean equals(CalendarEntry entry);
-
-    CalendarEntry copy();
-
 }
