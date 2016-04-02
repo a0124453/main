@@ -18,9 +18,9 @@ public class FindAllCommand extends FindCommand {
         String searchTerm = getSearchTerm();
 
         if (searchTerm.isEmpty()) {
-            return calendar.findAll(null,null,null,null,null);
+            return calendar.findAllByName("");
         } else {
-            return calendar.findAll(getSearchTerm(), null, null, null, null);
+            return calendar.findAllByName(getSearchTerm());
         }
     }
 }
