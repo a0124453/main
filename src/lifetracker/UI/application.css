@@ -2,6 +2,7 @@
 	src: url('/lifetracker/UI/Lato-Regular.ttf');
 }
 
+
 .root {
 	-fx-font-family: "Lato-Regular";
 }
@@ -66,7 +67,7 @@
     -fx-background-color: #89C4F4;  
 } 
 
-/* EACH ROW */
+
 .table-row-cell {  
     -fx-background-color: transparent;     
     -fx-border-width: 0;     
@@ -76,19 +77,27 @@
     -fx-border-radius: 5 5 5 5;
 }  
 
+
 .table-row-cell .table-column{  
     -fx-border-width: 1px;          
 }  
-  
-  
+
+ 
+ /*  
 .table-row-cell:filled:even{  
     -fx-background-color: white;  
 }  
   
-  
+
 .table-row-cell:filled:odd{  
     -fx-background-color: #F6F7F8;  
-}  
+} */ 
+
+.table-row-cell:priority-low {
+ /* styles specific for low priority row */
+ 	-fx-alignment: CENTER-LEFT;
+ 	-fx-background-color: rgba(255, 159, 160, .4);
+}
 
 .table-row-cell:filled:selected { 
   -fx-background: -fx-control-inner-background ;
@@ -100,7 +109,7 @@
 .table-row-cell:odd:filled:selected {
   -fx-background: -fx-control-inner-background-alt ;
 }
-  
+
 
 /* HIDE HORIZONTAL SCROLLBAR */
 .table-view *.scroll-bar:horizontal *.increment-button,
@@ -119,12 +128,14 @@
     -fx-padding: 0;
     -fx-shape: null;
 }
-
 /* OVERDUE CELL */
 .table-row-cell:overdue {
  /* styles specific for overdue cell*/
  	-fx-background-color: rgba(255, 159, 160, .4);
 } 
+
+
+
 /*
 #columnTaskID, #columnEventID {
 	-fx-border-radius: 10 0 0 0;
