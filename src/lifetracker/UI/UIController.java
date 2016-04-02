@@ -28,6 +28,7 @@ public class UIController implements Initializable {
 
     private static Logic l;
 
+    @FXML Label labelTitle;
     @FXML
     TextField textInput;
     @FXML
