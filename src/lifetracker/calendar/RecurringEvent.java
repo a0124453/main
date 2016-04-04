@@ -6,6 +6,8 @@ import java.time.Period;
 
 public class RecurringEvent extends RecurringTask {
 
+    public static final String CLASS_NAME = "RecurringEvent";
+
     private LocalDateTime startDateTime;
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period) {

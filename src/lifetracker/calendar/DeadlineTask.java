@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 public class DeadlineTask extends GenericEntry {
 
+    public static final String CLASS_NAME = "DeadlineTask";
+
     private LocalDateTime deadline;
 
     public DeadlineTask(String name, LocalDateTime deadline) {

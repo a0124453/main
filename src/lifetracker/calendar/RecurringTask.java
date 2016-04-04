@@ -6,6 +6,8 @@ import java.time.Period;
 
 public class RecurringTask extends DeadlineTask {
 
+    public static final String CLASS_NAME = "RecurringTask";
+
     private static final int INF_LIMIT = -1;
     private static final int DATE_LIMIT = -2;
     private static final String MESSAGE_ERROR_NEGATIVE_LIMIT = "Number of occurences must be positive!";
