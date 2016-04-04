@@ -16,9 +16,7 @@ public interface ExecuteResult {
 
     List<LogicEvent> getEventList();
 
-    List<LogicTask> getDeadlineList();
-
-    List<LogicFloating> getFloatingList();
+    List<LogicTask> getTaskList();
 
     void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
             TemporalAmount period);

@@ -9,14 +9,12 @@ public class CommandLineResult implements ExecuteResult {
 
     private String comment;
     private List<LogicEvent> eventList;
-    private List<LogicTask> deadlineList;
-    private List<LogicFloating> floatingList;
+    private List<LogicTask> taskList;
     private CommandType commandType;
 
     public CommandLineResult() {
         this.eventList = new ArrayList<>();
-        this.deadlineList = new ArrayList<>();
-        this.floatingList = new ArrayList<>();
+        this.taskList = new ArrayList<>();
     }
 
     @Override
@@ -37,26 +35,12 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public List<LogicTask> getDeadlineList() {
-        return deadlineList;
-    }
-
-    @Override
-    public List<LogicFloating> getFloatingList() {
-        return floatingList;
+    public List<LogicTask> getTaskList() {
+        return taskList;
     }
 
     @Override
     public void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
-            TemporalAmount period) {
-        if (deadline == null) {
-            addFloatingLine(id, name, isDone);
-        } else {
-            addDeadlineLine(id, name, deadline, isOverdue, isDone, period);
-        }
-    }
-
-    private void addDeadlineLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
             TemporalAmount period) {
         LogicTask record = new LogicTaskImpl();
         record.setId(id);
@@ -65,15 +49,7 @@ public class CommandLineResult implements ExecuteResult {
         record.setOverdue(isOverdue);
         record.setDone(isDone);
         record.setPeriod(period);
-        deadlineList.add(record);
-    }
-
-    private void addFloatingLine(int id, String name, boolean isDone) {
-        LogicFloating record = new LogicFloatingImpl();
-        record.setId(id);
-        record.setName(name);
-        record.setDone(isDone);
-        floatingList.add(record);
+        taskList.add(record);
     }
 
     @Override
