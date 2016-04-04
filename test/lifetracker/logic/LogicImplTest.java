@@ -57,8 +57,7 @@ public class LogicImplTest {
     public void testSaveat() {
         assertEquals(saveat.getComment(), logicTest.executeCommand("saveat location").getComment());
         assertEquals(saveat.getEventList(), logicTest.executeCommand("saveat location").getEventList());
-        assertEquals(saveat.getDeadlineList(), logicTest.executeCommand("saveat location").getDeadlineList());
-        assertEquals(saveat.getFloatingList(), logicTest.executeCommand("saveat location").getFloatingList());
+        assertEquals(saveat.getTaskList(), logicTest.executeCommand("saveat location").getTaskList());
         assertEquals(saveat.getType(), logicTest.executeCommand("saveat location").getType());
     }
     
@@ -76,8 +75,7 @@ public class LogicImplTest {
         
         assertEquals(expected1.getComment(), actual.getComment());
         assertEquals(expected1.getEventList(), actual.getEventList());
-        assertEquals(expected1.getDeadlineList(), actual.getDeadlineList());
-        assertEquals(expected1.getFloatingList(), actual.getFloatingList());
+        assertEquals(expected1.getTaskList(), actual.getTaskList());
         assertEquals(expected1.getType(), actual.getType());
     }
         
@@ -96,8 +94,7 @@ public class LogicImplTest {
         
         assertEquals(expected2.getComment(), actual.getComment());
         assertEquals(expected2.getEventList(), actual.getEventList());
-        assertEquals(expected2.getDeadlineList(), actual.getDeadlineList());
-        assertEquals(expected2.getFloatingList(), actual.getFloatingList());
+        assertEquals(expected2.getTaskList(), actual.getTaskList());
         assertEquals(expected2.getType(), actual.getType());
     }
      
@@ -116,8 +113,7 @@ public class LogicImplTest {
         
         assertEquals(expected3.getComment(), actual.getComment());
         assertEquals(expected3.getEventList(), actual.getEventList());
-        assertEquals(expected3.getDeadlineList(), actual.getDeadlineList());
-        assertEquals(expected3.getFloatingList(), actual.getFloatingList());
+        assertEquals(expected3.getTaskList(), actual.getTaskList());
         assertEquals(expected3.getType(), actual.getType());
     }
         
