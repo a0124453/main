@@ -16,7 +16,7 @@ public interface ExecuteResult {
 
     List<LogicEvent> getEventList();
 
-    List<LogicDeadline> getDeadlineList();
+    List<LogicTask> getDeadlineList();
 
     List<LogicFloating> getFloatingList();
 

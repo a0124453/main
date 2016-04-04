@@ -9,7 +9,7 @@ public class CommandLineResult implements ExecuteResult {
 
     private String comment;
     private List<LogicEvent> eventList;
-    private List<LogicDeadline> deadlineList;
+    private List<LogicTask> deadlineList;
     private List<LogicFloating> floatingList;
     private CommandType commandType;
 
@@ -37,7 +37,7 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public List<LogicDeadline> getDeadlineList() {
+    public List<LogicTask> getDeadlineList() {
         return deadlineList;
     }
 
@@ -58,7 +58,7 @@ public class CommandLineResult implements ExecuteResult {
 
     private void addDeadlineLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
             TemporalAmount period) {
-        LogicDeadline record = new LogicDeadlineImpl();
+        LogicTask record = new LogicTaskImpl();
         record.setId(id);
         record.setName(name);
         record.setDeadline(deadline);

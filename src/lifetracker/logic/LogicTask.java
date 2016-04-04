@@ -3,7 +3,7 @@ package lifetracker.logic;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 
-public interface LogicDeadline {
+public interface LogicTask {
 
     void setName(String name);
     
