@@ -149,9 +149,9 @@ public class UIController implements Initializable {
                 } else if (period instanceof Period) {
                     periodString = convertPeriodToString(((Period) period).normalized());
                 } else {
-                    periodString = convertDurationToString((Duration) temporalAmount);
+                    periodString = convertDurationToString((Duration) period);
                 }
-                return null;
+                return new ReadOnlyStringWrapper(periodString);
             }
         });
         //columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
@@ -191,6 +191,10 @@ public class UIController implements Initializable {
         long minutes = duration.toMinutes() % 60;
 
         return formatDuration(hours, HOUR_FIELD) + formatDuration(minutes, MINUTE_FIELD);
+    }
+    
+    private String formatDuration(long duration, String label) {
+        return duration == 0 ? "" : duration + " " + label + " ";
     }
 
     public static void populateList(ExecuteResult result) {
