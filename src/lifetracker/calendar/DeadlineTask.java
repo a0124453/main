@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -51,4 +53,8 @@ public class DeadlineTask extends GenericEntry {
         }
     }
 
+    @Override
+    public <T> T accept(EntryVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

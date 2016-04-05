@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
@@ -51,4 +53,8 @@ public class Event extends DeadlineTask {
         }
     }
 
+    @Override
+    public <T> T accept(EntryVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

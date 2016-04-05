@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -77,4 +79,8 @@ public class RecurringEvent extends RecurringTask {
         super.updateToNext();
     }
 
+    @Override
+    public <T> T accept(EntryVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

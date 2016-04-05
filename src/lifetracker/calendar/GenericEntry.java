@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 import java.time.LocalDateTime;
 import java.time.Period;
 
@@ -65,11 +67,7 @@ public class GenericEntry implements CalendarEntry {
 
     @Override
     public void mark() {
-        if (this.isActive == true) {
-            this.isActive = false;
-        } else {
-            this.isActive = true;
-        }
+        this.isActive = !this.isActive;
     }
 
     @Override
@@ -86,4 +84,8 @@ public class GenericEntry implements CalendarEntry {
         }
     }
 
+    @Override
+    public <T> T accept(EntryVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -1,13 +1,15 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.VisitableEntry;
+
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public interface CalendarEntry {
+public interface CalendarEntry extends VisitableEntry {
 
-    static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
+    String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
 
-    public static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
+    static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalArgumentException(MESSAGE_ERROR_START_AFTER_END);
         }
