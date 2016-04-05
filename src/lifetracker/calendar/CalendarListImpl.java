@@ -127,15 +127,14 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public CalendarEntry delete(int id) {
         if (taskList.containsKey(id)) {
-            CalendarEntry copy = taskList.get(id);
-            taskList.remove(id);
-            return copy;
+            return taskList.remove(id);
         } else if (eventList.containsKey(id)) {
-            CalendarEntry copy = eventList.get(id);
-            eventList.remove(id);
-            return copy;
+            return eventList.remove(id);
+        } else if (archivedEventList.containsKey(id)) {
+            return archivedEventList.remove(id);
+        } else if (archivedTaskList.containsKey(id)) {
+            return archivedTaskList.remove(id);
         }
-        //TODO: delete from archive!
         throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
     }
 
@@ -208,7 +207,14 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarEntry update(CalendarEntry newEntry) {
-        return null;
+        CalendarEntry oldEntry = null;
+        if (isValidId(newEntry.getId())) {
+            oldEntry = delete(newEntry.getId());
+        }
+
+        add(newEntry);
+
+        return oldEntry;
     }
 
     @Override
