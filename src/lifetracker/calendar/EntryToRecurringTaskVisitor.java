@@ -1,13 +1,13 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EditedEntryPair;
+import lifetracker.calendar.visitor.OldNewEntryPair;
 import lifetracker.calendar.visitor.EntryVisitor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair> {
+public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair> {
 
     private static final String ERROR_EMPTY_DEADLINE = "Task deadline cannot be empty!";
     private static final String ERROR_EMPTY_RECURRING = "Task recurring period cannot be empty!";
@@ -61,7 +61,7 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair
     }
 
     @Override
-    public EditedEntryPair visit(GenericEntry entry) {
+    public OldNewEntryPair visit(GenericEntry entry) {
         if (deadline == null) {
             throw new IllegalArgumentException(ERROR_EMPTY_DEADLINE);
         }
@@ -76,7 +76,7 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair
     }
 
     @Override
-    public EditedEntryPair visit(DeadlineTask task) {
+    public OldNewEntryPair visit(DeadlineTask task) {
         if (recurringPeriod == null) {
             throw new IllegalArgumentException(ERROR_EMPTY_RECURRING);
         }
@@ -87,19 +87,19 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair
     }
 
     @Override
-    public EditedEntryPair visit(RecurringTask task) {
+    public OldNewEntryPair visit(RecurringTask task) {
         RecurringTask clone = new RecurringTask(task);
         return edit(clone, task);
     }
 
     @Override
-    public EditedEntryPair visit(Event event) {
+    public OldNewEntryPair visit(Event event) {
         if (recurringPeriod == null) {
             throw new IllegalArgumentException(ERROR_EMPTY_RECURRING);
         }
 
         if (isConvertForced) {
-            EditedEntryPair pair = visit(new DeadlineTask(event));
+            OldNewEntryPair pair = visit(new DeadlineTask(event));
             pair.oldEntry = event;
             return pair;
         } else {
@@ -114,12 +114,12 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair
     }
 
     @Override
-    public EditedEntryPair visit(RecurringEvent event) {
+    public OldNewEntryPair visit(RecurringEvent event) {
         RecurringEvent clone = new RecurringEvent(event);
         return edit(clone, event);
     }
 
-    private EditedEntryPair edit(CalendarEntry clone, RecurringTask task) {
+    private OldNewEntryPair edit(CalendarEntry clone, RecurringTask task) {
         if (isConvertForced) {
             task = new RecurringTask(task);
         }
@@ -145,6 +145,6 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<EditedEntryPair
             task.setOccurrenceLimit(occurLimit);
         }
 
-        return new EditedEntryPair(clone, task);
+        return new OldNewEntryPair(clone, task);
     }
 }

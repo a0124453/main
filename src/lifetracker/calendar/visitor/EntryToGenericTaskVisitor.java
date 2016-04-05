@@ -7,7 +7,7 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
-public class EntryToGenericTaskVisitor implements EntryVisitor<EditedEntryPair> {
+public class EntryToGenericTaskVisitor implements EntryVisitor<OldNewEntryPair> {
 
     private String name;
     private boolean isConvertForced;
@@ -18,41 +18,41 @@ public class EntryToGenericTaskVisitor implements EntryVisitor<EditedEntryPair> 
     }
 
     @Override
-    public EditedEntryPair visit(GenericEntry entry) {
+    public OldNewEntryPair visit(GenericEntry entry) {
         GenericEntry clone = new GenericEntry(entry);
 
         return edit(clone, entry);
     }
 
     @Override
-    public EditedEntryPair visit(DeadlineTask task) {
+    public OldNewEntryPair visit(DeadlineTask task) {
         DeadlineTask clone = new DeadlineTask(task);
 
         return edit(clone, task);
     }
 
     @Override
-    public EditedEntryPair visit(RecurringTask task) {
+    public OldNewEntryPair visit(RecurringTask task) {
         RecurringTask clone = new RecurringTask(task);
 
         return edit(clone, task);
     }
 
     @Override
-    public EditedEntryPair visit(Event event) {
+    public OldNewEntryPair visit(Event event) {
         Event clone = new Event(event);
 
         return edit(clone, event);
     }
 
     @Override
-    public EditedEntryPair visit(RecurringEvent event) {
+    public OldNewEntryPair visit(RecurringEvent event) {
         RecurringEvent clone = new RecurringEvent(event);
 
         return edit(clone, event);
     }
 
-    private EditedEntryPair edit(CalendarEntry clone, GenericEntry newEntry) {
+    private OldNewEntryPair edit(CalendarEntry clone, GenericEntry newEntry) {
         if (isConvertForced){
             newEntry = new GenericEntry(newEntry);
         }
@@ -61,6 +61,6 @@ public class EntryToGenericTaskVisitor implements EntryVisitor<EditedEntryPair> 
             newEntry.setName(name);
         }
 
-        return new EditedEntryPair(clone, newEntry);
+        return new OldNewEntryPair(clone, newEntry);
     }
 }

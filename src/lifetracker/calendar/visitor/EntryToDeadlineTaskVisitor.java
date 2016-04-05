@@ -10,7 +10,7 @@ import lifetracker.calendar.RecurringTask;
 
 import java.time.LocalDateTime;
 
-public class EntryToDeadlineTaskVisitor implements EntryVisitor<EditedEntryPair> {
+public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair> {
 
     private static final String ERROR_EMPTY_DEADLINE = "Task deadline cannot be empty!";
 
@@ -25,7 +25,7 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<EditedEntryPair>
     }
 
     @Override
-    public EditedEntryPair visit(GenericEntry entry) {
+    public OldNewEntryPair visit(GenericEntry entry) {
         if (deadline == null) {
             throw new IllegalArgumentException(ERROR_EMPTY_DEADLINE);
         }
@@ -36,30 +36,30 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<EditedEntryPair>
     }
 
     @Override
-    public EditedEntryPair visit(DeadlineTask task) {
+    public OldNewEntryPair visit(DeadlineTask task) {
         DeadlineTask clone = new DeadlineTask(task);
         return edit(clone, task);
     }
 
     @Override
-    public EditedEntryPair visit(RecurringTask task) {
+    public OldNewEntryPair visit(RecurringTask task) {
         RecurringTask clone = new RecurringTask(task);
         return edit(clone, task);
     }
 
     @Override
-    public EditedEntryPair visit(Event event) {
+    public OldNewEntryPair visit(Event event) {
         Event clone = new Event(event);
         return edit(clone, event);
     }
 
     @Override
-    public EditedEntryPair visit(RecurringEvent event) {
+    public OldNewEntryPair visit(RecurringEvent event) {
         RecurringEvent clone = new RecurringEvent(event);
         return edit(clone, event);
     }
 
-    private EditedEntryPair edit(CalendarEntry clone, DeadlineTask task) {
+    private OldNewEntryPair edit(CalendarEntry clone, DeadlineTask task) {
         if (isConvertForced) {
             task = new DeadlineTask(task);
         }
@@ -72,6 +72,6 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<EditedEntryPair>
             task.setDateTime(CalendarProperty.END, deadline);
         }
 
-        return new EditedEntryPair(clone, task);
+        return new OldNewEntryPair(clone, task);
     }
 }

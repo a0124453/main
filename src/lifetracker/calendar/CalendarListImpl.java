@@ -1,6 +1,6 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EditedEntryPair;
+import lifetracker.calendar.visitor.OldNewEntryPair;
 import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
 import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
 import lifetracker.calendar.visitor.EntryVisitor;
@@ -274,9 +274,9 @@ public class CalendarListImpl implements CalendarList {
         return result;
     }
 
-    private CalendarEntry updateWithVisitor(EntryVisitor<EditedEntryPair> visitor, int id) {
+    private CalendarEntry updateWithVisitor(EntryVisitor<OldNewEntryPair> visitor, int id) {
         CalendarEntry entryToEdit = delete(id);
-        EditedEntryPair pair = entryToEdit.accept(visitor);
+        OldNewEntryPair pair = entryToEdit.accept(visitor);
 
         add(pair.newEntry);
         return pair.oldEntry;
