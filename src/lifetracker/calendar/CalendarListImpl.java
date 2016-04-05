@@ -129,29 +129,64 @@ public class CalendarListImpl implements CalendarList {
             eventList.remove(id);
             return copy;
         }
+        throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
+    }
+
+    @Override
+    public CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced) {
+
+    }
+
+    @Override
+    public CalendarEntry updateToDeadline(int id, String newName, LocalDateTime newDeadline, boolean isConvertForced) {
         return null;
     }
 
     @Override
-    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            Period newPeriod) {
-        CalendarEntry toUpdate;
-        CalendarEntry copy;
-        if (taskList.containsKey(id)) {
-            toUpdate = taskList.get(id);
-            copy = toUpdate.copy();
-        } else if (eventList.containsKey(id)) {
-            toUpdate = eventList.get(id);
-            copy = toUpdate.copy();
-        } else {
-            return null;
-        }
-        checkUpdateArguments(toUpdate, newStart, newEnd);
-        updateEntryName(toUpdate, newName);
-        updateEntryStart(toUpdate, newStart);
-        updateEntryEnd(toUpdate, newEnd);
-        updateEntryPeriod(toUpdate, newPeriod);
-        return copy;
+    public CalendarEntry updateToEvent(int id, String newName, LocalDateTime newStartTime, LocalDateTime newEndTime,
+            boolean isConvertForced) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
+            boolean isConvertForced) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
+            int newLimit, boolean isConvertForced) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
+            LocalDate newLimitDate, boolean isConvertForced) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
+            Period newPeriod, boolean isConvertForced) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
+            Period newPeriod, int newLimit) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
+            Period newPeriod, LocalDate newLimit) {
+        return null;
+    }
+
+    @Override
+    public CalendarEntry update(CalendarEntry newEntry) {
+        return null;
     }
 
     @Override
@@ -385,7 +420,7 @@ public class CalendarListImpl implements CalendarList {
 
     void archiveTask(int id) {
         if (!this.taskList.containsKey(id)) {
-            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID,id));
         }
         CalendarEntry task = this.taskList.get(id);
         this.taskList.remove(id);
@@ -394,7 +429,7 @@ public class CalendarListImpl implements CalendarList {
 
     void unarchiveTask(int id) {
         if (!this.archivedTaskList.containsKey(id)) {
-            throw new IllegalArgumentException(MESSAGE_ERROR_TASK_NOT_FOUND);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
         }
         CalendarEntry task = this.archivedTaskList.get(id);
         this.archivedTaskList.remove(id);
@@ -403,7 +438,7 @@ public class CalendarListImpl implements CalendarList {
 
     void archiveEvent(int id) {
         if (!this.eventList.containsKey(id)) {
-            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID,id));
         }
         CalendarEntry event = this.eventList.get(id);
         this.eventList.remove(id);
@@ -412,7 +447,7 @@ public class CalendarListImpl implements CalendarList {
 
     void unarchiveEvent(int id) {
         if (!this.archivedEventList.containsKey(id)) {
-            throw new IllegalArgumentException(MESSAGE_ERROR_EVENT_NOT_FOUND);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id);
         }
         CalendarEntry event = this.archivedEventList.get(id);
         this.archivedEventList.remove(id);

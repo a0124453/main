@@ -7,8 +7,7 @@ import java.util.List;
 
 public interface CalendarList {
 
-    String MESSAGE_ERROR_TASK_NOT_FOUND = "Task not found!";
-    String MESSAGE_ERROR_EVENT_NOT_FOUND = "Event not found!";
+    String ERROR_INVALID_ID = "Entry %1$s is not found!";
 
     // getter and setter functions for variables
     List<CalendarEntry> getTaskList();
