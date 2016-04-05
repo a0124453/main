@@ -1,6 +1,7 @@
 package lifetracker.calendar;
 
 import lifetracker.calendar.visitor.EntryToEventVisitor;
+import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
 import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
 import lifetracker.calendar.visitor.OldNewEntryPair;
 import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
@@ -184,19 +185,25 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, boolean isLimitKept) {
-        return null;
+        EntryToRecurringEventVisitor visitor = new EntryToRecurringEventVisitor(newName, newStart, newEnd, newPeriod,
+                isLimitKept);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override
     public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, int newLimit) {
-        return null;
+        EntryToRecurringEventVisitor visitor = new EntryToRecurringEventVisitor(newName, newStart, newEnd, newPeriod,
+                newLimit);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override
     public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, LocalDate newLimit) {
-        return null;
+        EntryToRecurringEventVisitor visitor = new EntryToRecurringEventVisitor(newName, newStart, newEnd, newPeriod,
+                newLimit);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override

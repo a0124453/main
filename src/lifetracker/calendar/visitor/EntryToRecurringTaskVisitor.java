@@ -54,7 +54,6 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
 
     public EntryToRecurringTaskVisitor(String name, LocalDateTime deadLine, Period recurringPeriod,
             LocalDate limitDate, boolean isConvertForced) {
-        assert limitDate != null;
 
         this.name = name;
         this.deadline = deadLine;
@@ -143,10 +142,9 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
 
         if (occurLimit == LIMIT_INF && !isLimitKept) {
             task.removeLimit();
-        } else if (occurLimit == LIMIT_DATE) {
-            assert limitDate != null;
+        } else if (occurLimit == LIMIT_DATE && limitDate!=null) {
             task.setDateTime(CalendarProperty.DATE_LIMIT, limitDate.atStartOfDay());
-        } else if (occurLimit != LIMIT_INF) {
+        } else if (occurLimit != LIMIT_INF && occurLimit != LIMIT_DATE) {
             task.setOccurrenceLimit(occurLimit);
         }
 
