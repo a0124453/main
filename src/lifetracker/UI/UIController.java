@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -13,6 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableRow;
 import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
@@ -165,6 +167,24 @@ public class UIController implements Initializable {
                 return new ReadOnlyStringWrapper(periodString);
             }
         });
+        
+        final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
+        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
+                    @Override
+                    public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
+                        return new TableRow<LogicEvent>() {
+                            @Override
+                            protected void updateItem(LogicEvent event, boolean b) {
+                                super.updateItem(event, b);
+                                boolean overDue = event != null && event.getOverdue();
+                                pseudoClassStateChanged(overduePseudoClass, overDue);
+                            }
+
+
+                        };
+                    }
+                });
+        
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
