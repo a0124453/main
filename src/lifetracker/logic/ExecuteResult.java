@@ -5,7 +5,7 @@ import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 public interface ExecuteResult {
-    
+
     public enum CommandType {
         DISPLAY, SAVE, EXIT, ERROR
     }
@@ -14,13 +14,15 @@ public interface ExecuteResult {
 
     void setComment(String comment);
 
-    List<List<String>> getEventList();
+    List<LogicEvent> getEventList();
 
-    List<List<String>> getTaskList();
+    List<LogicTask> getTaskList();
 
-    void addTaskLine(int id, String name, boolean isActive, LocalDateTime deadline, TemporalAmount period);
+    void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
+            TemporalAmount period);
 
-    void addEventLine(int id, String name, boolean isActive, LocalDateTime start, LocalDateTime end, TemporalAmount period);
+    void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue, boolean isDone,
+            TemporalAmount period);
 
     CommandType getType();
 
