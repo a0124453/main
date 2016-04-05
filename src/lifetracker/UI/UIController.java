@@ -20,6 +20,7 @@ import lifetracker.logic.LogicEvent;
 import lifetracker.logic.LogicTask;
 
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +37,12 @@ import com.sun.javafx.scene.control.skin.TableHeaderRow;
 public class UIController implements Initializable {
 
     private static Logic l;
+    private static final String DAY_FIELD = "day(s)";
+    private static final String MONTH_FIELD = "month(s)";
+    private static final String YEAR_FIELD = "year(s)";
+
+    private static final String MINUTE_FIELD = "minute(s)";
+    private static final String HOUR_FIELD = "hour(s)";
 
     @FXML Label labelTitle;
     @FXML
@@ -141,6 +148,8 @@ public class UIController implements Initializable {
                     periodString = "";
                 } else if (period instanceof Period) {
                     periodString = convertPeriodToString(((Period) period).normalized());
+                } else {
+                    periodString = convertDurationToString((Duration) temporalAmount);
                 }
                 return null;
             }
@@ -177,6 +186,12 @@ public class UIController implements Initializable {
         return formatDuration(years, YEAR_FIELD) + formatDuration(months, MONTH_FIELD) + formatDuration(days, DAY_FIELD);
     }
     
+    private String convertDurationToString(Duration duration) {
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+
+        return formatDuration(hours, HOUR_FIELD) + formatDuration(minutes, MINUTE_FIELD);
+    }
 
     public static void populateList(ExecuteResult result) {
         taskList.clear();
