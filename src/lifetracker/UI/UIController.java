@@ -142,7 +142,11 @@ public class UIController implements Initializable {
 
             @Override
             public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                TemporalAmount period = param.getValue().getPeriod();
+                String periodString = convertTemporalToString(param.getValue().getPeriod());
+                return new ReadOnlyStringWrapper(periodString);
+            }
+
+            private String convertTemporalToString(TemporalAmount period) {
                 String periodString;
                 if (period == null) {
                     periodString = "";
@@ -151,7 +155,7 @@ public class UIController implements Initializable {
                 } else {
                     periodString = convertDurationToString((Duration) period);
                 }
-                return new ReadOnlyStringWrapper(periodString);
+                return periodString;
             }
         });
         columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
@@ -161,9 +165,18 @@ public class UIController implements Initializable {
         //columnEventActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
         columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getStart().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
-        //columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+        
+        columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getEnd().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
 
         //columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
+        columnEventRecurring.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicEvent,String>, ObservableValue<String>>() {
+
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        });
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
