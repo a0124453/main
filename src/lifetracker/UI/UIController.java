@@ -100,7 +100,7 @@ public class UIController implements Initializable {
         }
 
         labelFeedback.setText(result.getComment());
-
+        
         if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
             populateList(result);
         }
@@ -169,6 +169,7 @@ public class UIController implements Initializable {
         });
         
         final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
+        final PseudoClass donePseudoClass = PseudoClass.getPseudoClass("done");
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
                     @Override
                     public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
@@ -190,10 +191,21 @@ public class UIController implements Initializable {
             public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
                 return new TableRow<LogicTask>() {
                     @Override
-                    protected void updateItem(LogicTask event, boolean b) {
-                        super.updateItem(event, b);
-                        boolean overDue = event != null && event.getOverdue();
-                        pseudoClassStateChanged(overduePseudoClass, overDue);
+                    protected void updateItem(LogicTask task, boolean b) {
+                        super.updateItem(task, b);
+                        boolean done = ((task != null) && !task.isDone());
+                        boolean overdue = ((task != null) && task.getOverdue());
+                        
+                        /*
+                        if (done) {
+                            pseudoClassStateChanged(donePseudoClass, done);
+                        } else {
+                            pseudoClassStateChanged(overduePseudoClass, overdue);
+                        }
+                        */
+                        //pseudoClassStateChanged(donePseudoClass, done);
+                        pseudoClassStateChanged(overduePseudoClass, overdue);
+
                     }
 
 
@@ -201,7 +213,23 @@ public class UIController implements Initializable {
             }
         });
         
-        
+        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
+            @Override
+            public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
+                return new TableRow<LogicEvent>() {
+                    @Override
+                    protected void updateItem(LogicEvent event, boolean b) {
+                        tableTask.getStyleClass().remove(donePseudoClass);
+                        tableTask.getStyleClass().remove(overduePseudoClass);
+                        super.updateItem(event, b);
+                        boolean done = event != null && event.isDone();
+                        pseudoClassStateChanged(donePseudoClass, done);
+                    }
+
+
+                };
+            }
+        });
         
         
         tableTask.setItems(taskList);
@@ -256,6 +284,10 @@ public class UIController implements Initializable {
         for (LogicEvent event : result.getEventList()) {
             eventList.add(event);
         }
+    }
+
+    private static void clearTable() {
+        // TODO Auto-generated method stub
     }
 
 }
