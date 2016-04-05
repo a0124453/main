@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
 
+    public static final String CLASS_NAME = "Event";
+
     private LocalDateTime startDateTime;
 
     public Event(String name, LocalDateTime start, LocalDateTime end) {

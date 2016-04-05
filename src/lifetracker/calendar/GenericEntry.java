@@ -5,6 +5,8 @@ import java.time.Period;
 
 public class GenericEntry implements CalendarEntry {
 
+    public static final String CLASS_NAME = "GenericEntry";
+
     private static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command!";
 
     private String name;
