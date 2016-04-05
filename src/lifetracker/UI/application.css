@@ -68,8 +68,7 @@
 } 
 
 /* EACH ROW */
-.table-row-cell {  
-    -fx-background-color: transparent;     
+.table-row-cell {      
     -fx-border-width: 0;     
     -fx-pref-height: 45.0px;  
     -fx-font-size: 14px; 
@@ -82,6 +81,7 @@
 }  
   
   
+  /* 
 .table-row-cell:filled:even{  
     -fx-background-color: white;  
 }  
@@ -89,7 +89,7 @@
   
 .table-row-cell:filled:odd{  
     -fx-background-color: #F6F7F8;  
-}  
+}  */
 
 .table-row-cell:filled:selected { 
   -fx-background: -fx-control-inner-background ;
