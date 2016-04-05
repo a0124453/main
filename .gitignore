@@ -30,4 +30,7 @@ hs_err_pid*
 # log folder
 logs/
 
+# junit build
+junit/
+
 config.properties
