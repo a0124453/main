@@ -145,18 +145,6 @@ public class UIController implements Initializable {
                 String periodString = convertTemporalToString(param.getValue().getPeriod());
                 return new ReadOnlyStringWrapper(periodString);
             }
-
-            private String convertTemporalToString(TemporalAmount period) {
-                String periodString;
-                if (period == null) {
-                    periodString = "";
-                } else if (period instanceof Period) {
-                    periodString = convertPeriodToString(((Period) period).normalized());
-                } else {
-                    periodString = convertDurationToString((Duration) period);
-                }
-                return periodString;
-            }
         });
         columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
 
@@ -173,8 +161,8 @@ public class UIController implements Initializable {
 
             @Override
             public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                // TODO Auto-generated method stub
-                return null;
+                String periodString = convertTemporalToString(param.getValue().getPeriod());
+                return new ReadOnlyStringWrapper(periodString);
             }
         });
         
@@ -188,6 +176,18 @@ public class UIController implements Initializable {
                 textInput.requestFocus();
             }
         });
+    }
+    
+    private String convertTemporalToString(TemporalAmount period) {
+        String periodString;
+        if (period == null) {
+            periodString = "";
+        } else if (period instanceof Period) {
+            periodString = convertPeriodToString(((Period) period).normalized());
+        } else {
+            periodString = convertDurationToString((Duration) period);
+        }
+        return periodString;
     }
     
     private String convertPeriodToString(Period period) {
