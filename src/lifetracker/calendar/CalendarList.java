@@ -54,7 +54,7 @@ public interface CalendarList {
             boolean isConvertForced);
 
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
-            boolean isConvertForced);
+            boolean isLimitKept, boolean isConvertForced);
 
     /**
      * Updates an entry into a RecurringTask.
@@ -94,7 +94,7 @@ public interface CalendarList {
      * Empty fields will be skipped during update, unless a conversion for the entry requires it, in which case an
      * {@code IllegalArgumentException} will be thrown.
      * <p>
-     * If {@code isConvertForced} is set, then this method will discard the previous recurring limit set in an entry
+     * If {@code isLimitKept} is set, then this method will discard the previous recurring limit set in an entry
      * with such a limit.
      *
      * @param id              The ID of the entry to update.
@@ -102,12 +102,12 @@ public interface CalendarList {
      * @param newStart        The new start date time
      * @param newEnd          The new end date time
      * @param newPeriod       The new recurring time period
-     * @param isConvertForced If the original limit should be discarded
+     * @param isLimitKept If the original limit should be discarded
      * @return The old entry before the update
      * @throws IllegalArgumentException If fields that are required are empty.
      */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            Period newPeriod, boolean isConvertForced);
+            Period newPeriod, boolean isLimitKept);
 
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, int newLimit);
@@ -117,7 +117,7 @@ public interface CalendarList {
 
     /**
      * Overrides an entry in the {@code CalendarList} with the new entry provided, if they have the same ID.
-     *
+     * <p>
      * If there are no old entries with the same ID, the new entry is simply added to the CalendarList.
      *
      * @param newEntry The new entry

@@ -8,7 +8,7 @@ import java.time.Period;
 
 public class RecurringTask extends DeadlineTask {
 
-    private final String  SERIAL_TYPE_IDENTIFIER = "RecurringTask";
+    private final String SERIAL_TYPE_IDENTIFIER = "RecurringTask";
 
     private static final int INF_LIMIT = -1;
     private static final int DATE_LIMIT = -2;
@@ -16,14 +16,13 @@ public class RecurringTask extends DeadlineTask {
     private static final String MESSAGE_ERROR_INVALID_LIMIT_DATE = "Deadline cannot be before limit date!";
 
     private Period period;
-    private int currentOccurence = 1;
-    private int limitOccurences;
-    private LocalDate limitDate;
+    private int occcurenceLimit;
+    private LocalDate dateLimit;
 
     public RecurringTask(String name, LocalDateTime deadline, Period period) {
         super(name, deadline);
         this.period = period;
-        this.limitOccurences = INF_LIMIT;
+        this.occcurenceLimit = INF_LIMIT;
     }
 
     public RecurringTask(String name, LocalDateTime deadline, Period period, int limit) {
@@ -32,7 +31,7 @@ public class RecurringTask extends DeadlineTask {
         if (limit <= 0) {
             throw new IllegalArgumentException(MESSAGE_ERROR_NEGATIVE_LIMIT);
         }
-        this.limitOccurences = limit;
+        this.occcurenceLimit = limit;
     }
 
     public RecurringTask(String name, LocalDateTime deadline, Period period, LocalDate limit) {
@@ -41,28 +40,27 @@ public class RecurringTask extends DeadlineTask {
             throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
         }
         this.period = period;
-        this.limitDate = limit;
-        this.limitOccurences = DATE_LIMIT;
+        this.dateLimit = limit;
+        this.occcurenceLimit = DATE_LIMIT;
     }
 
     public RecurringTask(RecurringTask entry) {
         super(entry);
         this.period = entry.period;
-        this.limitOccurences = entry.limitOccurences;
-        this.currentOccurence = entry.currentOccurence;
-        this.limitDate = entry.limitDate;
+        this.occcurenceLimit = entry.occcurenceLimit;
+        this.dateLimit = entry.dateLimit;
     }
 
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         switch (property) {
-            case LIMIT :
-                if (limitOccurences == DATE_LIMIT) {
-                    return this.limitDate.atStartOfDay();
+            case LIMIT:
+                if (occcurenceLimit == DATE_LIMIT) {
+                    return this.dateLimit.atStartOfDay();
                 } else {
                     return null;
                 }
-            default :
+            default:
                 return super.getDateTime(property);
         }
     }
@@ -70,20 +68,21 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
-            case LIMIT :
-                limitOccurences = DATE_LIMIT;
+            case LIMIT:
+                occcurenceLimit = DATE_LIMIT;
                 if (dateTime.toLocalDate().isBefore(this.getDateTime(CalendarProperty.END).toLocalDate())) {
                     throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
                 } else {
-                    this.limitDate = dateTime.toLocalDate();
+                    this.dateLimit = dateTime.toLocalDate();
+                    this.occcurenceLimit = DATE_LIMIT;
                 }
                 break;
-            case END :
-                if (limitOccurences == DATE_LIMIT && this.limitDate.isBefore(dateTime.toLocalDate())) {
+            case END:
+                if (occcurenceLimit == DATE_LIMIT && this.dateLimit.isBefore(dateTime.toLocalDate())) {
                     throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
                 }
                 // Fallthrough
-            default :
+            default:
                 super.setDateTime(property, dateTime);
         }
     }
@@ -98,28 +97,27 @@ public class RecurringTask extends DeadlineTask {
         return period;
     }
 
-    /*
-     * @Override public void mark() { // TODO Auto-generated method stub
-     * super.mark(); }
-     */
-
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case RECURRING :
+            case RECURRING:
                 return true;
-            default :
+            default:
                 return super.isProperty(property);
         }
     }
 
+    public int getOcccurenceLimit() {
+        return occcurenceLimit;
+    }
+
     public boolean hasNext() {
-        if (this.limitOccurences == INF_LIMIT) {
+        if (this.occcurenceLimit == INF_LIMIT) {
             return true;
-        } else if (this.limitOccurences == DATE_LIMIT) {
-            return this.getDateTime(CalendarProperty.END).toLocalDate().plus(period).isBefore(limitDate);
+        } else if (this.occcurenceLimit == DATE_LIMIT) {
+            return this.getDateTime(CalendarProperty.END).toLocalDate().plus(period).isBefore(dateLimit);
         } else {
-            return currentOccurence < limitOccurences;
+            return occcurenceLimit > 1;
         }
     }
 
@@ -127,20 +125,20 @@ public class RecurringTask extends DeadlineTask {
         if (hasNext()) {
             LocalDateTime currentDeadline = getDateTime(CalendarProperty.END);
             setDateTime(CalendarProperty.END, currentDeadline.plus(this.period));
-            currentOccurence++;
+
+            if (occcurenceLimit > 0) {
+                occcurenceLimit--;
+            }
         }
     }
 
     public void setOccurrenceLimit(int n) {
-        if (limitOccurences == DATE_LIMIT || limitOccurences == INF_LIMIT) {
-            currentOccurence = 1;
-            limitDate = null;
-            this.limitOccurences = n;
-        } else if (n < currentOccurence) {
-            limitOccurences = currentOccurence;
-        } else {
-            limitOccurences = n;
-        }
+        assert n > 0;
+        occcurenceLimit = n;
+    }
+
+    public void removeLimit() {
+        occcurenceLimit = INF_LIMIT;
     }
 
     @Override

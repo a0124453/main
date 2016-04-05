@@ -18,7 +18,7 @@ public class DeadlineTask extends GenericEntry {
 
     public DeadlineTask(DeadlineTask entry) {
         super(entry);
-        this.setDateTime(CalendarProperty.END, deadline);
+        this.setDateTime(CalendarProperty.END, entry.deadline);
     }
 
     @Override

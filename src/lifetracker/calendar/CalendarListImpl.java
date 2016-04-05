@@ -156,25 +156,31 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
-            boolean isConvertForced) {
-        return null;
+            boolean isLimitKept, boolean isConvertForced) {
+        EntryToRecurringTaskVisitor visitor = new EntryToRecurringTaskVisitor(newName, newDeadLine, newPeriod,
+                isLimitKept, isConvertForced);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override
     public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             int newLimit, boolean isConvertForced) {
-        return null;
+        EntryToRecurringTaskVisitor visitor = new EntryToRecurringTaskVisitor(newName, newDeadLine, newPeriod, newLimit,
+                isConvertForced);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override
     public CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             LocalDate newLimitDate, boolean isConvertForced) {
-        return null;
+        EntryToRecurringTaskVisitor visitor = new EntryToRecurringTaskVisitor(newName, newDeadLine, newPeriod,
+                newLimitDate, isConvertForced);
+        return updateWithVisitor(visitor, id);
     }
 
     @Override
     public CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            Period newPeriod, boolean isConvertForced) {
+            Period newPeriod, boolean isLimitKept) {
         return null;
     }
 
