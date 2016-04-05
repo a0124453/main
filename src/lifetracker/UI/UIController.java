@@ -21,8 +21,10 @@ import lifetracker.logic.LogicTask;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -129,7 +131,20 @@ public class UIController implements Initializable {
             }
         });
         //columnTaskRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+        columnTaskRecurring.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicTask,String>, ObservableValue<String>>() {
 
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                TemporalAmount period = param.getValue().getPeriod();
+                String periodString;
+                if (period == null) {
+                    periodString = "";
+                } else if (period instanceof Period) {
+                    periodString = convertPeriodToString(((Period) period).normalized());
+                }
+                return null;
+            }
+        });
         //columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
 
         //columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
@@ -152,6 +167,14 @@ public class UIController implements Initializable {
                 textInput.requestFocus();
             }
         });
+    }
+    
+    private String convertPeriodToString(Period period) {
+        int years = period.getYears();
+        int months = period.getMonths();
+        int days = period.getDays();
+
+        return formatDuration(years, YEAR_FIELD) + formatDuration(months, MONTH_FIELD) + formatDuration(days, DAY_FIELD);
     }
     
 
