@@ -12,12 +12,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicEvent;
 import lifetracker.logic.LogicTask;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -107,8 +112,22 @@ public class UIController implements Initializable {
 
         //columnTaskActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
-        //columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
-
+        //columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper((param.getValue().getDeadline().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)).toString())));
+        columnTaskTime.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicTask,String>, ObservableValue<String>>() {
+            
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                LocalDateTime deadline = param.getValue().getDeadline();
+                String deadlineString;
+                if(deadline != null) {
+                   deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+                } else {
+                    deadlineString = "";
+                }
+                
+                return new ReadOnlyStringWrapper(deadlineString);
+            }
+        });
         //columnTaskRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
 
         //columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
