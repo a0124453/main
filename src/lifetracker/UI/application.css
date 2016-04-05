@@ -104,8 +104,12 @@
 
 .table-row-cell:overdue {
  /* styles specific for low priority row */
- 	-fx-alignment: CENTER-LEFT;
  	-fx-background-color: rgba(255, 159, 160, .4);
+}
+
+.table-row-cell:done .text {
+ /* styles specific for low priority row */
+ 	-fx-strikethrough: true;
 }
   
 

@@ -169,6 +169,7 @@ public class UIController implements Initializable {
         });
         
         final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
+        final PseudoClass donePseudoClass = PseudoClass.getPseudoClass("done");
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
                     @Override
                     public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
@@ -176,8 +177,15 @@ public class UIController implements Initializable {
                             @Override
                             protected void updateItem(LogicEvent event, boolean b) {
                                 super.updateItem(event, b);
-                                boolean overDue = event != null && event.getOverdue();
-                                pseudoClassStateChanged(overduePseudoClass, overDue);
+                                boolean overdue = event != null && event.getOverdue();
+                                boolean done = event != null && !event.isDone();
+                                
+                                if(!done) {
+                                    pseudoClassStateChanged(overduePseudoClass, overdue);
+                                }
+                                
+                                super.updateItem(event, b);
+                                pseudoClassStateChanged(donePseudoClass, done);
                             }
 
 
