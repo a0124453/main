@@ -185,24 +185,6 @@ public class UIController implements Initializable {
                     }
                 });
         
-        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
-            @Override
-            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
-                return new TableRow<LogicTask>() {
-                    @Override
-                    protected void updateItem(LogicTask event, boolean b) {
-                        super.updateItem(event, b);
-                        boolean overDue = event != null && event.getOverdue();
-                        pseudoClassStateChanged(overduePseudoClass, overDue);
-                    }
-
-
-                };
-            }
-        });
-        
-        
-        
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
