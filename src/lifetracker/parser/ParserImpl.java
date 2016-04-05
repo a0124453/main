@@ -45,7 +45,7 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
-        commands.put("mark", this::processMark);
+        commands.put("toggleActive", this::processMark);
     }
 
     private final CommandParser cmdParser;

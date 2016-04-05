@@ -78,8 +78,24 @@ public class RecurringEvent extends RecurringTask {
     public void updateToNext() {
         if (hasNext()) {
             this.startDateTime = startDateTime.plus(getPeriod());
+            forceUpdateDate();
         }
-        super.updateToNext();
+    }
+
+    @Override
+    public boolean hasNext() {
+        int occurrenceLimit = getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT);
+
+        if (occurrenceLimit == INF_LIMIT_CONST) {
+            return true;
+        } else if (occurrenceLimit == DATE_LIMIT_CONST) {
+            LocalDate newDate = getDateTime(CalendarProperty.START).toLocalDate().plus(getPeriod());
+            LocalDate limit = getDateTime(CalendarProperty.DATE_LIMIT).toLocalDate();
+
+            return newDate.isBefore(limit) || newDate.isEqual(limit);
+        } else {
+            return occurrenceLimit > 1;
+        }
     }
 
     @Override

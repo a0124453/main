@@ -66,7 +66,7 @@ public class GenericEntry implements CalendarEntry {
     }
 
     @Override
-    public void mark() {
+    public void toggleActive() {
         this.isActive = !this.isActive;
     }
 

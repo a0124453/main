@@ -1,5 +1,7 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.OldNewEntryPair;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -8,6 +10,7 @@ import java.util.List;
 public interface CalendarList {
 
     String ERROR_INVALID_ID = "Entry %1$s is not found!";
+    int BASE_ID = 0;
 
     // getter and setter functions for variables
     List<CalendarEntry> getTaskList();
@@ -125,7 +128,7 @@ public interface CalendarList {
      */
     CalendarEntry update(CalendarEntry newEntry);
 
-    CalendarEntry mark(int id);
+    OldNewEntryPair mark(int id);
 
     CalendarList findByName(String toSearch);
 

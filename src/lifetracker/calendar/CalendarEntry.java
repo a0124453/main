@@ -32,7 +32,7 @@ public interface CalendarEntry extends VisitableEntry {
 
     Period getPeriod();
 
-    void mark();
+    void toggleActive();
 
     boolean isProperty(CalendarProperty property);
 

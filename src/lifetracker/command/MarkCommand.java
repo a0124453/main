@@ -1,7 +1,7 @@
 package lifetracker.command;
 
-import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.visitor.OldNewEntryPair;
 
 //@@author A0091173J
 public class MarkCommand extends CommandObject {
@@ -17,7 +17,7 @@ public class MarkCommand extends CommandObject {
 
     @Override
     public CalendarList execute(CalendarList calendar) {
-        CalendarEntry markedEntry = calendar.mark(entryId);
+        OldNewEntryPair markedEntry = calendar.mark(entryId);
         setComment(String.format(MESSAGE_MARKED_DONE, entryId));
 
         return super.execute(calendar);

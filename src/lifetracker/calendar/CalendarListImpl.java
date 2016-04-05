@@ -1,17 +1,17 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
 import lifetracker.calendar.visitor.EntryToEventVisitor;
+import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
 import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
 import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
-import lifetracker.calendar.visitor.OldNewEntryPair;
-import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
-import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
 import lifetracker.calendar.visitor.EntryVisitor;
+import lifetracker.calendar.visitor.MarkVisitor;
+import lifetracker.calendar.visitor.OldNewEntryPair;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -208,7 +208,7 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public CalendarEntry update(CalendarEntry newEntry) {
         CalendarEntry oldEntry = null;
-        if (isValidId(newEntry.getId())) {
+        if (isPresent(newEntry.getId())) {
             oldEntry = delete(newEntry.getId());
         }
 
@@ -218,45 +218,19 @@ public class CalendarListImpl implements CalendarList {
     }
 
     @Override
-    public CalendarEntry mark(int id) {
-        //        CalendarEntry entry;
-        //        if (this.taskList.containsKey(id)) {
-        //            entry = this.taskList.get(id);
-        //            assert entry.isActive();
-        //            entry.mark();
-        //            if (entry.getType().equals(EntryType.FLOATING)) {
-        //                this.archiveTask(id);
-        //            } else {
-        //                assert entry.getType().equals(EntryType.DEADLINE);
-        //                if (!entry.isRecurring()) {
-        //                    this.archiveTask(id);
-        //                }
-        //            }
-        //            return entry;
-        //        } else if (this.eventList.containsKey(id)) {
-        //            entry = this.eventList.get(id);
-        //            assert entry.isActive();
-        //            assert entry.getType().equals(EntryType.EVENT);
-        //            entry.mark();
-        //            this.archiveEvent(id);
-        //            return entry;
-        //        } else if (this.archivedTaskList.containsKey(id)) {
-        //            entry = this.archivedTaskList.get(id);
-        //            assert !entry.isActive();
-        //            entry.mark();
-        //            this.unarchiveTask(id);
-        //            return entry;
-        //        } else if (this.archivedEventList.containsKey(id)) {
-        //            entry = this.archivedEventList.get(id);
-        //            assert !entry.isActive();
-        //            assert entry.getType().equals(EntryType.EVENT);
-        //            entry.mark();
-        //            this.unarchiveEvent(id);
-        //            return entry;
-        //        } else {
-        //            return null;
-        //        }
-        return null;
+    public OldNewEntryPair mark(int id) {
+        CalendarEntry entryToMark = delete(id);
+
+        MarkVisitor visitor = new MarkVisitor();
+        OldNewEntryPair pair = entryToMark.accept(visitor);
+
+        add(entryToMark);
+
+        if(pair.newEntry != null){
+            update(pair.newEntry);
+        }
+
+        return pair;
     }
 
     @Override
@@ -298,15 +272,10 @@ public class CalendarListImpl implements CalendarList {
         return pair.oldEntry;
     }
 
-    TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch,
-            LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
         copyMap.putAll(treeMap);
         filterByName(copyMap, toSearch);
-        //        filterByStartDate(copyMap, startDate);
-        //        filterByStartTime(copyMap, startTime);
-        //        filterByEndDate(copyMap, endDate);
-        //        filterByEndTime(copyMap, endTime);
         return copyMap;
     }
 
@@ -396,47 +365,11 @@ public class CalendarListImpl implements CalendarList {
     //        }
     //    }
 
-    void archiveTask(int id) {
-        if (!this.taskList.containsKey(id)) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
-        }
-        CalendarEntry task = this.taskList.get(id);
-        this.taskList.remove(id);
-        this.archivedTaskList.put(id, task);
-    }
-
-    void unarchiveTask(int id) {
-        if (!this.archivedTaskList.containsKey(id)) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
-        }
-        CalendarEntry task = this.archivedTaskList.get(id);
-        this.archivedTaskList.remove(id);
-        this.taskList.put(id, task);
-    }
-
-    void archiveEvent(int id) {
-        if (!this.eventList.containsKey(id)) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
-        }
-        CalendarEntry event = this.eventList.get(id);
-        this.eventList.remove(id);
-        this.archivedEventList.put(id, event);
-    }
-
-    void unarchiveEvent(int id) {
-        if (!this.archivedEventList.containsKey(id)) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
-        }
-        CalendarEntry event = this.archivedEventList.get(id);
-        this.archivedEventList.remove(id);
-        this.eventList.put(id, event);
-    }
-
     private int getNextId() {
-        int taskMax = this.taskList.isEmpty() ? 0 : this.taskList.lastKey();
-        int eventMax = this.eventList.isEmpty() ? 0 : this.eventList.lastKey();
-        int archivedTaskMax = this.archivedTaskList.isEmpty() ? 0 : this.archivedTaskList.lastKey();
-        int archivedEventMax = this.archivedEventList.isEmpty() ? 0 : this.archivedEventList.lastKey();
+        int taskMax = this.taskList.isEmpty() ? BASE_ID : this.taskList.lastKey();
+        int eventMax = this.eventList.isEmpty() ? BASE_ID : this.eventList.lastKey();
+        int archivedTaskMax = this.archivedTaskList.isEmpty() ? BASE_ID : this.archivedTaskList.lastKey();
+        int archivedEventMax = this.archivedEventList.isEmpty() ? BASE_ID : this.archivedEventList.lastKey();
         int idToSet = Math.max(taskMax, eventMax);
         idToSet = Math.max(idToSet, archivedTaskMax);
         idToSet = Math.max(idToSet, archivedEventMax);
@@ -455,12 +388,15 @@ public class CalendarListImpl implements CalendarList {
     }
 
     private boolean isValidId(int id) {
-        boolean isValid = !taskList.containsKey(id);
-        isValid &= !eventList.containsKey(id);
-        isValid &= !archivedTaskList.containsKey(id);
-        isValid &= !archivedEventList.containsKey(id);
-        isValid &= id > 0;
-        return isValid;
+        return id > BASE_ID && !isPresent(id);
+    }
+
+    private boolean isPresent(int id){
+        boolean isPresent = taskList.containsKey(id);
+        isPresent |= eventList.containsKey(id);
+        isPresent |= archivedTaskList.containsKey(id);
+        isPresent |= archivedEventList.containsKey(id);
+        return isPresent;
     }
 
 }
