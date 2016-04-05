@@ -7,46 +7,60 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
-public class EntryToGenericTaskVisitor implements EntryVisitor<CalendarEntry> {
+public class EntryToGenericTaskVisitor implements EntryVisitor<EditedEntryPair> {
 
     private String name;
+    private boolean isConvertForced;
 
-    public EntryToGenericTaskVisitor(String name) {
+    public EntryToGenericTaskVisitor(String name, boolean isConvertForced) {
         this.name = name;
+        this.isConvertForced = isConvertForced;
     }
 
     @Override
-    public CalendarEntry visit(GenericEntry entry) {
-        return genericVisit(entry);
+    public EditedEntryPair visit(GenericEntry entry) {
+        GenericEntry clone = new GenericEntry(entry);
+
+        return edit(clone, entry);
     }
 
     @Override
-    public CalendarEntry visit(DeadlineTask task) {
-        return genericVisit(task);
+    public EditedEntryPair visit(DeadlineTask task) {
+        DeadlineTask clone = new DeadlineTask(task);
+
+        return edit(clone, task);
     }
 
     @Override
-    public CalendarEntry visit(RecurringTask task) {
-        return genericVisit(task);
+    public EditedEntryPair visit(RecurringTask task) {
+        RecurringTask clone = new RecurringTask(task);
+
+        return edit(clone, task);
     }
 
     @Override
-    public CalendarEntry visit(Event event) {
-        return genericVisit(event);
+    public EditedEntryPair visit(Event event) {
+        Event clone = new Event(event);
+
+        return edit(clone, event);
     }
 
     @Override
-    public CalendarEntry visit(RecurringEvent event) {
-        return genericVisit(event);
+    public EditedEntryPair visit(RecurringEvent event) {
+        RecurringEvent clone = new RecurringEvent(event);
+
+        return edit(clone, event);
     }
 
-    private CalendarEntry genericVisit(GenericEntry entry){
-        CalendarEntry clone = new GenericEntry(entry);
-
-        if(name!=null && !name.isEmpty()){
-            entry.setName(name);
+    private EditedEntryPair edit(CalendarEntry clone, GenericEntry newEntry) {
+        if (isConvertForced){
+            newEntry = new GenericEntry(newEntry);
         }
 
-        return clone;
+        if (name != null && !name.isEmpty()) {
+            newEntry.setName(name);
+        }
+
+        return new EditedEntryPair(clone, newEntry);
     }
 }
