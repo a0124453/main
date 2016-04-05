@@ -36,4 +36,6 @@ public interface CalendarEntry extends VisitableEntry {
 
     boolean isProperty(CalendarProperty property);
 
+    int getIntegerProperty(CalendarProperty property);
+
 }

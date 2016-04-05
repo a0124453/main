@@ -14,16 +14,19 @@ public class RecurringEvent extends RecurringTask {
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period) {
         super(name, end, period);
+        CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
     }
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period, int limit) {
         super(name, end, period, limit);
+        CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
     }
 
-    public RecurringEvent(String name, LocalDateTime start, LocalDateTime deadline, Period period, LocalDate limit) {
-        super(name, deadline, period, limit);
+    public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period, LocalDate limit) {
+        super(name, end, period, limit);
+        CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
     }
 

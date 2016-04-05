@@ -12,6 +12,7 @@ public class Event extends DeadlineTask {
 
     public Event(String name, LocalDateTime start, LocalDateTime end) {
         super(name, end);
+        CalendarEntry.checkStartBeforeEnd(start, end);
         this.startDateTime = start;
     }
 
@@ -31,6 +32,8 @@ public class Event extends DeadlineTask {
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         if (property.equals(CalendarProperty.START)) {
+            CalendarEntry.checkStartBeforeEnd(dateTime, getDateTime(CalendarProperty.END));
+
             this.startDateTime = dateTime;
         } else {
             super.setDateTime(property, dateTime);

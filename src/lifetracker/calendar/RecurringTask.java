@@ -12,8 +12,8 @@ public class RecurringTask extends DeadlineTask {
 
     private static final int INF_LIMIT = -1;
     private static final int DATE_LIMIT = -2;
-    private static final String MESSAGE_ERROR_NEGATIVE_LIMIT = "Number of occurences must be positive!";
-    private static final String MESSAGE_ERROR_INVALID_LIMIT_DATE = "Deadline cannot be before limit date!";
+    private static final String MESSAGE_ERROR_NEGATIVE_LIMIT = "Number of occurrences must be positive!";
+    private static final String MESSAGE_ERROR_INVALID_LIMIT_DATE = "Limit date cannot be before deadline/end date!";
 
     private Period period;
     private int occcurenceLimit;
@@ -54,7 +54,7 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         switch (property) {
-            case LIMIT:
+            case DATE_LIMIT:
                 if (occcurenceLimit == DATE_LIMIT) {
                     return this.dateLimit.atStartOfDay();
                 } else {
@@ -68,7 +68,7 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
-            case LIMIT:
+            case DATE_LIMIT:
                 occcurenceLimit = DATE_LIMIT;
                 if (dateTime.toLocalDate().isBefore(this.getDateTime(CalendarProperty.END).toLocalDate())) {
                     throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
@@ -98,11 +98,25 @@ public class RecurringTask extends DeadlineTask {
     }
 
     @Override
+    public int getIntegerProperty(CalendarProperty property) {
+        switch (property) {
+            case OCCURRENCE_LIMIT:
+                return occcurenceLimit;
+            default :
+                return super.getIntegerProperty(property);
+        }
+    }
+
+    @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case RECURRING:
+            case RECURRING :
                 return true;
-            default:
+            case DATE_LIMITED :
+                return occcurenceLimit == DATE_LIMIT;
+            case OCCURRENCE_LIMITED :
+                return occcurenceLimit > 0;
+            default :
                 return super.isProperty(property);
         }
     }

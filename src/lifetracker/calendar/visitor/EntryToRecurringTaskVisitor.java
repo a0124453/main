@@ -1,7 +1,12 @@
-package lifetracker.calendar;
+package lifetracker.calendar.visitor;
 
-import lifetracker.calendar.visitor.OldNewEntryPair;
-import lifetracker.calendar.visitor.EntryVisitor;
+import lifetracker.calendar.CalendarEntry;
+import lifetracker.calendar.CalendarProperty;
+import lifetracker.calendar.DeadlineTask;
+import lifetracker.calendar.Event;
+import lifetracker.calendar.GenericEntry;
+import lifetracker.calendar.RecurringEvent;
+import lifetracker.calendar.RecurringTask;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -140,7 +145,7 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
             task.removeLimit();
         } else if (occurLimit == LIMIT_DATE) {
             assert limitDate != null;
-            task.setDateTime(CalendarProperty.LIMIT, limitDate.atStartOfDay());
+            task.setDateTime(CalendarProperty.DATE_LIMIT, limitDate.atStartOfDay());
         } else if (occurLimit != LIMIT_INF) {
             task.setOccurrenceLimit(occurLimit);
         }

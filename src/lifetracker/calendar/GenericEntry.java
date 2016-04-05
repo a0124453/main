@@ -85,6 +85,11 @@ public class GenericEntry implements CalendarEntry {
     }
 
     @Override
+    public int getIntegerProperty(CalendarProperty property) {
+        return 0;
+    }
+
+    @Override
     public <T> T accept(EntryVisitor<T> visitor) {
         return visitor.visit(this);
     }
