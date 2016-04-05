@@ -102,8 +102,9 @@
   -fx-background: -fx-control-inner-background-alt ;
 }
 
-.table-row-cell:overdue .text{
+.table-row-cell:overdue {
  /* styles specific for low priority row */
+ 	-fx-alignment: CENTER-LEFT;
  	-fx-background-color: rgba(255, 159, 160, .4);
 }
 
