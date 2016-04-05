@@ -154,7 +154,7 @@ public class UIController implements Initializable {
                 return new ReadOnlyStringWrapper(periodString);
             }
         });
-        //columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
+        columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
 
         //columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
 
@@ -203,6 +203,9 @@ public class UIController implements Initializable {
             taskList.add(task);
         }
         eventList.clear();
+        for (LogicEvent event : result.getEventList()) {
+            eventList.add(event);
+        }
     }
 
 }
