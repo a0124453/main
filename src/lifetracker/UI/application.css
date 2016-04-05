@@ -107,6 +107,10 @@
  	-fx-alignment: CENTER-LEFT;
  	-fx-background-color: rgba(255, 159, 160, .4);
 }
+
+.table-row-cell:done .text {
+    -fx-strikethrough: true;
+}
   
 
 /* HIDE HORIZONTAL SCROLLBAR */
