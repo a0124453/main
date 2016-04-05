@@ -7,6 +7,8 @@ import lifetracker.logic.Logic;
 import java.util.List;
 import java.util.Scanner;
 
+//@@author A0091173J-unused
+//Replaced by GUI
 public class UI {
 
     private static final String MESSAGE_WELCOME = "Welcome to the Life Tracker, Spend less time planning so you always know what's next.";
