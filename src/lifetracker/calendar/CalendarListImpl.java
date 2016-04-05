@@ -1,17 +1,18 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EditedEntryPair;
+import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -129,12 +130,20 @@ public class CalendarListImpl implements CalendarList {
             eventList.remove(id);
             return copy;
         }
+        //TODO: delete from archive!
         throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
     }
 
     @Override
     public CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced) {
+        EntryToGenericTaskVisitor visitor = new EntryToGenericTaskVisitor(newName, isConvertForced);
 
+        CalendarEntry entryToEdit = delete(id);
+
+        EditedEntryPair pair = entryToEdit.accept(visitor);
+
+        add(pair.newEntry);
+        return pair.oldEntry;
     }
 
     @Override
@@ -191,43 +200,44 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarEntry mark(int id) {
-        CalendarEntry entry;
-        if (this.taskList.containsKey(id)) {
-            entry = this.taskList.get(id);
-            assert entry.isActive();
-            entry.mark();
-            if (entry.getType().equals(EntryType.FLOATING)) {
-                this.archiveTask(id);
-            } else {
-                assert entry.getType().equals(EntryType.DEADLINE);
-                if (!entry.isRecurring()) {
-                    this.archiveTask(id);
-                }
-            }
-            return entry;
-        } else if (this.eventList.containsKey(id)) {
-            entry = this.eventList.get(id);
-            assert entry.isActive();
-            assert entry.getType().equals(EntryType.EVENT);
-            entry.mark();
-            this.archiveEvent(id);
-            return entry;
-        } else if (this.archivedTaskList.containsKey(id)) {
-            entry = this.archivedTaskList.get(id);
-            assert !entry.isActive();
-            entry.mark();
-            this.unarchiveTask(id);
-            return entry;
-        } else if (this.archivedEventList.containsKey(id)) {
-            entry = this.archivedEventList.get(id);
-            assert !entry.isActive();
-            assert entry.getType().equals(EntryType.EVENT);
-            entry.mark();
-            this.unarchiveEvent(id);
-            return entry;
-        } else {
-            return null;
-        }
+//        CalendarEntry entry;
+//        if (this.taskList.containsKey(id)) {
+//            entry = this.taskList.get(id);
+//            assert entry.isActive();
+//            entry.mark();
+//            if (entry.getType().equals(EntryType.FLOATING)) {
+//                this.archiveTask(id);
+//            } else {
+//                assert entry.getType().equals(EntryType.DEADLINE);
+//                if (!entry.isRecurring()) {
+//                    this.archiveTask(id);
+//                }
+//            }
+//            return entry;
+//        } else if (this.eventList.containsKey(id)) {
+//            entry = this.eventList.get(id);
+//            assert entry.isActive();
+//            assert entry.getType().equals(EntryType.EVENT);
+//            entry.mark();
+//            this.archiveEvent(id);
+//            return entry;
+//        } else if (this.archivedTaskList.containsKey(id)) {
+//            entry = this.archivedTaskList.get(id);
+//            assert !entry.isActive();
+//            entry.mark();
+//            this.unarchiveTask(id);
+//            return entry;
+//        } else if (this.archivedEventList.containsKey(id)) {
+//            entry = this.archivedEventList.get(id);
+//            assert !entry.isActive();
+//            assert entry.getType().equals(EntryType.EVENT);
+//            entry.mark();
+//            this.unarchiveEvent(id);
+//            return entry;
+//        } else {
+//            return null;
+//        }
+        return null;
     }
 
     @Override
@@ -266,70 +276,11 @@ public class CalendarListImpl implements CalendarList {
         TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
         copyMap.putAll(treeMap);
         filterByName(copyMap, toSearch);
-        filterByStartDate(copyMap, startDate);
-        filterByStartTime(copyMap, startTime);
-        filterByEndDate(copyMap, endDate);
-        filterByEndTime(copyMap, endTime);
+//        filterByStartDate(copyMap, startDate);
+//        filterByStartTime(copyMap, startTime);
+//        filterByEndDate(copyMap, endDate);
+//        filterByEndTime(copyMap, endTime);
         return copyMap;
-    }
-
-    void updateEntryName(CalendarEntry toUpdate, String newName) {
-        if (newName != null && !newName.isEmpty()) {
-            toUpdate.setName(newName);
-        }
-    }
-
-    void updateEntryStart(CalendarEntry toUpdate, LocalDateTime newStart) {
-        if (newStart != null) {
-            toUpdate.setStart(newStart);
-        }
-    }
-
-    void updateEntryEnd(CalendarEntry toUpdate, LocalDateTime newEnd) {
-        if (toUpdate.getType().equals(EntryType.EVENT)) {
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-            }
-        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-            }
-        } else {
-            assert toUpdate.getType().equals(EntryType.FLOATING);
-            if (newEnd != null) {
-                toUpdate.setEnd(newEnd);
-                ((CalendarEntryImpl) toUpdate).setType(EntryType.DEADLINE);
-            }
-        }
-        // allowed to change floating task to deadline but not the other way
-        // around
-    }
-
-    void updateEntryPeriod(CalendarEntry toUpdate, TemporalAmount newPeriod) {
-        if (newPeriod != null) {
-            toUpdate.setPeriod(newPeriod);
-        }
-    }
-
-    void checkUpdateArguments(CalendarEntry toUpdate, LocalDateTime newStart, LocalDateTime newEnd) {
-        if (toUpdate.getType().equals(EntryType.EVENT)) {
-            if (newStart != null && newEnd != null) {
-                CalendarEntry.checkStartBeforeEnd(newStart, newEnd);
-            } else if (newStart != null && newEnd == null) {
-                CalendarEntry.checkStartBeforeEnd(newStart, toUpdate.getEnd());
-            } else if (newStart == null && newEnd != null) {
-                CalendarEntry.checkStartBeforeEnd(toUpdate.getStart(), newEnd);
-            }
-        } else if (toUpdate.getType().equals(EntryType.DEADLINE)) {
-            if (newStart != null) {
-                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
-            }
-        } else {
-            assert toUpdate.getType().equals(EntryType.FLOATING);
-            if (newStart != null) {
-                throw new IllegalArgumentException(CalendarEntry.MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT);
-            }
-        }
     }
 
     void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
@@ -346,77 +297,77 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate startDate) {
-        if (startDate == null) {
-            return;
-        }
-        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-            if (entry.getValue().getStart() == null) {
-                iterator.remove();
-            } else {
-                LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
-                if (!entryStartDate.equals(startDate)) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
-
-    void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime startTime) {
-        if (startTime == null) {
-            return;
-        }
-        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-            if (entry.getValue().getStart() == null) {
-                iterator.remove();
-            } else {
-                LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
-                if (!entryStartTime.equals(startTime)) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
-
-    void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate endDate) {
-        if (endDate == null) {
-            return;
-        }
-        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-            if (entry.getValue().getEnd() == null) {
-                iterator.remove();
-            } else {
-                LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
-                if (!entryEndDate.equals(endDate)) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
-
-    void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime endTime) {
-        if (endTime == null) {
-            return;
-        }
-        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-            if (entry.getValue().getEnd() == null) {
-                iterator.remove();
-            } else {
-                LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
-                if (!entryEndTime.equals(endTime)) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
+//    void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate startDate) {
+//        if (startDate == null) {
+//            return;
+//        }
+//        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+//            if (entry.getValue().getStart() == null) {
+//                iterator.remove();
+//            } else {
+//                LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
+//                if (!entryStartDate.equals(startDate)) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
+//    }
+//
+//    void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime startTime) {
+//        if (startTime == null) {
+//            return;
+//        }
+//        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+//            if (entry.getValue().getStart() == null) {
+//                iterator.remove();
+//            } else {
+//                LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
+//                if (!entryStartTime.equals(startTime)) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
+//    }
+//
+//    void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate endDate) {
+//        if (endDate == null) {
+//            return;
+//        }
+//        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+//            if (entry.getValue().getEnd() == null) {
+//                iterator.remove();
+//            } else {
+//                LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
+//                if (!entryEndDate.equals(endDate)) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
+//    }
+//
+//    void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime endTime) {
+//        if (endTime == null) {
+//            return;
+//        }
+//        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+//            if (entry.getValue().getEnd() == null) {
+//                iterator.remove();
+//            } else {
+//                LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
+//                if (!entryEndTime.equals(endTime)) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
+//    }
 
     void archiveTask(int id) {
         if (!this.taskList.containsKey(id)) {
@@ -447,7 +398,7 @@ public class CalendarListImpl implements CalendarList {
 
     void unarchiveEvent(int id) {
         if (!this.archivedEventList.containsKey(id)) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
         }
         CalendarEntry event = this.archivedEventList.get(id);
         this.archivedEventList.remove(id);
@@ -477,8 +428,7 @@ public class CalendarListImpl implements CalendarList {
     }
 
     private boolean isValidId(int id) {
-        boolean isValid = true;
-        isValid &= !taskList.containsKey(id);
+        boolean isValid = !taskList.containsKey(id);
         isValid &= !eventList.containsKey(id);
         isValid &= !archivedTaskList.containsKey(id);
         isValid &= !archivedEventList.containsKey(id);

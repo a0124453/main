@@ -8,7 +8,7 @@ import java.time.Period;
 
 public class RecurringTask extends DeadlineTask {
 
-    public static final String CLASS_NAME = "RecurringTask";
+    private final String  SERIAL_TYPE_IDENTIFIER = "RecurringTask";
 
     private static final int INF_LIMIT = -1;
     private static final int DATE_LIMIT = -2;

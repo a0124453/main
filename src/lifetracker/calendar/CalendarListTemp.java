@@ -1,7 +1,7 @@
 package lifetracker.calendar;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 import java.util.TreeMap;
 
 public class CalendarListTemp extends CalendarListImpl {
@@ -33,7 +33,7 @@ public class CalendarListTemp extends CalendarListImpl {
     }
 
     @Override
-    public int add(String name, LocalDateTime deadline, TemporalAmount period) {
+    public int add(String name, LocalDateTime deadline, Period period) {
         return 0;
     }
 
@@ -43,7 +43,7 @@ public class CalendarListTemp extends CalendarListImpl {
     }
 
     @Override
-    public int add(String name, LocalDateTime start, LocalDateTime end, TemporalAmount period) {
+    public int add(String name, LocalDateTime start, LocalDateTime end, Period period) {
         return 0;
     }
 
@@ -51,11 +51,4 @@ public class CalendarListTemp extends CalendarListImpl {
     public CalendarEntry delete(int id) {
         return null;
     }
-
-    @Override
-    public CalendarEntry update(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            TemporalAmount newPeriod) {
-        return null;
-    }
-
 }

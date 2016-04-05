@@ -8,7 +8,7 @@ import java.time.Period;
 
 public class RecurringEvent extends RecurringTask {
 
-    public static final String CLASS_NAME = "RecurringEvent";
+    private final String SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
 
     private LocalDateTime startDateTime;
 

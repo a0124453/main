@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
 
-    public static final String CLASS_NAME = "Event";
+    private final String SERIAL_TYPE_IDENTIFIER = "Event";
 
     private LocalDateTime startDateTime;
 

@@ -7,13 +7,13 @@ import java.time.Period;
 
 public class GenericEntry implements CalendarEntry {
 
-    public static final String CLASS_NAME = "GenericEntry";
+    private final String SERIAL_TYPE_IDENTIFIER = "GenericEntry";
 
     private static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command!";
 
     private String name;
     private int id;
-    private boolean isActive;
+    public boolean isActive = true;
 
     public GenericEntry(String name) {
         this.name = name;
