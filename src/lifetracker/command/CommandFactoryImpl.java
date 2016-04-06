@@ -98,20 +98,20 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject editRecurringDeadline(int id, String name, LocalDateTime deadline, Period recurringPeriod,
-            boolean isLimitInf) {
-        return null;
+            boolean isLimitRemoved) {
+        return new EditRecurringTaskCommand(id, name, deadline, recurringPeriod, isLimitRemoved);
     }
 
     @Override
     public CommandObject editRecurringDeadline(int id, String name, LocalDateTime deadline, Period recurringPeriod,
             int limit) {
-        return null;
+        return new EditRecurringTaskCommand(id, name, deadline, recurringPeriod, limit);
     }
 
     @Override
     public CommandObject editRecurringDeadline(int id, String name, LocalDateTime deadline, Period recurringPeriod,
             LocalDate limitDate) {
-        return null;
+        return new EditRecurringTaskCommand(id, name, deadline, recurringPeriod, limitDate);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class CommandFactoryImpl implements CommandFactory {
     @Override
     public CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
             Period recurringPeriod,
-            boolean isLimitInf) {
+            boolean isLimitRemoved) {
         return null;
     }
 
