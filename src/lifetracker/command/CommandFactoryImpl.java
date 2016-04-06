@@ -144,17 +144,17 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject editRecurring(int id, String name, Period recurringPeriod, boolean isLimitInf) {
-        return null;
+    public CommandObject editRecurring(int id, String name, Period recurringPeriod, boolean isLimitRemoved) {
+        return new EditRecurringEntryCommand(id, name, recurringPeriod, isLimitRemoved);
     }
 
     @Override
     public CommandObject editRecurring(int id, String name, Period recurringPeriod, int limit) {
-        return null;
+        return new EditRecurringEntryCommand(id, name, recurringPeriod, limit);
     }
 
     @Override
     public CommandObject editRecurring(int id, String name, Period recurringPeriod, LocalDate limitDate) {
-        return null;
+        return new EditRecurringEntryCommand(id, name, recurringPeriod, limitDate);
     }
 }

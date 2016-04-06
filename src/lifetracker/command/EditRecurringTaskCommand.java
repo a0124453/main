@@ -6,37 +6,26 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public class EditRecurringTaskCommand extends EditDeadlineTaskCommand {
+public class EditRecurringTaskCommand extends EditRecurringEntryCommand {
 
-    static final int OCCUR_INF = -1;
-    static final int OCCUR_DATE = -2;
-
-    final Period recurringPeriod;
-    final int occurLimit;
-    final LocalDate dateLimit;
+    final LocalDateTime endDateTime;
 
     public EditRecurringTaskCommand(int id, String name, LocalDateTime endDateTime, Period recurringPeriod,
             boolean isForcedConvert) {
-        super(id, name, endDateTime, isForcedConvert);
-        this.recurringPeriod = recurringPeriod;
-        this.occurLimit = OCCUR_INF;
-        this.dateLimit = null;
+        super(id, name, recurringPeriod, isForcedConvert);
+        this.endDateTime = endDateTime;
     }
 
     public EditRecurringTaskCommand(int id, String name, LocalDateTime endDateTime, Period recurringPeriod,
             int occurLimit) {
-        super(id, name, endDateTime, true);
-        this.recurringPeriod = recurringPeriod;
-        this.occurLimit = occurLimit;
-        this.dateLimit = null;
+        super(id, name, recurringPeriod, occurLimit);
+        this.endDateTime = endDateTime;
     }
 
     public EditRecurringTaskCommand(int id, String name, LocalDateTime endDateTime, Period recurringPeriod,
             LocalDate dateLimit) {
-        super(id, name, endDateTime, true);
-        this.recurringPeriod = recurringPeriod;
-        this.dateLimit = dateLimit;
-        this.occurLimit = OCCUR_DATE;
+        super(id, name, recurringPeriod, dateLimit);
+        this.endDateTime = endDateTime;
     }
 
     @Override
@@ -46,7 +35,7 @@ public class EditRecurringTaskCommand extends EditDeadlineTaskCommand {
         } else if (occurLimit == OCCUR_DATE) {
             oldEntry = calendar
                     .updateToRecurringTask(id, name, endDateTime, recurringPeriod, dateLimit, true);
-        } else{
+        } else {
             oldEntry = calendar.updateToRecurringTask(id, name, endDateTime, recurringPeriod, occurLimit, true);
         }
 
