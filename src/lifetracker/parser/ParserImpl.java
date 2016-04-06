@@ -183,7 +183,7 @@ public class ParserImpl implements Parser {
                         params.recurringPeriod, params.occurLimit);
             case RECURRING_EVENT_DATE:
                 return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
-                        params.recurringPeriod, params.occurLimit);
+                        params.recurringPeriod, params.dateLimit);
             default:
                 assert false;
                 return null;
