@@ -65,14 +65,13 @@ public class ParserImpl implements Parser {
     private final CommandFactory commandObjectFactory;
 
     public ParserImpl(CommandFactory commandFactory) {
-        cmdParser = new CommandParser(commands.keySet(), ADD_KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
-                FULL_COMMAND_SEPARATOR);
+        cmdParser = new CommandParser(commands.keySet(), defaultCommand);
         commandObjectFactory = commandFactory;
     }
 
     @Override
     public CommandObject parse(String userInput) {
-        List<String> commandSegments = cmdParser.parseFullCommand(userInput);
+        List<String> commandSegments = cmdParser.parseFullCommand(userInput, FULL_COMMAND_SEPARATOR);
 
         String command = commandSegments.get(0).toLowerCase();
         commandSegments.remove(0);
@@ -83,9 +82,12 @@ public class ParserImpl implements Parser {
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
-        Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
+        Map<String, String> commandBodySectionsMap = cmdParser
+                .parseCommandBody(addCommandBody, ADD_KEYWORDS_WITH_VERIFICATIONS);
 
-        return detectAddMethod(commandBodySectionsMap);
+        Parameters params = AddParameterParser.getInstance().parseCommandMap(commandBodySectionsMap);
+
+        return processParametersForAdd(params);
     }
 
     private CommandObject processDelete(List<String> commandBody) {
@@ -182,6 +184,40 @@ public class ParserImpl implements Parser {
             return commandObjectFactory.mark(id);
         } catch (NumberFormatException ex) {
             throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
+    }
+
+    private CommandObject processParametersForAdd(Parameters params) {
+        switch (params.commandClass) {
+            case GENERIC:
+                return commandObjectFactory.addFloatingTask(params.name);
+            case DEADLINE:
+                return commandObjectFactory.addDeadlineTask(params.name, params.endDateTime);
+            case RECURRING_TASK:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod);
+            case RECURRING_TASK_DATE:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                                params.dateLimit);
+            case RECURRING_TASK_OCCURRENCES:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                                params.occurLimit);
+            case EVENT:
+                return commandObjectFactory.addEvent(params.name, params.startDateTime, params.endDateTime);
+            case RECURRING_EVENT:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod);
+            case RECURRING_EVENT_OCCURRENCES:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod, params.occurLimit);
+            case RECURRING_EVENT_DATE:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod, params.occurLimit);
+            default:
+                assert false;
+                return null;
         }
     }
 

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * This class deals with separating commands into distinct components.
@@ -24,25 +23,16 @@ public class CommandParser {
     private static final String COMMAND_BODY_SEPARATOR = " ";
 
     private final Set<String> commands;
-    /**
-     * A map of keywords, together with their respective format verification predicates.
-     */
-    private final Map<String, Predicate<String>> keywordsWithVerifications;
     private final String defaultCommand;
-    private final String fullCommandSeparator;
 
     public CommandParser(Set<String> commands,
-            Map<String, Predicate<String>> keywordsWithVerifications,
-            String defaultCommand,
-            String fullCommandSeparator) {
+            String defaultCommand) {
 
         this.commands = commands;
-        this.keywordsWithVerifications = keywordsWithVerifications;
         this.defaultCommand = defaultCommand;
-        this.fullCommandSeparator = Pattern.quote(fullCommandSeparator);
     }
 
-    public List<String> parseFullCommand(String fullCommand) {
+    public List<String> parseFullCommand(String fullCommand, String fullCommandSeparator) {
 
         String[] components = fullCommand.split(fullCommandSeparator);
 
@@ -51,9 +41,9 @@ public class CommandParser {
         String command = getFirstWord(components[0]);
 
         //If command was split without space
-        if(components[0].equals(command)){
+        if (components[0].equals(command)) {
             components[0] = "";
-        } else{
+        } else {
             components[0] = components[0].replaceFirst(command + " ", "");
         }
 
@@ -61,9 +51,9 @@ public class CommandParser {
 
         parsedComponents.add(command);
 
-        for(String component: components){
-            if(!component.trim().isEmpty()){
-               parsedComponents.add(component);
+        for (String component : components) {
+            if (!component.trim().isEmpty()) {
+                parsedComponents.add(component);
             }
         }
 
@@ -86,7 +76,8 @@ public class CommandParser {
      * @param commandBody The command body to parse
      * @return A map with the components parsed
      */
-    public Map<String, String> parseCommandBody(String commandBody) {
+    public Map<String, String> parseCommandBody(String commandBody,
+            Map<String, Predicate<String>> keywordsWithVerifications) {
 
         Map<String, String> keyWordArgumentMap = new LinkedHashMap<>();
 
@@ -115,7 +106,7 @@ public class CommandParser {
             }
         }
 
-        if(!keyWordArgumentMap.containsKey(COMMAND_BODY_NAME_FIELD_KEY)){
+        if (!keyWordArgumentMap.containsKey(COMMAND_BODY_NAME_FIELD_KEY)) {
             keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseDeque(intermediateStack));
         }
 
