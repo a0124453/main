@@ -3,7 +3,6 @@ package lifetracker.parser;
 import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 import org.apache.commons.lang3.StringUtils;
-import sun.font.TrueTypeFont;
 
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -17,22 +16,29 @@ public class ParserImpl implements Parser {
 
     private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
 
-    private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
-
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
 
     private static final DurationParser DURATION_PARSER = DurationParser.getInstance();
 
+    private static final Map<String, Predicate<String>> ADD_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+
     static {
-        KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
-        KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
-        KEYWORDS_WITH_VERIFICATIONS.put("nodue", StringUtils::isBlank);
-        KEYWORDS_WITH_VERIFICATIONS.put("stop", StringUtils::isBlank);
-        KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
+
+    }
+
+    private static final Map<String, Predicate<String>> EDIT_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>(
+            ADD_KEYWORDS_WITH_VERIFICATIONS);
+
+    static {
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("nodue", StringUtils::isBlank);
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("stop", StringUtils::isBlank);
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
     }
 
     private static final String defaultCommand = "add";
@@ -59,7 +65,7 @@ public class ParserImpl implements Parser {
     private final CommandFactory commandObjectFactory;
 
     public ParserImpl(CommandFactory commandFactory) {
-        cmdParser = new CommandParser(commands.keySet(), KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
+        cmdParser = new CommandParser(commands.keySet(), ADD_KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
                 FULL_COMMAND_SEPARATOR);
         commandObjectFactory = commandFactory;
     }
@@ -80,65 +86,6 @@ public class ParserImpl implements Parser {
         Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
 
         return detectAddMethod(commandBodySectionsMap);
-    }
-
-    private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
-        if (validAddEventMap(commandBodySectionsMap)) {
-
-
-
-
-
-            if (commandBodySectionsMap.containsKey("every")) {
-                Period recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
-
-                return commandObjectFactory
-                        .addRecurringEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0),
-                                startEndDateTime.get(1),
-                                recurringAmount);
-            } else {
-                return commandObjectFactory
-                        .addEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
-            }
-
-        } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
-
-            if (!commandBodySectionsMap.containsKey("by")) {
-                commandBodySectionsMap.put("by", "");
-            }
-
-            LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
-
-            if (commandBodySectionsMap.containsKey("every")) {
-                Period recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
-                return commandObjectFactory
-                        .addRecurringDeadlineTask(commandBodySectionsMap.get("name"), dueDate, recurringAmount);
-            } else {
-                return commandObjectFactory.addDeadlineTask(commandBodySectionsMap.get("name"), dueDate);
-            }
-
-        } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
-
-            return commandObjectFactory.addFloatingTask(commandBodySectionsMap.get("name"));
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean validAddEventMap(Map<String, String> commandBodySectionMap) {
-        return commandBodySectionMap.containsKey("from") && !commandBodySectionMap.containsKey("by");
-    }
-
-    private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
-        return (commandBodySectionMap.containsKey("by") || commandBodySectionMap.containsKey("every"))
-                && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
-    }
-
-    private boolean validAddFloatingTaskMap(Map<String, String> commandBodySectionMap) {
-        return !(commandBodySectionMap.containsKey("by")
-                || commandBodySectionMap.containsKey("from")
-                || commandBodySectionMap.containsKey("to")
-                || commandBodySectionMap.containsKey("every"));
     }
 
     private CommandObject processDelete(List<String> commandBody) {
