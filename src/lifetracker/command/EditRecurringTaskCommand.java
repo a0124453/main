@@ -52,6 +52,6 @@ public class EditRecurringTaskCommand extends EditDeadlineTaskCommand {
 
         setExecuted(true);
         setComment(String.format(MESSAGE_EDITED, id));
-        return super.execute(calendar);
+        return calendar;
     }
 }
