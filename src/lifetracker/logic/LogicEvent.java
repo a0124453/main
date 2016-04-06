@@ -32,4 +32,16 @@ public interface LogicEvent {
     void setPeriod(TemporalAmount period);
     
     TemporalAmount getPeriod();
+    
+    int getLimitOccur();
+
+    void setLimitOccur(int limitOccur);
+
+    LocalDateTime getLimitDate();
+
+    void setLimitDate(LocalDateTime limitDate);
+
+    boolean isNew();
+
+    void setNew(boolean isNew);
 }

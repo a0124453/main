@@ -11,6 +11,9 @@ public class LogicTaskImpl implements LogicTask {
     private boolean isOverdue;
     private boolean isDone;
     private TemporalAmount period;
+    private int limitOccur;
+    private LocalDateTime limitDate;
+    private boolean isNew;
     
     @Override
     public void setName(String name) {
@@ -70,5 +73,35 @@ public class LogicTaskImpl implements LogicTask {
     @Override
     public TemporalAmount getPeriod() {
         return period;
+    }
+
+    @Override
+    public int getLimitOccur() {
+        return limitOccur;
+    }
+
+    @Override
+    public void setLimitOccur(int limitOccur) {
+        this.limitOccur = limitOccur;
+    }
+
+    @Override
+    public LocalDateTime getLimitDate() {
+        return limitDate;
+    }
+
+    @Override
+    public void setLimitDate(LocalDateTime limitDate) {
+        this.limitDate = limitDate;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    @Override
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
     }
 }

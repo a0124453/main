@@ -41,7 +41,7 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
-            TemporalAmount period) {
+            TemporalAmount period, int limitOccur, LocalDateTime limitDate, boolean isNew) {
         LogicTask record = new LogicTaskImpl();
         record.setId(id);
         record.setName(name);
@@ -49,12 +49,15 @@ public class CommandLineResult implements ExecuteResult {
         record.setOverdue(isOverdue);
         record.setDone(isDone);
         record.setPeriod(period);
+        record.setLimitOccur(limitOccur);
+        record.setLimitDate(limitDate);
+        record.setNew(isNew);
         taskList.add(record);
     }
 
     @Override
     public void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue,
-            boolean isDone, TemporalAmount period) {
+            boolean isDone, TemporalAmount period, int limitOccur, LocalDateTime limitDate, boolean isNew) {
         LogicEvent record = new LogicEventImpl();
         record.setId(id);
         record.setName(name);
@@ -63,6 +66,9 @@ public class CommandLineResult implements ExecuteResult {
         record.setOverdue(isOverdue);
         record.setDone(isDone);
         record.setPeriod(period);
+        record.setLimitOccur(limitOccur);
+        record.setLimitDate(limitDate);
+        record.setNew(isNew);
         eventList.add(record);
     }
 
