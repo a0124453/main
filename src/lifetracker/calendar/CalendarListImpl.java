@@ -51,12 +51,17 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public List<CalendarEntry> getArchivedTaskList() {
-        return new ArrayList<>(archivedTaskList.values());
+        List<CalendarEntry> list = new ArrayList<>(archivedTaskList.values());
+        List<CalendarEntry> sortedList = sortReverseByDateTime(CalendarProperty.END, list);
+        return sortedList;
     }
 
     @Override
     public List<CalendarEntry> getArchivedEventList() {
-        return new ArrayList<>(archivedEventList.values());
+        List<CalendarEntry> list = new ArrayList<>(archivedEventList.values());
+        List<CalendarEntry> sortedList = sortReverseByDateTime(CalendarProperty.END, list);
+        sortedList = sortReverseByDateTime(CalendarProperty.START, sortedList);
+        return sortedList;
     }
 
     @Override
@@ -419,6 +424,26 @@ public class CalendarListImpl implements CalendarList {
                 return 1;
             } else if (date1.isAfter(date2)) {
                 return -1;
+            } else {
+                return 0;
+            }
+        };
+        Collections.sort(list, comparator);
+        return list;
+    }
+
+    private List<CalendarEntry> sortReverseByDateTime(CalendarProperty property, List<CalendarEntry> list) {
+        Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
+            LocalDateTime date1 = entry1.getDateTime(property);
+            LocalDateTime date2 = entry2.getDateTime(property);
+            if (date1 == null && date2 != null) {
+                return 1;
+            } else if (date1 != null && date2 == null) {
+                return -1;
+            } else if (date1.isBefore(date2)) {
+                return -1;
+            } else if (date1.isAfter(date2)) {
+                return 1;
             } else {
                 return 0;
             }
