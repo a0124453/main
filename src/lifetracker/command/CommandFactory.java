@@ -68,7 +68,7 @@ public interface CommandFactory {
     CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end, Period recurringPeriod,
             LocalDate limitDate);
 
-    CommandObject editStop(int id, String name, LocalDateTime start, LocalDateTime end);
+    CommandObject editStop(int id, String name);
 
     CommandObject editRecurring(int id, String name, Period recurringPeriod, boolean isLimitInf);
 

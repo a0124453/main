@@ -139,8 +139,8 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject editStop(int id, String name, LocalDateTime start, LocalDateTime end) {
-        return null;
+    public CommandObject editStop(int id, String name) {
+        return new EditStopCommand(id, name);
     }
 
     @Override

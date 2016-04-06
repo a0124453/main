@@ -232,7 +232,7 @@ public class ParserImpl implements Parser {
             case RECURRING_OCCURRENCES:
                 return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
             case STOP:
-                return commandObjectFactory.editStop(id, params.name, params.startDateTime, params.endDateTime);
+                return commandObjectFactory.editStop(id, params.name);
             default:
                 assert false;
                 return null;

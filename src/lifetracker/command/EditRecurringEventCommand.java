@@ -6,9 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-/**
- * @author Shen Yichen <2007.yichen@gmail.com>
- */
+//@@author A0091173J
 public class EditRecurringEventCommand extends EditRecurringTaskCommand {
 
     final LocalDateTime startDateTime;

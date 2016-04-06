@@ -41,6 +41,9 @@ public class EditParameterParser extends AddParameterParser {
                 result.isForcedOverwrite = true;
             } else {
                 resolveAndProcessRecurringCommandType(commandMap, result);
+                if(isStopMap(commandMap)){
+                    result.commandClass = CommandClass.STOP;
+                }
             }
         }
     }
