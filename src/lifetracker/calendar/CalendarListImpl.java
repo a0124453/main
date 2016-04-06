@@ -407,9 +407,15 @@ public class CalendarListImpl implements CalendarList {
 
     private List<CalendarEntry> sortByDateTime(CalendarProperty property, List<CalendarEntry> list) {
         Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
-            if (entry1.getDateTime(property).isBefore(entry2.getDateTime(property))) {
+            LocalDateTime date1 = entry1.getDateTime(property);
+            LocalDateTime date2 = entry2.getDateTime(property);
+            if (date1 == null && date2 != null) {
                 return 1;
-            } else if (entry1.getDateTime(property).isAfter(entry2.getDateTime(property))) {
+            } else if (date1 != null && date2 == null) {
+                return -1;
+            } else if (date1.isBefore(date2)) {
+                return 1;
+            } else if (date1.isAfter(date2)) {
                 return -1;
             } else {
                 return 0;
