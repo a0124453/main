@@ -226,7 +226,7 @@ public class CalendarListImpl implements CalendarList {
 
         add(entryToMark);
 
-        if(pair.newEntry != null){
+        if (pair.newEntry != null) {
             update(pair.newEntry);
         }
 
@@ -234,7 +234,7 @@ public class CalendarListImpl implements CalendarList {
     }
 
     @Override
-    public CalendarEntry get(int id){
+    public CalendarEntry get(int id) {
         if (taskList.containsKey(id)) {
             return taskList.get(id);
         } else if (eventList.containsKey(id)) {
@@ -280,10 +280,14 @@ public class CalendarListImpl implements CalendarList {
 
     private CalendarEntry updateWithVisitor(EntryVisitor<OldNewEntryPair> visitor, int id) {
         CalendarEntry entryToEdit = delete(id);
-        OldNewEntryPair pair = entryToEdit.accept(visitor);
-
-        add(pair.newEntry);
-        return pair.oldEntry;
+        try {
+            OldNewEntryPair pair = entryToEdit.accept(visitor);
+            add(pair.newEntry);
+            return pair.oldEntry;
+        } catch (IllegalArgumentException ex) {
+            add(entryToEdit);
+            throw ex;
+        }
     }
 
     TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
@@ -405,7 +409,7 @@ public class CalendarListImpl implements CalendarList {
         return id > BASE_ID && !isPresent(id);
     }
 
-    private boolean isPresent(int id){
+    private boolean isPresent(int id) {
         boolean isPresent = taskList.containsKey(id);
         isPresent |= eventList.containsKey(id);
         isPresent |= archivedTaskList.containsKey(id);
