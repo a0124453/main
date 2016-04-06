@@ -6,16 +6,28 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableRow;
+import javafx.util.Callback;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
+import lifetracker.logic.LogicEvent;
+import lifetracker.logic.LogicTask;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -27,6 +39,12 @@ import com.sun.javafx.scene.control.skin.TableHeaderRow;
 public class UIController implements Initializable {
 
     private static Logic l;
+    private static final String DAY_FIELD = "day(s)";
+    private static final String MONTH_FIELD = "month(s)";
+    private static final String YEAR_FIELD = "year(s)";
+
+    private static final String MINUTE_FIELD = "minute(s)";
+    private static final String HOUR_FIELD = "hour(s)";
 
     @FXML Label labelTitle;
     @FXML
@@ -34,34 +52,34 @@ public class UIController implements Initializable {
     @FXML
     Label labelFeedback;
     @FXML
-    TableView<ItemUI> tableTask;
+    TableView<LogicTask> tableTask;
     @FXML
-    TableColumn<ItemUI, String> columnTaskID;
+    
+    TableColumn<LogicTask, String> columnTaskID;
     @FXML
-    TableColumn<ItemUI, String> columnTaskName;
+    TableColumn<LogicTask, String> columnTaskName;
     @FXML
-    TableColumn<ItemUI, String> columnTaskActive;
+    TableColumn<LogicTask, String> columnTaskTime;
     @FXML
-    TableColumn<ItemUI, String> columnTaskTime;
+    TableColumn<LogicTask, String> columnTaskRecurring;
     @FXML
-    TableColumn<ItemUI, String> columnTaskRecurring;
+    
+    TableView<LogicEvent> tableEvent;
     @FXML
-    TableView<ItemUI> tableEvent;
+    TableColumn<LogicEvent, String> columnEventID;
     @FXML
-    TableColumn<ItemUI, String> columnEventID;
+    TableColumn<LogicEvent, String> columnEventName;
     @FXML
-    TableColumn<ItemUI, String> columnEventName;
+    TableColumn<LogicEvent, String> columnEventActive;
     @FXML
-    TableColumn<ItemUI, String> columnEventActive;
+    TableColumn<LogicEvent, String> columnEventStartTime;
     @FXML
-    TableColumn<ItemUI, String> columnEventStartTime;
+    TableColumn<LogicEvent, String> columnEventEndTime;
     @FXML
-    TableColumn<ItemUI, String> columnEventEndTime;
-    @FXML
-    TableColumn<ItemUI, String> columnEventRecurring;
+    TableColumn<LogicEvent, String> columnEventRecurring;
 
-    private static ObservableList<ItemUI> taskList = FXCollections.observableArrayList();
-    private static ObservableList<ItemUI> eventList = FXCollections.observableArrayList();
+    private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
+    private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
 
     @FXML
     public void getInput() {
@@ -99,27 +117,104 @@ public class UIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
+        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
         
-        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
+        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
 
         //columnTaskActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
-        columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
+        //columnTaskTime.setCellValueFactory(param -> new ReadOnlyStringWrapper((param.getValue().getDeadline().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)).toString())));
+        columnTaskTime.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicTask,String>, ObservableValue<String>>() {
+            
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                LocalDateTime deadline = param.getValue().getDeadline();
+                String deadlineString;
+                if(deadline != null) {
+                   deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+                } else {
+                    deadlineString = "";
+                }
+                
+                return new ReadOnlyStringWrapper(deadlineString);
+            }
+        });
+        //columnTaskRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+        columnTaskRecurring.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicTask,String>, ObservableValue<String>>() {
 
-        columnTaskRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                String periodString = convertTemporalToString(param.getValue().getPeriod());
+                return new ReadOnlyStringWrapper(periodString);
+            }
+        });
+        columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
 
-        columnEventID.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(0)));
-
-        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(1)));
+        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
 
         //columnEventActive.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(2)));
 
-        columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(3)));
+        columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getStart().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
+        
+        columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getEnd().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
 
-        columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(4)));
+        //columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
+        columnEventRecurring.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LogicEvent,String>, ObservableValue<String>>() {
 
-        columnEventRecurring.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getItem().get(5)));
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
+                String periodString = convertTemporalToString(param.getValue().getPeriod());
+                return new ReadOnlyStringWrapper(periodString);
+            }
+        });
+        
+        final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
+        final PseudoClass donePseudoClass = PseudoClass.getPseudoClass("done");
+        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
+                    @Override
+                    public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
+                        return new TableRow<LogicEvent>() {
+                            @Override
+                            protected void updateItem(LogicEvent event, boolean b) {
+                                super.updateItem(event, b);
+                                boolean overdue = event != null && event.getOverdue();
+                                boolean done = event != null && !event.isDone();
+                                
+                                if(!done) {
+                                    pseudoClassStateChanged(overduePseudoClass, overdue);
+                                }
+                                
+                                super.updateItem(event, b);
+                                pseudoClassStateChanged(donePseudoClass, done);
+                            }
+
+
+                        };
+                    }
+                });
+        
+        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
+            @Override
+            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
+                return new TableRow<LogicTask>() {
+                    @Override
+                    protected void updateItem(LogicTask task, boolean b) {
+                        super.updateItem(task, b);
+                        boolean overdue = task != null && task.getOverdue();
+                        boolean done = task != null && !task.isDone();
+                        
+                        if(!done) {
+                            pseudoClassStateChanged(overduePseudoClass, overdue);
+                        }
+                        
+                        super.updateItem(task, b);
+                        pseudoClassStateChanged(donePseudoClass, done);
+                    }
+
+
+                };
+            }
+        });
         
         tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
@@ -133,18 +228,46 @@ public class UIController implements Initializable {
         });
     }
     
+    private String convertTemporalToString(TemporalAmount period) {
+        String periodString;
+        if (period == null) {
+            periodString = "";
+        } else if (period instanceof Period) {
+            periodString = convertPeriodToString(((Period) period).normalized());
+        } else {
+            periodString = convertDurationToString((Duration) period);
+        }
+        return periodString;
+    }
+    
+    private String convertPeriodToString(Period period) {
+        int years = period.getYears();
+        int months = period.getMonths();
+        int days = period.getDays();
+
+        return formatDuration(years, YEAR_FIELD) + formatDuration(months, MONTH_FIELD) + formatDuration(days, DAY_FIELD);
+    }
+    
+    private String convertDurationToString(Duration duration) {
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+
+        return formatDuration(hours, HOUR_FIELD) + formatDuration(minutes, MINUTE_FIELD);
+    }
+    
+    private String formatDuration(long duration, String label) {
+        return duration == 0 ? "" : duration + " " + label + " ";
+    }
 
     public static void populateList(ExecuteResult result) {
         taskList.clear();
-        for (List<String> task : result.getTaskList()) {
-            taskList.add(new ItemUI(task));
+        for (LogicTask task : result.getTaskList()) {
+            taskList.add(task);
         }
-
         eventList.clear();
-        for (List<String> event : result.getEventList()) {
-            eventList.add(new ItemUI(event));
+        for (LogicEvent event : result.getEventList()) {
+            eventList.add(event);
         }
-
     }
 
 }

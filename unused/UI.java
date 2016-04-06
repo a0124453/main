@@ -46,8 +46,8 @@ public class UI {
 
             if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
 
-                printTable(EVENT_TITLE, EVENT_HEADERS, result.getEventList());
-                printTable(TASK_TITLE, TASK_HEADERS, result.getTaskList());
+               // printTable(EVENT_TITLE, EVENT_HEADERS, result.getEventList());
+               // printTable(TASK_TITLE, TASK_HEADERS, result.getTaskList());
 
             }
 
