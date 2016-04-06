@@ -5,7 +5,6 @@ import lifetracker.command.CommandObject;
 
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +90,7 @@ public class ParserImpl implements Parser {
                     .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
 
             if (commandBodySectionsMap.containsKey("every")) {
-                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
+                Period recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
 
                 return commandObjectFactory
                         .addRecurringEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0),
@@ -111,7 +110,7 @@ public class ParserImpl implements Parser {
             LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
 
             if (commandBodySectionsMap.containsKey("every")) {
-                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
+                Period recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
                 return commandObjectFactory
                         .addRecurringDeadlineTask(commandBodySectionsMap.get("name"), dueDate, recurringAmount);
             } else {

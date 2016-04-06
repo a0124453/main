@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -62,7 +61,7 @@ public class ParserImplTest {
         //Partition: Recurring deadlines
         parser.parse("finish readings by tomorrow 2pm every 2 week");
         LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
-        TemporalAmount expectedRecurringDuration = Period.ofWeeks(2);
+        Period expectedRecurringDuration = Period.ofWeeks(2);
         verify(cmdFactory).addRecurringDeadlineTask("finish readings", expectedDateTime, expectedRecurringDuration);
 
         //Boundary: Missing date time
