@@ -12,4 +12,5 @@ public class Parameters {
     public Period recurringPeriod;
     public int occurLimit;
     public LocalDate dateLimit;
+    public boolean isForcedOverwrite= false;
 }

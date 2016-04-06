@@ -7,13 +7,15 @@ public interface CommandParametersParser {
 
     Parameters parseCommandMap(Map<String, String> commandMap);
 
-    static void checkNotAllPresent(Map<String, String> commandMap, String... keywords) {
-        boolean allPresent = true;
+    static void checkMutuallyExclusiveKeywords(Map<String, String> commandMap, String... keywords) {
+        int count = 0;
         for (String word : keywords) {
-            allPresent &= commandMap.containsKey(word);
+            if (commandMap.containsKey(word)) {
+                count++;
+            }
         }
 
-        if (allPresent) {
+        if (count > 1) {
             throw new IllegalArgumentException(ERROR_INVALID_PARAMS);
         }
     }

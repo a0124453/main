@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.scene.input.KeyCode.R;
+import static lifetracker.parser.CommandParametersParser.checkMutuallyExclusiveKeywords;
+
 //@@author A0091173J
 public class AddParameterParser implements CommandParametersParser {
     private static AddParameterParser ourInstance = new AddParameterParser();
@@ -47,12 +50,14 @@ public class AddParameterParser implements CommandParametersParser {
 
             if (isRecurringMap(commandMap)) {
                 populateRecurringParameters(commandMap, result);
+            } else if(isStopMap(commandMap)){
+                result.isForcedOverwrite = true;
             }
         }
     }
 
     private boolean isEventMap(Map<String, String> commandMap) {
-        CommandParametersParser.checkNotAllPresent(commandMap, EVENT_START_FIELD, TASK_DEADLINE_FIELD);
+        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, TASK_DEADLINE_FIELD);
 
         return commandMap.containsKey(EVENT_START_FIELD);
     }
@@ -77,9 +82,9 @@ public class AddParameterParser implements CommandParametersParser {
     }
 
     private boolean isRecurringMap(Map<String, String> commandMap) {
-        CommandParametersParser.checkNotAllPresent(commandMap, RECURRING_PERIOD_FIELD, RECURRING_STOP);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_PERIOD_FIELD, RECURRING_STOP);
 
-        CommandParametersParser.checkNotAllPresent(commandMap, RECURRING_LIMIT_DATE, RECURRING_LIMIT_OCCURRENCES);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_DATE, RECURRING_LIMIT_OCCURRENCES);
 
         return commandMap.containsKey(RECURRING_PERIOD_FIELD);
     }
@@ -110,5 +115,12 @@ public class AddParameterParser implements CommandParametersParser {
         } else {
             result.commandClass = noneEnum;
         }
+    }
+
+    private boolean isStopMap(Map<String, String> commandMap){
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_PERIOD_FIELD, RECURRING_STOP);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, RECURRING_LIMIT_DATE, RECURRING_STOP);
+
+        return commandMap.containsKey(RECURRING_STOP);
     }
 }
