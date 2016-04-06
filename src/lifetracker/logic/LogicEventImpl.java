@@ -68,7 +68,7 @@ public class LogicEventImpl implements LogicEvent {
     }
     
     @Override
-    public void setDone(boolean isDone) {
+    public void setActive(boolean isDone) {
         this.isDone = isDone;
     }
     
@@ -115,5 +115,51 @@ public class LogicEventImpl implements LogicEvent {
     @Override
     public void setNew(boolean isNew) {
         this.isNew = isNew;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof LogicEventImpl))
+            return false;
+
+        LogicEventImpl that = (LogicEventImpl) o;
+
+        if (getId() != that.getId())
+            return false;
+        if (getOverdue() != that.getOverdue())
+            return false;
+        if (isDone() != that.isDone())
+            return false;
+        if (getLimitOccur() != that.getLimitOccur())
+            return false;
+        if (isNew() != that.isNew())
+            return false;
+        if (!getName().equals(that.getName()))
+            return false;
+        if (getStart() != null ? !getStart().equals(that.getStart()) : that.getStart() != null)
+            return false;
+        if (getEnd() != null ? !getEnd().equals(that.getEnd()) : that.getEnd() != null)
+            return false;
+        if (getPeriod() != null ? !getPeriod().equals(that.getPeriod()) : that.getPeriod() != null)
+            return false;
+        return getLimitDate() != null ? getLimitDate().equals(that.getLimitDate()) : that.getLimitDate() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName().hashCode();
+        result = 31 * result + getId();
+        result = 31 * result + (getStart() != null ? getStart().hashCode() : 0);
+        result = 31 * result + (getEnd() != null ? getEnd().hashCode() : 0);
+        result = 31 * result + (getOverdue() ? 1 : 0);
+        result = 31 * result + (isDone() ? 1 : 0);
+        result = 31 * result + (getPeriod() != null ? getPeriod().hashCode() : 0);
+        result = 31 * result + getLimitOccur();
+        result = 31 * result + (getLimitDate() != null ? getLimitDate().hashCode() : 0);
+        result = 31 * result + (isNew() ? 1 : 0);
+        return result;
     }
 }

@@ -19,10 +19,10 @@ public interface ExecuteResult {
 
     List<LogicTask> getTaskList();
 
-    void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
+    void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isActive,
             Period period, int limitOccur, LocalDate limitDate, boolean isNew);
 
-    void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue, boolean isDone,
+    void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue, boolean isActive,
             Period period, int limitOccur, LocalDate limitDate, boolean isNew);
 
     CommandType getType();

@@ -22,7 +22,7 @@ public interface LogicTask {
     
     boolean getOverdue();
     
-    void setDone(boolean isDone);
+    void setActive(boolean isDone);
     
     boolean isDone();
     

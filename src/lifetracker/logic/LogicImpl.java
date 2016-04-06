@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.EmptyStackException;
 import java.util.Properties;
 import java.util.Stack;
@@ -174,31 +175,39 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
-            executedState.getTaskList().forEach(task -> runResult.addTaskLine(
-                    task.getId(),
-                    task.getName(),
-                    task.getDateTime(CalendarProperty.END),
-                    task.isProperty(CalendarProperty.OVER),
-                    task.isProperty(CalendarProperty.ACTIVE),
-                    task.getPeriod(),
-                    task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
-                    task.getDateTime(CalendarProperty.DATE_LIMIT).toLocalDate(),
-                    false));
+            executedState.getTaskList().forEach(task -> {
+                LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
+
+                runResult.addTaskLine(
+                        task.getId(),
+                        task.getName(),
+                        task.getDateTime(CalendarProperty.END),
+                        task.isProperty(CalendarProperty.OVER),
+                        task.isProperty(CalendarProperty.ACTIVE),
+                        task.getPeriod(),
+                        task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                        limitDate == null ? null : limitDate.toLocalDate(),
+                        false);
+            });
         }
 
         if (!executedState.getEventList().isEmpty()) {
             // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
-            executedState.getEventList().forEach(event -> runResult.addEventLine(
-                    event.getId(),
-                    event.getName(),
-                    event.getDateTime(CalendarProperty.START),
-                    event.getDateTime(CalendarProperty.END),
-                    event.isProperty(CalendarProperty.OVER),
-                    event.isProperty(CalendarProperty.ACTIVE),
-                    event.getPeriod(),
-                    event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
-                    event.getDateTime(CalendarProperty.DATE_LIMIT).toLocalDate(),
-                    false));
+            executedState.getEventList().forEach(event -> {
+
+                LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
+                runResult.addEventLine(
+                        event.getId(),
+                        event.getName(),
+                        event.getDateTime(CalendarProperty.START),
+                        event.getDateTime(CalendarProperty.END),
+                        event.isProperty(CalendarProperty.OVER),
+                        event.isProperty(CalendarProperty.ACTIVE),
+                        event.getPeriod(),
+                        event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                        limitDate == null ? null : limitDate.toLocalDate(),
+                        false);
+            });
         }
 
         return runResult;

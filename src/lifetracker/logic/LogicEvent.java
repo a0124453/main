@@ -26,7 +26,7 @@ public interface LogicEvent {
     
     boolean getOverdue();
     
-    void setDone(boolean isDone);
+    void setActive(boolean isDone);
     
     boolean isDone();
     
