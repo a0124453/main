@@ -24,6 +24,7 @@ public class AddParameterParser implements CommandParametersParser {
     protected static final String RECURRING_LIMIT_DATE = "until";
 
     protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
+    protected final DurationParser durationParser = DurationParser.getInstance();
 
     @Override
     public Parameters parseCommandMap(Map<String, String> commandMap) {
@@ -56,6 +57,7 @@ public class AddParameterParser implements CommandParametersParser {
 
             if (isRecurringMap(commandMap)) {
                 fillUpTaskNull(commandMap);
+                populateTaskParameters(commandMap, result);
                 populateRecurringParameters(commandMap, result);
             }
         }
@@ -111,6 +113,9 @@ public class AddParameterParser implements CommandParametersParser {
     }
 
     void populateRecurringParameters(Map<String, String> commandMap, Parameters result) {
+
+        result.recurringPeriod = durationParser.parse(commandMap.get(RECURRING_PERIOD_FIELD));
+
         if (commandMap.containsKey(RECURRING_LIMIT_DATE)) {
             result.dateLimit = dateTimeParser.parseDateTimeAsIs(commandMap.get(RECURRING_LIMIT_DATE)).toLocalDate();
 

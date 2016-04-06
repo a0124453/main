@@ -32,14 +32,14 @@ public class CommandParserTest {
 
     private String defaultCommand = "add";
 
-    private String fullCommandSeperator = "| ";
+    private String fullCommandSeparator = "| ";
 
     private CommandParser cmdParser = new CommandParser(commands, defaultCommand);
 
     @Test
     public void testParseFullCommand() throws Exception {
 
-        //Parition: Default (no) command with spaces
+        //Partition: Default (no) command with spaces
         String command = "abc testcommand";
 
         List<String> expected = new ArrayList<>();
@@ -47,7 +47,7 @@ public class CommandParserTest {
         expected.add(defaultCommand);
         expected.add(command);
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeperator));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Partition: Explicit command specified
         //Boundary: more than one space between words
@@ -57,14 +57,14 @@ public class CommandParserTest {
         expected.add("testcommand");
         expected.add(" add  testcommand ");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeperator));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Partition: Command with mulitple sections
         command = "testcommand add testcommand |  add";
         expected.set(1, "add testcommand ");
         expected.add(" add");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeperator));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         expected.clear();
 
@@ -75,7 +75,7 @@ public class CommandParserTest {
         expected.add("add");
         expected.add("two");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeperator));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Boundary: Spaces right after separator
         command = "testcommand|  abc |def";
@@ -83,7 +83,7 @@ public class CommandParserTest {
         expected.add("testcommand");
         expected.add(" abc |def");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeperator));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
     }
 

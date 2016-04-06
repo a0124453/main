@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * This class deals with separating commands into distinct components.
@@ -33,6 +34,7 @@ public class CommandParser {
     }
 
     public List<String> parseFullCommand(String fullCommand, String fullCommandSeparator) {
+        fullCommandSeparator = Pattern.quote(fullCommandSeparator);
 
         String[] components = fullCommand.split(fullCommandSeparator);
 
