@@ -1,5 +1,18 @@
 package lifetracker.calendar;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.commons.lang3.StringUtils;
+
 import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
 import lifetracker.calendar.visitor.EntryToEventVisitor;
 import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
@@ -8,16 +21,6 @@ import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
 import lifetracker.calendar.visitor.EntryVisitor;
 import lifetracker.calendar.visitor.MarkVisitor;
 import lifetracker.calendar.visitor.OldNewEntryPair;
-import org.apache.commons.lang3.StringUtils;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -38,7 +41,10 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public List<CalendarEntry> getEventList() {
-        return new ArrayList<>(eventList.values());
+        List<CalendarEntry> list = new ArrayList<>(eventList.values());
+        List<CalendarEntry> sortedList = sortByDateTime(CalendarProperty.END, list);
+        sortedList = sortByDateTime(CalendarProperty.START, sortedList);
+        return sortedList;
     }
 
     @Override
@@ -397,6 +403,20 @@ public class CalendarListImpl implements CalendarList {
         isPresent |= archivedTaskList.containsKey(id);
         isPresent |= archivedEventList.containsKey(id);
         return isPresent;
+    }
+
+    private List<CalendarEntry> sortByDateTime(CalendarProperty property, List<CalendarEntry> list) {
+        Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
+            if (entry1.getDateTime(property).isBefore(entry2.getDateTime(property))) {
+                return 1;
+            } else if (entry1.getDateTime(property).isAfter(entry2.getDateTime(property))) {
+                return -1;
+            } else {
+                return 0;
+            }
+        };
+        Collections.sort(list, comparator);
+        return list;
     }
 
 }
