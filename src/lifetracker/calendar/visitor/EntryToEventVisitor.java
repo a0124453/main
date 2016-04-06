@@ -39,6 +39,8 @@ public class EntryToEventVisitor implements EntryVisitor<OldNewEntryPair> {
         }
 
         Event event = new Event(entry.getName(), startDateTime, endDateTime);
+        event.setId(entry.getId());
+
         return edit(entry, event);
     }
 
@@ -49,6 +51,7 @@ public class EntryToEventVisitor implements EntryVisitor<OldNewEntryPair> {
         }
 
         Event event = new Event(task.getName(), startDateTime, task.getDateTime(CalendarProperty.END));
+        event.setId(task.getId());
         return edit(task, event);
     }
 
@@ -78,6 +81,7 @@ public class EntryToEventVisitor implements EntryVisitor<OldNewEntryPair> {
         if (isForcedConvert) {
             Event newEvent = new Event(event.getName(), event.getDateTime(CalendarProperty.START),
                     event.getDateTime(CalendarProperty.END));
+            newEvent.setId(event.getId());
             return edit(event, newEvent);
         } else {
             RecurringEvent clone = new RecurringEvent(event);
@@ -116,6 +120,8 @@ public class EntryToEventVisitor implements EntryVisitor<OldNewEntryPair> {
 
         RecurringEvent newEvent = new RecurringEvent(task.getName(), startDateTime,
                 task.getDateTime(CalendarProperty.END), task.getPeriod());
+
+        newEvent.setId(task.getId());
 
         if (task.isProperty(CalendarProperty.DATE_LIMITED)) {
             newEvent.setDateTime(CalendarProperty.DATE_LIMIT, task.getDateTime(CalendarProperty.DATE_LIMIT));
