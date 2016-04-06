@@ -57,9 +57,7 @@ public class EditParameterParser extends AddParameterParser {
 
         return super.isRecurringMap(commandMap)
                 || commandMap.containsKey(RECURRING_UNLIMIT_MARKER)
-                || commandMap.containsKey(RECURRING_LIMIT_OCCURRENCES)
-                || commandMap.containsKey(RECURRING_LIMIT_DATE)
-                || commandMap.containsKey(RECURRING_STOP_MARKER);
+                || commandMap.containsKey(RECURRING_LIMIT_OCCURRENCES);
     }
 
     @Override
