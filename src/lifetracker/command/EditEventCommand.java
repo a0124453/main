@@ -20,14 +20,14 @@ public class EditEventCommand extends EditDeadlineTaskCommand {
     public CalendarList execute(CalendarList calendar) {
 
         if(isForcedConvert){
-            calendar.updateToEvent(id, name, startDateTime, endDateTime, true);
+            oldEntry = calendar.updateToEvent(id, name, startDateTime, endDateTime, true);
         } else{
             CalendarEntry entryToEdit = calendar.get(id);
 
             if(entryToEdit.isProperty(CalendarProperty.RECURRING)){
-                calendar.updateToRecurringEvent(id, name, startDateTime, endDateTime, null, true);
+                oldEntry = calendar.updateToRecurringEvent(id, name, startDateTime, endDateTime, null, true);
             } else{
-                calendar.updateToEvent(id, name, startDateTime, endDateTime, true);
+                oldEntry = calendar.updateToEvent(id, name, startDateTime, endDateTime, true);
             }
         }
 

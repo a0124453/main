@@ -17,9 +17,9 @@ public class EditStopCommand extends EditGenericTaskCommand {
         CalendarEntry entryToEdit = calendar.get(id);
 
         if (entryToEdit.getDateTime(CalendarProperty.START) == null) {
-            calendar.updateToDeadline(id, name, null, true);
+            oldEntry = calendar.updateToDeadline(id, name, null, true);
         } else {
-            calendar.updateToEvent(id, name, null, null, true);
+            oldEntry = calendar.updateToEvent(id, name, null, null, true);
         }
 
         setExecuted(true);
