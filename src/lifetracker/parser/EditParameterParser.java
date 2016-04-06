@@ -30,13 +30,17 @@ public class EditParameterParser extends AddParameterParser {
     void determineTypeAndPopulateFields(Map<String, String> commandMap, Parameters result) {
         if (isEventMap(commandMap)) {
             populateEventParameters(commandMap, result);
-            resolveAndProcessCommandType(commandMap, result);
+            resolveAndProcessRecurringCommandType(commandMap, result);
         } else if (isTaskMap(commandMap)) {
             populateTaskParameters(commandMap, result);
-            resolveAndProcessCommandType(commandMap, result);
+            resolveAndProcessRecurringCommandType(commandMap, result);
         } else {
             result.commandClass = CommandClass.GENERIC;
-            resolveAndProcessCommandType(commandMap, result);
+            if (commandMap.containsKey(REMOVE_DATE_MARKER)) {
+                result.isForcedOverwrite = true;
+            } else {
+                resolveAndProcessRecurringCommandType(commandMap, result);
+            }
         }
     }
 
@@ -45,8 +49,26 @@ public class EditParameterParser extends AddParameterParser {
         checkMutuallyExclusiveKeywords(commandMap, RECURRING_STOP_MARKER, RECURRING_PERIOD_FIELD);
         checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, RECURRING_LIMIT_DATE,
                 RECURRING_UNLIMIT_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, REMOVE_DATE_MARKER, RECURRING_PERIOD_FIELD);
 
-        return super.isRecurringMap(commandMap);
+        return super.isRecurringMap(commandMap)
+                || commandMap.containsKey(RECURRING_UNLIMIT_MARKER)
+                || commandMap.containsKey(RECURRING_LIMIT_OCCURRENCES)
+                || commandMap.containsKey(RECURRING_LIMIT_DATE)
+                || commandMap.containsKey(RECURRING_STOP_MARKER);
+    }
+
+    @Override
+    boolean isEventMap(Map<String, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, REMOVE_DATE_MARKER);
+        return super.isEventMap(commandMap);
+    }
+
+    @Override
+    boolean isTaskMap(Map<String, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, EVENT_END_FIELD, REMOVE_DATE_MARKER);
+        return super.isTaskMap(commandMap);
     }
 
     @Override
@@ -82,13 +104,24 @@ public class EditParameterParser extends AddParameterParser {
         return commandMap.containsKey(RECURRING_UNLIMIT_MARKER);
     }
 
-    private void resolveAndProcessCommandType(Map<String, String> commandMap, Parameters result) {
+    boolean isRemoveDateMap(Map<String, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, EVENT_END_FIELD, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_PERIOD_FIELD, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, REMOVE_DATE_MARKER);
+        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_DATE, REMOVE_DATE_MARKER);
+
+        return commandMap.containsKey(REMOVE_DATE_MARKER);
+    }
+
+    private void resolveAndProcessRecurringCommandType(Map<String, String> commandMap, Parameters result) {
         if (isRecurringMap(commandMap)) {
             populateRecurringParameters(commandMap, result);
         } else if (isUnlimitMap(commandMap)) {
             populateRecurringParameters(commandMap, result);
             result.isForcedOverwrite = true;
-        } else {
+        } else if (isStopMap(commandMap)) {
             result.isForcedOverwrite = true;
         }
     }
