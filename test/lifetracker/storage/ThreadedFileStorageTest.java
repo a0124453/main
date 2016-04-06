@@ -156,7 +156,7 @@ public class ThreadedFileStorageTest {
         }
 
         if (altTestFile.exists()) {
-            testFile.delete();
+            altTestFile.delete();
         }
     }
 }

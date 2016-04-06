@@ -123,19 +123,19 @@ public class ParserImplTest {
 
         //Boundary: Missing options
         parser.parse("edit 2 > some other talk from tomorrow 3pm to 4pm");
-        verify(cmdFactory).editEvent(2, "some other talk", startTime, endTime,true);
+        verify(cmdFactory).editEvent(2, "some other talk", startTime, endTime,false);
 
         //Boundary: Missing end date time
         parser.parse("edit 3 > run from tomorrow 3pm");
-        verify(cmdFactory).editEvent(3, "run", startTime, endTime, true);
+        verify(cmdFactory).editEvent(3, "run", startTime, endTime, false);
 
         //Boundary: Missing name
         parser.parse("edit 4 > from tomorrow 3pm to 4pm");
-        verify(cmdFactory).editEvent(4, "", startTime, endTime, true);
+        verify(cmdFactory).editEvent(4, "", startTime, endTime, false);
 
         //Partition: Edit deadline task
         parser.parse("edit 5 > homework by tomorrow 4pm");
-        verify(cmdFactory).editDeadline(5, "homework", endTime, true);
+        verify(cmdFactory).editDeadline(5, "homework", endTime, false);
 
         //Boundary: Invalid deadline date time
         parser.parse("edit 6 > drop by school from home");
