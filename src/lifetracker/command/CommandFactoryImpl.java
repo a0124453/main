@@ -122,21 +122,20 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
-            Period recurringPeriod,
-            boolean isLimitRemoved) {
-        return null;
+            Period recurringPeriod, boolean isLimitRemoved) {
+        return new EditRecurringEventCommand(id, name, start, end, recurringPeriod, isLimitRemoved);
     }
 
     @Override
     public CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
             Period recurringPeriod, int limit) {
-        return null;
+        return new EditRecurringEventCommand(id, name, start, end, recurringPeriod, limit);
     }
 
     @Override
     public CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
             Period recurringPeriod, LocalDate limitDate) {
-        return null;
+        return new EditRecurringEventCommand(id, name, start, end, recurringPeriod, limitDate);
     }
 
     @Override
