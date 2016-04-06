@@ -31,7 +31,7 @@ import java.util.Set;
 class DateTimeParser {
     private static DateTimeParser instance = new DateTimeParser();
 
-    static DateTimeParser getInstance() {
+    public static DateTimeParser getInstance() {
         return instance;
     }
 
@@ -44,13 +44,13 @@ class DateTimeParser {
     private DateTimeParser() {
     }
 
-    boolean isDateTime(String dateTimeString) {
+    public boolean isDateTime(String dateTimeString) {
         assert dateTimeString != null;
 
         return dateTimeString.isEmpty() || nattyParser.parse(dateTimeString).size() == 1;
     }
 
-    LocalDateTime parseSingleDateTime(String dateTimeString) {
+    public LocalDateTime parseSingleDateTime(String dateTimeString) {
         assert isDateTime(dateTimeString);
 
         dateTimeString = fillEmpty(dateTimeString);
@@ -62,7 +62,7 @@ class DateTimeParser {
         return adjustSingleDateToDefault(parsedDateTimeObj, parsedDateGroup.getParseLocations().keySet());
     }
 
-    List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
+    public List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
         assert isDateTime(startString);
         assert isDateTime(endString);
 
@@ -89,6 +89,12 @@ class DateTimeParser {
         dateTimeResults.addAll(Arrays.asList(adjustedDates));
 
         return dateTimeResults;
+    }
+
+    public LocalDateTime parseDateTimeAsIs(String dateTimeString){
+        DateGroup parsedDateGroup = parseWithNatty(dateTimeString);
+
+        return convertDateGroupToLocalDateTime(parsedDateGroup);
     }
 
     private String fillEmpty(String dateTimeString) {

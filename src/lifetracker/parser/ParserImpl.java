@@ -2,6 +2,8 @@ package lifetracker.parser;
 
 import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
+import org.apache.commons.lang3.StringUtils;
+import sun.font.TrueTypeFont;
 
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -26,6 +28,11 @@ public class ParserImpl implements Parser {
         KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
         KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
         KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
+        KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
+        KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
+        KEYWORDS_WITH_VERIFICATIONS.put("nodue", StringUtils::isBlank);
+        KEYWORDS_WITH_VERIFICATIONS.put("stop", StringUtils::isBlank);
+        KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
     }
 
     private static final String defaultCommand = "add";
@@ -44,7 +51,7 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
-        commands.put("toggleActive", this::processMark);
+        commands.put("mark", this::processMark);
     }
 
     private final CommandParser cmdParser;
@@ -78,16 +85,9 @@ public class ParserImpl implements Parser {
     private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
         if (validAddEventMap(commandBodySectionsMap)) {
 
-            if (!commandBodySectionsMap.containsKey("from")) {
-                commandBodySectionsMap.put("from", "");
-            }
 
-            if (!commandBodySectionsMap.containsKey("to")) {
-                commandBodySectionsMap.put("to", "");
-            }
 
-            List<LocalDateTime> startEndDateTime = DATE_TIME_PARSER
-                    .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
+
 
             if (commandBodySectionsMap.containsKey("every")) {
                 Period recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
