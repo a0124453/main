@@ -1,5 +1,15 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
+import lifetracker.calendar.visitor.EntryToEventVisitor;
+import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
+import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
+import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
+import lifetracker.calendar.visitor.EntryVisitor;
+import lifetracker.calendar.visitor.MarkVisitor;
+import lifetracker.calendar.visitor.OldNewEntryPair;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -10,17 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
-
-import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
-import lifetracker.calendar.visitor.EntryToEventVisitor;
-import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
-import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
-import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
-import lifetracker.calendar.visitor.EntryVisitor;
-import lifetracker.calendar.visitor.MarkVisitor;
-import lifetracker.calendar.visitor.OldNewEntryPair;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -232,7 +231,7 @@ public class CalendarListImpl implements CalendarList {
 
         add(entryToMark);
 
-        if(pair.newEntry != null){
+        if (pair.newEntry != null) {
             update(pair.newEntry);
         }
 
@@ -397,7 +396,7 @@ public class CalendarListImpl implements CalendarList {
         return id > BASE_ID && !isPresent(id);
     }
 
-    private boolean isPresent(int id){
+    private boolean isPresent(int id) {
         boolean isPresent = taskList.containsKey(id);
         isPresent |= eventList.containsKey(id);
         isPresent |= archivedTaskList.containsKey(id);
@@ -407,9 +406,15 @@ public class CalendarListImpl implements CalendarList {
 
     private List<CalendarEntry> sortByDateTime(CalendarProperty property, List<CalendarEntry> list) {
         Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
-            if (entry1.getDateTime(property).isBefore(entry2.getDateTime(property))) {
+            LocalDateTime entry1DateTime = entry1.getDateTime(property);
+            LocalDateTime entry2DateTime = entry2.getDateTime(property);
+
+            entry1DateTime = entry1DateTime == null ? LocalDateTime.MAX : entry1DateTime;
+            entry2DateTime = entry2DateTime == null ? LocalDateTime.MAX : entry2DateTime;
+
+            if (entry1DateTime.isBefore(entry2DateTime)) {
                 return 1;
-            } else if (entry1.getDateTime(property).isAfter(entry2.getDateTime(property))) {
+            } else if (entry1DateTime.isAfter(entry2DateTime)) {
                 return -1;
             } else {
                 return 0;
