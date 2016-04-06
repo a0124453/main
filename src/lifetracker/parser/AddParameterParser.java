@@ -126,7 +126,7 @@ public class AddParameterParser implements CommandParametersParser {
         }
     }
 
-    void assignRecurringClass(Map<String, String> commandMap, Parameters result, CommandClass eventEnum,
+    private void assignRecurringClass(Map<String, String> commandMap, Parameters result, CommandClass eventEnum,
             CommandClass taskEnum) {
         if (isEventMap(commandMap)) {
             result.commandClass = eventEnum;
