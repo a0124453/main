@@ -36,7 +36,9 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public List<CalendarEntry> getTaskList() {
-        return new ArrayList<>(taskList.values());
+        List<CalendarEntry> list = new ArrayList<>(taskList.values());
+        List<CalendarEntry> sortedList = sortByDateTime(CalendarProperty.END, list);
+        return sortedList;
     }
 
     @Override
