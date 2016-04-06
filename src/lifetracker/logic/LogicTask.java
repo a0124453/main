@@ -1,7 +1,8 @@
 package lifetracker.logic;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 
 public interface LogicTask {
 
@@ -25,7 +26,19 @@ public interface LogicTask {
     
     boolean isDone();
     
-    void setPeriod(TemporalAmount period);
+    void setPeriod(Period period);
     
-    TemporalAmount getPeriod();
+    Period getPeriod();
+
+    int getLimitOccur();
+
+    void setLimitOccur(int limitOccur);
+
+    LocalDate getLimitDate();
+
+    void setLimitDate(LocalDate limitDate);
+
+    boolean isNew();
+
+    void setNew(boolean isNew);
 }

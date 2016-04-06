@@ -78,6 +78,9 @@ public class LogicImpl implements Logic {
         if (commandString.equals("exit")) {
             runResult.setType(CommandType.EXIT);
             return runResult;
+        } else if (commandContent[0].equals("help")) {
+            runResult.setType(CommandType.HELP);
+            return runResult;
         } else if (commandContent[0].equals("saveat")) {
             return processSaveatResults(commandString, runResult);
         } else {
@@ -87,7 +90,7 @@ public class LogicImpl implements Logic {
             runResult.setType(CommandType.DISPLAY);
 
             switch (commandString) {
-                case "undo" :
+                case "undo":
 
                     try {
                         commandToExecute = commandStack.pop();
@@ -101,7 +104,7 @@ public class LogicImpl implements Logic {
                     }
 
                     break;
-                case "redo" :
+                case "redo":
 
                     try {
                         commandToExecute = redoStack.pop();
@@ -170,26 +173,32 @@ public class LogicImpl implements Logic {
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
-            executedState.getTaskList()
-                    .forEach(task -> runResult
-                            .addTaskLine(task.getId(),
-                                    task.getName(),
-                                    task.getDateTime(CalendarProperty.END),
-                                    task.isProperty(CalendarProperty.OVER),
-                                    !task.isProperty(CalendarProperty.ACTIVE),
-                                    task.getPeriod()));
+            // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
+            executedState.getTaskList().forEach(task -> runResult.addTaskLine(
+                    task.getId(),
+                    task.getName(),
+                    task.getDateTime(CalendarProperty.END),
+                    task.isProperty(CalendarProperty.OVER),
+                    task.isProperty(CalendarProperty.ACTIVE),
+                    task.getPeriod(),
+                    task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                    task.getDateTime(CalendarProperty.DATE_LIMIT).toLocalDate(),
+                    false));
         }
 
         if (!executedState.getEventList().isEmpty()) {
-            executedState.getEventList().forEach(
-                    event -> runResult
-                            .addEventLine(event.getId(),
-                                    event.getName(),
-                                    event.getDateTime(CalendarProperty.START),
-                                    event.getDateTime(CalendarProperty.END),
-                                    event.isProperty(CalendarProperty.OVER),
-                                    !event.isProperty(CalendarProperty.ACTIVE),
-                                    event.getPeriod()));
+            // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
+            executedState.getEventList().forEach(event -> runResult.addEventLine(
+                    event.getId(),
+                    event.getName(),
+                    event.getDateTime(CalendarProperty.START),
+                    event.getDateTime(CalendarProperty.END),
+                    event.isProperty(CalendarProperty.OVER),
+                    event.isProperty(CalendarProperty.ACTIVE),
+                    event.getPeriod(),
+                    event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                    event.getDateTime(CalendarProperty.DATE_LIMIT).toLocalDate(),
+                    false));
         }
 
         return runResult;

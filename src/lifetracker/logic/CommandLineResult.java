@@ -1,7 +1,8 @@
 package lifetracker.logic;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class CommandLineResult implements ExecuteResult {
 
     @Override
     public void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isDone,
-            TemporalAmount period) {
+            Period period, int limitOccur, LocalDate limitDate, boolean isNew) {
         LogicTask record = new LogicTaskImpl();
         record.setId(id);
         record.setName(name);
@@ -49,12 +50,15 @@ public class CommandLineResult implements ExecuteResult {
         record.setOverdue(isOverdue);
         record.setDone(isDone);
         record.setPeriod(period);
+        record.setLimitOccur(limitOccur);
+        record.setLimitDate(limitDate);
+        record.setNew(isNew);
         taskList.add(record);
     }
 
     @Override
     public void addEventLine(int id, String name, LocalDateTime start, LocalDateTime end, boolean isOverdue,
-            boolean isDone, TemporalAmount period) {
+            boolean isDone, Period period, int limitOccur, LocalDate limitDate, boolean isNew) {
         LogicEvent record = new LogicEventImpl();
         record.setId(id);
         record.setName(name);
@@ -63,6 +67,9 @@ public class CommandLineResult implements ExecuteResult {
         record.setOverdue(isOverdue);
         record.setDone(isDone);
         record.setPeriod(period);
+        record.setLimitOccur(limitOccur);
+        record.setLimitDate(limitDate);
+        record.setNew(isNew);
         eventList.add(record);
     }
 

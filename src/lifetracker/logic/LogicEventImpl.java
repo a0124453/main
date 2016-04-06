@@ -1,7 +1,8 @@
 package lifetracker.logic;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 
 public class LogicEventImpl implements LogicEvent {
 
@@ -11,7 +12,10 @@ public class LogicEventImpl implements LogicEvent {
     private LocalDateTime end;
     private boolean isOverdue;
     private boolean isDone;
-    private TemporalAmount period;
+    private Period period;
+    private int limitOccur;
+    private LocalDate limitDate;
+    private boolean isNew;
     
     @Override
     public void setName(String name) {
@@ -74,12 +78,42 @@ public class LogicEventImpl implements LogicEvent {
     }
     
     @Override
-    public void setPeriod(TemporalAmount period) {
+    public void setPeriod(Period period) {
      this.period = period;   
     }
     
     @Override
-    public TemporalAmount getPeriod() {
+    public Period getPeriod() {
         return period;
+    }
+    
+    @Override
+    public int getLimitOccur() {
+        return limitOccur;
+    }
+
+    @Override
+    public void setLimitOccur(int limitOccur) {
+        this.limitOccur = limitOccur;
+    }
+
+    @Override
+    public LocalDate getLimitDate() {
+        return limitDate;
+    }
+
+    @Override
+    public void setLimitDate(LocalDate limitDate) {
+        this.limitDate = limitDate;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    @Override
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
     }
 }
