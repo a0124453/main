@@ -29,6 +29,7 @@ public class EditParameterParser extends AddParameterParser {
 
     void determineTypeAndPopulateFields(Map<String, String> commandMap, Parameters result) {
         if (isEventMap(commandMap)) {
+            fillUpEventNull(commandMap);
             populateEventParameters(commandMap, result);
             resolveAndProcessRecurringCommandType(commandMap, result);
         } else if (isTaskMap(commandMap)) {
@@ -73,6 +74,8 @@ public class EditParameterParser extends AddParameterParser {
 
     @Override
     void populateRecurringParameters(Map<String, String> commandMap, Parameters result) {
+        result.recurringPeriod = durationParser.parse(commandMap.get(RECURRING_PERIOD_FIELD));
+
         if (commandMap.containsKey(RECURRING_LIMIT_DATE)) {
             result.dateLimit = dateTimeParser.parseDateTimeAsIs(commandMap.get(RECURRING_LIMIT_DATE)).toLocalDate();
 

@@ -117,7 +117,8 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS);
+        Map<String, String> editSectionMap = cmdParser
+                .parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS);
 
         Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
@@ -189,10 +190,50 @@ public class ParserImpl implements Parser {
         }
     }
 
-    private CommandObject processParametersForEdit(int id, Parameters params){
-        switch (params.commandClass){
+    private CommandObject processParametersForEdit(int id, Parameters params) {
+        switch (params.commandClass) {
             case GENERIC:
                 return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
+            case DEADLINE:
+                return commandObjectFactory
+                        .editDeadline(id, params.name, params.endDateTime, !params.isForcedOverwrite);
+            case RECURRING_TASK:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.isForcedOverwrite);
+            case RECURRING_TASK_DATE:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.dateLimit);
+            case RECURRING_TASK_OCCURRENCES:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.occurLimit);
+            case EVENT:
+                return commandObjectFactory.editEvent(id, params.name, params.startDateTime, params.endDateTime,
+                        !params.isForcedOverwrite);
+            case RECURRING_EVENT:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.isForcedOverwrite);
+            case RECURRING_EVENT_DATE:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.dateLimit);
+            case RECURRING_EVENT_OCCURRENCES:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.occurLimit);
+            case RECURRING:
+                return commandObjectFactory
+                        .editRecurring(id, params.name, params.recurringPeriod, params.isForcedOverwrite);
+            case RECURRING_DATE:
+                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.dateLimit);
+            case RECURRING_OCCURRENCES:
+                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
+            case STOP:
+                return commandObjectFactory.editStop(id, params.name, params.startDateTime, params.endDateTime);
+
             default:
                 assert false;
                 return null;
