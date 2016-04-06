@@ -9,11 +9,22 @@ import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 
 import java.lang.reflect.Type;
-import java.time.Duration;
-import java.time.Period;
-import java.time.temporal.TemporalAmount;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarEntry> {
+
+    private static final String SERIAL_CLASS_ID_FIELD = "SERIAL_TYPE_IDENTIFIER";
+
+    private static final Map<String, Class<? extends CalendarEntry>> CLASS_MAP = new HashMap<>();
+
+    static {
+        CLASS_MAP.put("DeadlineTask", DeadlineTask.class);
+        CLASS_MAP.put("Event", Event.class);
+        CLASS_MAP.put("GenericEntry", GenericEntry.class);
+        CLASS_MAP.put("RecurringEvent", RecurringEvent.class);
+        CLASS_MAP.put("RecurringTask", RecurringTask.class);
+    }
 
     @Override
     public CalendarEntry deserialize(JsonElement jsonElement, Type type,
@@ -23,19 +34,21 @@ public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarE
 
         TypeAdapter temporalAmountTypeAdapter;
 
-        if (isPeriodRecurring(jsonElement)) {
+        Class<? extends CalendarEntry> entryClass = resolveEntryClass(jsonElement);
 
-            temporalAmountTypeAdapter = typeQuery.getAdapter(Period.class);
-        } else {
-            temporalAmountTypeAdapter = typeQuery.getAdapter(Duration.class);
-        }
-        Gson gsonParser = new GsonBuilder()
-                .registerTypeHierarchyAdapter(TemporalAmount.class, temporalAmountTypeAdapter).create();
+        Gson gsonParser = new GsonBuilder().create();
 
-        return gsonParser.fromJson(jsonElement, CalendarEntryImpl.class);
+        return gsonParser.fromJson(jsonElement, entryClass);
     }
 
-    private boolean isPeriodRecurring(JsonElement jsonElement) {
-        return jsonElement.getAsJsonObject().get("period").getAsJsonObject().has("years");
+    private Class<? extends CalendarEntry> resolveEntryClass(JsonElement jsonElement) {
+
+        JsonElement classSerialID = jsonElement.getAsJsonObject().get(SERIAL_CLASS_ID_FIELD);
+
+        if (classSerialID == null) {
+            throw new RuntimeException("Invalid file format! Save file might have been corrupted!");
+        }
+
+        return CLASS_MAP.get(classSerialID.getAsString());
     }
 }

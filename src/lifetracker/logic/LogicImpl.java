@@ -1,6 +1,7 @@
 package lifetracker.logic;
 
 import lifetracker.calendar.CalendarList;
+import lifetracker.calendar.CalendarProperty;
 import lifetracker.command.CommandObject;
 import lifetracker.logic.ExecuteResult.CommandType;
 import lifetracker.parser.Parser;
@@ -10,7 +11,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +53,7 @@ public class LogicImpl implements Logic {
         calendar = storageAdapter.load();
     }
 
-    private void configureFile() throws IOException, FileNotFoundException {
+    private void configureFile() throws IOException {
         property = new Properties();
         propertyFile = new File(CONFIG_FILE_NAME);
 
@@ -86,50 +86,50 @@ public class LogicImpl implements Logic {
 
             runResult.setType(CommandType.DISPLAY);
 
-            if (commandString.equals("undo")) {
+            switch (commandString) {
+                case "undo" :
 
-                try {
-                    commandToExecute = commandStack.pop();
-                    redoStack.push(commandToExecute);
-                    executedState = commandToExecute.undo(calendar);
-                } catch (EmptyStackException ex) {
-                    ExecuteResult errorResult = new CommandLineResult();
-                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
-                    errorResult.setType(CommandType.ERROR);
-                    return errorResult;
-                }
+                    try {
+                        commandToExecute = commandStack.pop();
+                        redoStack.push(commandToExecute);
+                        executedState = commandToExecute.undo(calendar);
+                    } catch (EmptyStackException ex) {
+                        ExecuteResult errorResult = new CommandLineResult();
+                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
+                        errorResult.setType(CommandType.ERROR);
+                        return errorResult;
+                    }
 
-            }
+                    break;
+                case "redo" :
 
-            else if (commandString.equals("redo")) {
+                    try {
+                        commandToExecute = redoStack.pop();
+                        commandStack.push(commandToExecute);
+                        executedState = commandToExecute.execute(calendar);
+                    } catch (EmptyStackException ex) {
+                        ExecuteResult errorResult = new CommandLineResult();
+                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
+                        errorResult.setType(CommandType.ERROR);
+                        return errorResult;
+                    }
 
-                try {
-                    commandToExecute = redoStack.pop();
+                    break;
+                default:
+
+                    try {
+                        commandToExecute = commandParser.parse(commandString);
+                        executedState = commandToExecute.execute(calendar);
+                    } catch (IllegalArgumentException ex) {
+                        ExecuteResult errorResult = new CommandLineResult();
+                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
+                        errorResult.setType(CommandType.ERROR);
+                        return errorResult;
+                    }
+
                     commandStack.push(commandToExecute);
-                    executedState = commandToExecute.execute(calendar);
-                } catch (EmptyStackException ex) {
-                    ExecuteResult errorResult = new CommandLineResult();
-                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
-                    errorResult.setType(CommandType.ERROR);
-                    return errorResult;
-                }
-
-            }
-
-            else {
-
-                try {
-                    commandToExecute = commandParser.parse(commandString);
-                    executedState = commandToExecute.execute(calendar);
-                } catch (IllegalArgumentException ex) {
-                    ExecuteResult errorResult = new CommandLineResult();
-                    errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
-                    errorResult.setType(CommandType.ERROR);
-                    return errorResult;
-                }
-
-                commandStack.push(commandToExecute);
-                redoStack.clear();
+                    redoStack.clear();
+                    break;
             }
             store();
             return processExecutionResults(runResult, commandToExecute, executedState);
@@ -170,13 +170,26 @@ public class LogicImpl implements Logic {
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
-            executedState.getTaskList().forEach(task -> runResult.addTaskLine(task.getId(), task.getName(),
-                    task.getEnd(), task.isOver(), task.isActive(), task.getPeriod()));
+            executedState.getTaskList()
+                    .forEach(task -> runResult
+                            .addTaskLine(task.getId(),
+                                    task.getName(),
+                                    task.getDateTime(CalendarProperty.END),
+                                    task.isProperty(CalendarProperty.OVER),
+                                    !task.isProperty(CalendarProperty.ACTIVE),
+                                    task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
-            executedState.getEventList().forEach(event -> runResult.addEventLine(event.getId(), event.getName(),
-                    event.getStart(), event.getEnd(), event.isOver(), event.isActive(), event.getPeriod()));
+            executedState.getEventList().forEach(
+                    event -> runResult
+                            .addEventLine(event.getId(),
+                                    event.getName(),
+                                    event.getDateTime(CalendarProperty.START),
+                                    event.getDateTime(CalendarProperty.END),
+                                    event.isProperty(CalendarProperty.OVER),
+                                    !event.isProperty(CalendarProperty.ACTIVE),
+                                    event.getPeriod()));
         }
 
         return runResult;

@@ -1,19 +1,15 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.VisitableEntry;
+
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAmount;
+import java.time.Period;
 
-public interface CalendarEntry {
+public interface CalendarEntry extends VisitableEntry {
 
-    public static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
-    public static final String MESSAGE_ERROR_ILLEGAL_TYPE_CHANGE_TASK_TO_EVENT = "A task cannot be changed into an event!";
+    String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";
 
-    public enum EntryType {
-        FLOATING, DEADLINE, EVENT
-    }
-
-    public static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
+    static void checkStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalArgumentException(MESSAGE_ERROR_START_AFTER_END);
         }
@@ -22,42 +18,24 @@ public interface CalendarEntry {
     // get() and set() functions for variables
     int getId();
 
+    void setId(int id);
+
     String getName();
 
     void setName(String name);
 
-    LocalDateTime getStart();
+    LocalDateTime getDateTime(CalendarProperty property);
 
-    void setStart(LocalDateTime start);
+    void setDateTime(CalendarProperty property, LocalDateTime dateTime);
 
-    LocalDateTime getEnd();
+    void setPeriod(Period period);
 
-    void setEnd(LocalDateTime end);
+    Period getPeriod();
 
-    LocalTime getStartTime();
+    void toggleActive();
 
-    LocalTime getEndTime();
+    boolean isProperty(CalendarProperty property);
 
-    EntryType getType();
-
-    void setPeriod(TemporalAmount period);
-
-    TemporalAmount getPeriod();
-
-    void mark();
-
-    boolean isActive();
-
-    boolean isRecurring();
-
-    boolean isToday();
-
-    boolean isOngoing();
-
-    boolean isOver();
-
-    boolean equals(CalendarEntry entry);
-
-    CalendarEntry copy();
+    int getIntegerProperty(CalendarProperty property);
 
 }

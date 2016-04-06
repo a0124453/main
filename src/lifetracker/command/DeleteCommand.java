@@ -35,25 +35,7 @@ public class DeleteCommand extends CommandObject {
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        switch (entryDeleted.getType()) {
-            case FLOATING :
-                calendar.add(entryDeleted.getName());
-                break;
-            case DEADLINE :
-                if (entryDeleted.isRecurring()) {
-                    calendar.add(entryDeleted.getName(), entryDeleted.getEnd(), entryDeleted.getPeriod());
-                } else {
-                    calendar.add(entryDeleted.getName(), entryDeleted.getEnd());
-                }
-                break;
-            case EVENT :
-                if (entryDeleted.isRecurring()) {
-                    calendar.add(entryDeleted.getName(), entryDeleted.getStart(), entryDeleted.getEnd(),
-                            entryDeleted.getPeriod());
-                } else {
-                    calendar.add(entryDeleted.getName(), entryDeleted.getStart(), entryDeleted.getEnd());
-                }
-        }
+        calendar.add(entryDeleted);
 
         setComment(String.format(MESSAGE_UNDO, entryDeleted.getName()));
 

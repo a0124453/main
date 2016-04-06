@@ -15,11 +15,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.Properties;
 
 //@@author A0091173J
 public class IntegrationLogicTest {
@@ -27,40 +30,48 @@ public class IntegrationLogicTest {
     private static final String MESSAGE_ADD = "\"%1$s\" is added.";
     private static final String MESSAGE_DELETE = "%1$d is deleted.";
 
-    private static final String DEFAULT_FILENAME = "lifetracker.dat";
-    private static final String ALT_FILENAME = "lifetracker.dat.orig";
+    private static final String CONFIG_FILE = "config.properties";
+    private static final String SAVE_FILE_PROPERTY = "savefile";
 
+    private static final String ALT_FILENAME_EXTENSION = ".orig";
+
+    private static String storageFileName;
     private Storage storage;
     private Logic logic;
 
     @BeforeClass
     public static void setUpTestFile() throws Exception {
-        File origFile = new File(DEFAULT_FILENAME);
+
+        Properties properties = new Properties();
+        properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILE)));
+        storageFileName = properties.getProperty(SAVE_FILE_PROPERTY);
+
+        File origFile = new File(storageFileName);
 
         if (origFile.exists()) {
-            origFile.renameTo(new File(ALT_FILENAME));
+            origFile.renameTo(new File(storageFileName + ALT_FILENAME_EXTENSION));
         }
     }
 
     @AfterClass
     public static void tearDownTestFile() throws Exception {
-        File origFile = new File(ALT_FILENAME);
+        File origFile = new File(storageFileName + ALT_FILENAME_EXTENSION);
 
         if (origFile.exists()) {
-            origFile.renameTo(new File(DEFAULT_FILENAME));
+            origFile.renameTo(new File(storageFileName));
         }
     }
 
     @Before
     public void setUp() throws Exception {
-        storage = new ThreadedFileStorage(DEFAULT_FILENAME);
+        storage = new ThreadedFileStorage();
         logic = new LogicImpl(new ParserImpl(new CommandFactoryImpl()), storage);
     }
 
     @After
     public void tearDown() throws Exception {
         storage.close();
-        File testFile = new File(DEFAULT_FILENAME);
+        File testFile = new File(storageFileName);
         testFile.delete();
     }
 
@@ -231,7 +242,7 @@ public class IntegrationLogicTest {
         actual = logic.executeCommand("delete 100");
         ExecuteResult error = new CommandLineResult();
         error.setType(ExecuteResult.CommandType.ERROR);
-        error.setComment("Invalid Command: 100 cannot be found!");
+        error.setComment("Invalid Command: Entry 100 is not found!");
         assertExecuteResult(error, actual);
 
         //Boundary: Invalid ID
@@ -263,14 +274,6 @@ public class IntegrationLogicTest {
         assertExecuteResult(expected, actual);
 
         actual = logic.executeCommand("list xyzt");
-        assertExecuteResult(expected, actual);
-
-        //Boundary: With spaces
-        actual = logic.executeCommand("search bcd ef");
-        expected = new CommandLineResult();
-        expected.setType(ExecuteResult.CommandType.DISPLAY);
-        expected.addTaskLine(1, "abcd efg", null, false, false, null);
-        expected.setComment("Displaying entries with: \"bcd ef\".");
         assertExecuteResult(expected, actual);
 
         //Boundary: Case insensitivity
