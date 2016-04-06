@@ -88,7 +88,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject editGenericTask(int id, String name, boolean isForcedConvert) {
-        return null;
+        return new EditGenericTaskCommand(id, name, isForcedConvert);
     }
 
     @Override
