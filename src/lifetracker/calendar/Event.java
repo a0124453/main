@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
 
-    private final String SERIAL_TYPE_IDENTIFIER = "Event";
+    {
+        SERIAL_TYPE_IDENTIFIER = "Event";
+    }
 
     private LocalDateTime startDateTime;
 
@@ -43,15 +45,15 @@ public class Event extends DeadlineTask {
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case ONGOING :
+            case ONGOING:
                 boolean hasStarted = LocalDateTime.now().isAfter(startDateTime);
                 boolean isOver = isProperty(CalendarProperty.OVER);
                 return hasStarted && !isOver;
-            case TODAY :
+            case TODAY:
                 boolean startsToday = (LocalDateTime.now().equals(startDateTime));
                 boolean isOngoing = isProperty(CalendarProperty.ONGOING);
                 return startsToday || isOngoing;
-            default :
+            default:
                 return super.isProperty(property);
         }
     }

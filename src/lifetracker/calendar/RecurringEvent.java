@@ -8,7 +8,9 @@ import java.time.Period;
 
 public class RecurringEvent extends RecurringTask {
 
-    private final String SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
+    {
+        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
+    }
 
     private LocalDateTime startDateTime;
 
@@ -38,9 +40,9 @@ public class RecurringEvent extends RecurringTask {
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         switch (property) {
-            case START :
+            case START:
                 return this.startDateTime;
-            default :
+            default:
                 return super.getDateTime(property);
         }
     }
@@ -48,12 +50,12 @@ public class RecurringEvent extends RecurringTask {
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
-            case START :
+            case START:
                 // end date is always valid
                 CalendarEntry.checkStartBeforeEnd(dateTime, this.getDateTime(CalendarProperty.END));
                 this.startDateTime = dateTime;
                 break;
-            default :
+            default:
                 super.setDateTime(property, dateTime);
         }
     }
@@ -61,15 +63,15 @@ public class RecurringEvent extends RecurringTask {
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case ONGOING :
+            case ONGOING:
                 boolean hasStarted = LocalDateTime.now().isAfter(startDateTime);
                 boolean isOver = isProperty(CalendarProperty.OVER);
                 return hasStarted && !isOver;
-            case TODAY :
+            case TODAY:
                 boolean startsToday = (LocalDateTime.now().equals(startDateTime));
                 boolean isOngoing = isProperty(CalendarProperty.ONGOING);
                 return startsToday || isOngoing;
-            default :
+            default:
                 return super.isProperty(property);
         }
     }

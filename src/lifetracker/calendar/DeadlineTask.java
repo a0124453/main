@@ -6,8 +6,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DeadlineTask extends GenericEntry {
-
-    private final String CLASS_NAME = "DeadlineTask";
+    {
+        SERIAL_TYPE_IDENTIFIER = "DeadlineTask";
+    }
 
     private LocalDateTime deadline;
 
@@ -42,13 +43,13 @@ public class DeadlineTask extends GenericEntry {
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case OVER :
+            case OVER:
                 return LocalDateTime.now().isAfter(this.deadline);
-            case ONGOING :
+            case ONGOING:
                 return LocalDateTime.now().isBefore(this.deadline);
-            case TODAY :
+            case TODAY:
                 return LocalDate.now().equals(this.deadline.toLocalDate());
-            default :
+            default:
                 return super.isProperty(property);
         }
     }
