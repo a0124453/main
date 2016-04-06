@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.EmptyStackException;
 import java.util.Properties;
 import java.util.Stack;
@@ -77,6 +78,9 @@ public class LogicImpl implements Logic {
 
         if (commandString.equals("exit")) {
             runResult.setType(CommandType.EXIT);
+            return runResult;
+        } else if (commandContent[0].equals("help")) {
+            runResult.setType(CommandType.HELP);
             return runResult;
         } else if (commandContent[0].equals("saveat")) {
             return processSaveatResults(commandString, runResult);
@@ -170,11 +174,13 @@ public class LogicImpl implements Logic {
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
+            // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
             executedState.getTaskList().forEach(task -> runResult.addTaskLine(task.getId(), task.getName(),
                     task.getEnd(), task.isOver(), task.isActive(), task.getPeriod()));
         }
 
         if (!executedState.getEventList().isEmpty()) {
+         // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
             executedState.getEventList().forEach(event -> runResult.addEventLine(event.getId(), event.getName(),
                     event.getStart(), event.getEnd(), event.isOver(), event.isActive(), event.getPeriod()));
         }
