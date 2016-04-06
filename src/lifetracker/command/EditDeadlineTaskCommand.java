@@ -25,7 +25,7 @@ public class EditDeadlineTaskCommand extends EditGenericTaskCommand {
             if (entryToEdit.isProperty(CalendarProperty.RECURRING)) {
                 oldEntry = calendar.updateToRecurringTask(id, name, endDateTime, null, true, false);
             } else {
-                oldEntry = calendar.updateToDeadline(id, name, endDateTime, false);
+                oldEntry = calendar.updateToDeadline(id, name, endDateTime, true);
             }
         }
 

@@ -115,8 +115,9 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject editEvent(int id, String name, LocalDateTime start, LocalDateTime end, boolean isLimitRemoved) {
-        return null;
+    public CommandObject editEvent(int id, String name, LocalDateTime start, LocalDateTime end,
+            boolean isLimitRemoved) {
+        return new EditEventCommand(id, name, start, end, isLimitRemoved);
     }
 
     @Override
