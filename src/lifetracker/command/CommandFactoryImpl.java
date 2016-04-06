@@ -93,7 +93,7 @@ public class CommandFactoryImpl implements CommandFactory {
 
     @Override
     public CommandObject editDeadline(int id, String name, LocalDateTime deadline, boolean isLimitKept) {
-        return null;
+        return new EditDeadlineTaskCommand(id, name, deadline, !isLimitKept);
     }
 
     @Override
