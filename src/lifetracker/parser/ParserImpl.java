@@ -196,7 +196,7 @@ public class ParserImpl implements Parser {
                 return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
             case DEADLINE:
                 return commandObjectFactory
-                        .editDeadline(id, params.name, params.endDateTime, !params.isForcedOverwrite);
+                        .editDeadline(id, params.name, params.endDateTime, params.isForcedOverwrite);
             case RECURRING_TASK:
                 return commandObjectFactory
                         .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
@@ -211,7 +211,7 @@ public class ParserImpl implements Parser {
                                 params.occurLimit);
             case EVENT:
                 return commandObjectFactory.editEvent(id, params.name, params.startDateTime, params.endDateTime,
-                        !params.isForcedOverwrite);
+                        params.isForcedOverwrite);
             case RECURRING_EVENT:
                 return commandObjectFactory
                         .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
@@ -233,7 +233,6 @@ public class ParserImpl implements Parser {
                 return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
             case STOP:
                 return commandObjectFactory.editStop(id, params.name, params.startDateTime, params.endDateTime);
-
             default:
                 assert false;
                 return null;

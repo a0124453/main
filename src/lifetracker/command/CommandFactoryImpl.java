@@ -92,8 +92,8 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject editDeadline(int id, String name, LocalDateTime deadline, boolean isLimitKept) {
-        return new EditDeadlineTaskCommand(id, name, deadline, !isLimitKept);
+    public CommandObject editDeadline(int id, String name, LocalDateTime deadline, boolean isLimitRemoved) {
+        return new EditDeadlineTaskCommand(id, name, deadline, isLimitRemoved);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject editEvent(int id, String name, LocalDateTime start, LocalDateTime end, boolean isLimitKept) {
+    public CommandObject editEvent(int id, String name, LocalDateTime start, LocalDateTime end, boolean isLimitRemoved) {
         return null;
     }
 
