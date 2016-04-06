@@ -53,6 +53,14 @@ public class AddParameterParser implements CommandParametersParser {
             } else if(isStopMap(commandMap)){
                 result.isForcedOverwrite = true;
             }
+        } else if(isTaskMap(commandMap)){
+            populateTaskParameters(commandMap, result);
+
+            if(isRecurringMap(commandMap)){
+                populateRecurringParameters(commandMap, result);
+            }else if(isStopMap(commandMap)){
+                result.isForcedOverwrite = true;
+            }
         }
     }
 
@@ -79,6 +87,18 @@ public class AddParameterParser implements CommandParametersParser {
         if (!commandMap.containsKey(EVENT_END_FIELD)) {
             commandMap.put(EVENT_END_FIELD, "");
         }
+    }
+
+    private boolean isTaskMap(Map<String, String> commandMap){
+        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_START_FIELD);
+        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_END_FIELD);
+
+        return commandMap.containsKey(TASK_DEADLINE_FIELD);
+    }
+
+    private void populateTaskParameters(Map<String , String > commandMap, Parameters result){
+        result.endDateTime = dateTimeParser.parseSingleDateTime(commandMap.get(TASK_DEADLINE_FIELD));
+        result.commandClass = CommandClass.DEADLINE;
     }
 
     private boolean isRecurringMap(Map<String, String> commandMap) {
