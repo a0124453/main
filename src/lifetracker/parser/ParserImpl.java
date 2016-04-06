@@ -4,8 +4,6 @@ import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +13,8 @@ import java.util.function.Predicate;
 public class ParserImpl implements Parser {
 
     private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
+
+    private static final String ERROR_INVALID_EDIT = "Invalid syntax for edit command!";
 
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
 
@@ -103,7 +103,7 @@ public class ParserImpl implements Parser {
 
     private CommandObject processEdit(List<String> commandBody) {
         if (commandBody.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ERROR_INVALID_EDIT);
         }
 
         String idString = commandBody.get(0);
@@ -117,43 +117,11 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection);
+        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS);
 
-        return detectEdit(editSectionMap, id);
-    }
+        Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
-    private CommandObject detectEdit(Map<String, String> editSectionMap, int id) {
-
-        String name = editSectionMap.get("name");
-
-        Period recurringAmount = null;
-
-        if (editSectionMap.containsKey("every")) {
-            recurringAmount = DURATION_PARSER.parse(editSectionMap.get("every"));
-        }
-
-        if (validAddEventMap(editSectionMap)) {
-            if (!editSectionMap.containsKey("from")) {
-                editSectionMap.put("from", "");
-            }
-
-            if (!editSectionMap.containsKey("to")) {
-                editSectionMap.put("to", "");
-            }
-
-            List<LocalDateTime> dateTimes = DATE_TIME_PARSER
-                    .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
-
-            return commandObjectFactory.edit(id, name, dateTimes.get(0), dateTimes.get(1), recurringAmount);
-        } else if (validAddDeadlineTaskMap(editSectionMap)) {
-            LocalDateTime due = DATE_TIME_PARSER.parseSingleDateTime(editSectionMap.get("by"));
-
-            return commandObjectFactory.edit(id, name, null, due, recurringAmount);
-        } else if (validAddFloatingTaskMap(editSectionMap)) {
-            return commandObjectFactory.edit(id, name, null, null, null);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        return processParametersForEdit(id, params);
     }
 
     private CommandObject processFind(List<String> commandBody) {
@@ -219,6 +187,17 @@ public class ParserImpl implements Parser {
                 assert false;
                 return null;
         }
+    }
+
+    private CommandObject processParametersForEdit(int id, Parameters params){
+        switch (params.commandClass){
+            case GENERIC:
+                return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
+            default:
+                assert false;
+                return null;
+        }
+
     }
 
     private String restoreCommandSections(List<String> stringList) {

@@ -119,31 +119,31 @@ public class ParserImplTest {
         LocalDateTime startTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
         LocalDateTime endTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(16, 0));
 
-        verify(cmdFactory).edit(1, "new name", startTime, endTime, Period.ofDays(2));
+        verify(cmdFactory).editRecurringEvent(1, "new name", startTime, endTime, Period.ofDays(2), false);
 
         //Boundary: Missing options
         parser.parse("edit 2 > some other talk from tomorrow 3pm to 4pm");
-        verify(cmdFactory).edit(2, "some other talk", startTime, endTime, null);
+        verify(cmdFactory).editEvent(2, "some other talk", startTime, endTime,true);
 
         //Boundary: Missing end date time
         parser.parse("edit 3 > run from tomorrow 3pm");
-        verify(cmdFactory).edit(3, "run", startTime, endTime, null);
+        verify(cmdFactory).editEvent(3, "run", startTime, endTime, true);
 
         //Boundary: Missing name
         parser.parse("edit 4 > from tomorrow 3pm to 4pm");
-        verify(cmdFactory).edit(4, "", startTime, endTime, null);
+        verify(cmdFactory).editEvent(4, "", startTime, endTime, true);
 
         //Partition: Edit deadline task
         parser.parse("edit 5 > homework by tomorrow 4pm");
-        verify(cmdFactory).edit(5, "homework", null, endTime, null);
+        verify(cmdFactory).editDeadline(5, "homework", endTime, true);
 
         //Boundary: Invalid deadline date time
         parser.parse("edit 6 > drop by school from home");
-        verify(cmdFactory).edit(6, "drop by school from home", null, null, null);
+        verify(cmdFactory).editGenericTask(6, "drop by school from home", false);
 
         //Partition: Name only
         parser.parse("edit 7 > sleep");
-        verify(cmdFactory).edit(7, "sleep", null, null, null);
+        verify(cmdFactory).editGenericTask(7, "sleep", false);
     }
 
     @Test
