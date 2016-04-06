@@ -31,6 +31,7 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair>
         }
 
         DeadlineTask deadlineTask = new DeadlineTask(entry.getName(), entry.getDateTime(CalendarProperty.END));
+        deadlineTask.setId(entry.getId());
 
         return edit(entry, deadlineTask);
     }

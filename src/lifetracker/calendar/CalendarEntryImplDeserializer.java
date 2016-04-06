@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarEntry> {
 
-    private static final String SERIAL_CLASS_ID_FIELD = "SERIAL_CLASS_INDENTIFIER";
+    private static final String SERIAL_CLASS_ID_FIELD = "SERIAL_TYPE_IDENTIFIER";
 
     private static final Map<String, Class<? extends CalendarEntry>> CLASS_MAP = new HashMap<>();
 

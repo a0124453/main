@@ -75,8 +75,8 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
         }
 
         RecurringTask newTask = new RecurringTask(entry.getName(), deadline, recurringPeriod);
+        newTask.setId(entry.getId());
         return edit(entry, newTask);
-
     }
 
     @Override
@@ -87,6 +87,7 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
 
         RecurringTask newTask = new RecurringTask(task.getName(), task.getDateTime(CalendarProperty.END),
                 recurringPeriod);
+        newTask.setId(task.getId());
         return edit(task, newTask);
     }
 
@@ -112,6 +113,8 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
                     event.getDateTime(CalendarProperty.START),
                     event.getDateTime(CalendarProperty.END),
                     recurringPeriod);
+
+            newEvent.setId(event.getId());
 
             return edit(event, newEvent);
         }

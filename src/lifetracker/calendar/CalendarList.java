@@ -130,6 +130,8 @@ public interface CalendarList {
 
     OldNewEntryPair mark(int id);
 
+    CalendarEntry get(int id);
+
     CalendarList findByName(String toSearch);
 
     CalendarList findArchivedByName(String toSearch);

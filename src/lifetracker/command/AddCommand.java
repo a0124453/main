@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 //@@author A0091173J
 public class AddCommand extends CommandObject {
 
-    private static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
+    static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
     static final String MESSAGE_ADDED = "\"%1$s\" is added.";
 
     private final String name;

@@ -11,13 +11,15 @@ public class MarkCommand extends CommandObject {
 
     private final int entryId;
 
+    private OldNewEntryPair markedEntryPair;
+
     public MarkCommand(int entryId) {
         this.entryId = entryId;
     }
 
     @Override
     public CalendarList execute(CalendarList calendar) {
-        OldNewEntryPair markedEntry = calendar.mark(entryId);
+        markedEntryPair = calendar.mark(entryId);
         setComment(String.format(MESSAGE_MARKED_DONE, entryId));
 
         return super.execute(calendar);
@@ -25,7 +27,13 @@ public class MarkCommand extends CommandObject {
 
     @Override
     public CalendarList undo(CalendarList calendar) {
-        calendar.mark(entryId);
+
+        if(markedEntryPair.newEntry != null){
+            calendar.delete(markedEntryPair.newEntry.getId());
+        }
+
+        calendar.update(markedEntryPair.oldEntry);
+
         setComment(String.format(MESSAGE_MARKED_UNDONE, entryId));
 
         return super.undo(calendar);

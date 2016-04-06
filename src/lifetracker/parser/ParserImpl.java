@@ -2,10 +2,8 @@ package lifetracker.parser;
 
 import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
+import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,17 +14,31 @@ public class ParserImpl implements Parser {
 
     private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
 
-    private static final Map<String, Predicate<String>> KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+    private static final String ERROR_INVALID_EDIT = "Invalid syntax for edit command!";
 
     private static final DateTimeParser DATE_TIME_PARSER = DateTimeParser.getInstance();
 
     private static final DurationParser DURATION_PARSER = DurationParser.getInstance();
 
+    private static final Map<String, Predicate<String>> ADD_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+
     static {
-        KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
-        KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
+        ADD_KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
+
+    }
+
+    private static final Map<String, Predicate<String>> EDIT_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>(
+            ADD_KEYWORDS_WITH_VERIFICATIONS);
+
+    static {
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("nodue", StringUtils::isBlank);
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("stop", StringUtils::isBlank);
+        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
     }
 
     private static final String defaultCommand = "add";
@@ -45,7 +57,7 @@ public class ParserImpl implements Parser {
         commands.put("listall", this::processFindAll);
         commands.put("findall", this::processFindAll);
         commands.put("searchall", this::processFindAll);
-        commands.put("toggleActive", this::processMark);
+        commands.put("mark", this::processMark);
     }
 
     private final CommandParser cmdParser;
@@ -53,14 +65,13 @@ public class ParserImpl implements Parser {
     private final CommandFactory commandObjectFactory;
 
     public ParserImpl(CommandFactory commandFactory) {
-        cmdParser = new CommandParser(commands.keySet(), KEYWORDS_WITH_VERIFICATIONS, defaultCommand,
-                FULL_COMMAND_SEPARATOR);
+        cmdParser = new CommandParser(commands.keySet(), defaultCommand);
         commandObjectFactory = commandFactory;
     }
 
     @Override
     public CommandObject parse(String userInput) {
-        List<String> commandSegments = cmdParser.parseFullCommand(userInput);
+        List<String> commandSegments = cmdParser.parseFullCommand(userInput, FULL_COMMAND_SEPARATOR);
 
         String command = commandSegments.get(0).toLowerCase();
         commandSegments.remove(0);
@@ -71,75 +82,12 @@ public class ParserImpl implements Parser {
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
-        Map<String, String> commandBodySectionsMap = cmdParser.parseCommandBody(addCommandBody);
+        Map<String, String> commandBodySectionsMap = cmdParser
+                .parseCommandBody(addCommandBody, ADD_KEYWORDS_WITH_VERIFICATIONS);
 
-        return detectAddMethod(commandBodySectionsMap);
-    }
+        Parameters params = AddParameterParser.getInstance().parseCommandMap(commandBodySectionsMap);
 
-    private CommandObject detectAddMethod(Map<String, String> commandBodySectionsMap) {
-        if (validAddEventMap(commandBodySectionsMap)) {
-
-            if (!commandBodySectionsMap.containsKey("from")) {
-                commandBodySectionsMap.put("from", "");
-            }
-
-            if (!commandBodySectionsMap.containsKey("to")) {
-                commandBodySectionsMap.put("to", "");
-            }
-
-            List<LocalDateTime> startEndDateTime = DATE_TIME_PARSER
-                    .parseDoubleDateTime(commandBodySectionsMap.get("from"), commandBodySectionsMap.get("to"));
-
-            if (commandBodySectionsMap.containsKey("every")) {
-                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
-
-                return commandObjectFactory
-                        .addRecurringEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0),
-                                startEndDateTime.get(1),
-                                recurringAmount);
-            } else {
-                return commandObjectFactory
-                        .addEvent(commandBodySectionsMap.get("name"), startEndDateTime.get(0), startEndDateTime.get(1));
-            }
-
-        } else if (validAddDeadlineTaskMap(commandBodySectionsMap)) {
-
-            if (!commandBodySectionsMap.containsKey("by")) {
-                commandBodySectionsMap.put("by", "");
-            }
-
-            LocalDateTime dueDate = DATE_TIME_PARSER.parseSingleDateTime(commandBodySectionsMap.get("by"));
-
-            if (commandBodySectionsMap.containsKey("every")) {
-                TemporalAmount recurringAmount = DURATION_PARSER.parse(commandBodySectionsMap.get("every"));
-                return commandObjectFactory
-                        .addRecurringDeadlineTask(commandBodySectionsMap.get("name"), dueDate, recurringAmount);
-            } else {
-                return commandObjectFactory.addDeadlineTask(commandBodySectionsMap.get("name"), dueDate);
-            }
-
-        } else if (validAddFloatingTaskMap(commandBodySectionsMap)) {
-
-            return commandObjectFactory.addFloatingTask(commandBodySectionsMap.get("name"));
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean validAddEventMap(Map<String, String> commandBodySectionMap) {
-        return commandBodySectionMap.containsKey("from") && !commandBodySectionMap.containsKey("by");
-    }
-
-    private boolean validAddDeadlineTaskMap(Map<String, String> commandBodySectionMap) {
-        return (commandBodySectionMap.containsKey("by") || commandBodySectionMap.containsKey("every"))
-                && !(commandBodySectionMap.containsKey("from") || commandBodySectionMap.containsKey("to"));
-    }
-
-    private boolean validAddFloatingTaskMap(Map<String, String> commandBodySectionMap) {
-        return !(commandBodySectionMap.containsKey("by")
-                || commandBodySectionMap.containsKey("from")
-                || commandBodySectionMap.containsKey("to")
-                || commandBodySectionMap.containsKey("every"));
+        return processParametersForAdd(params);
     }
 
     private CommandObject processDelete(List<String> commandBody) {
@@ -155,7 +103,7 @@ public class ParserImpl implements Parser {
 
     private CommandObject processEdit(List<String> commandBody) {
         if (commandBody.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ERROR_INVALID_EDIT);
         }
 
         String idString = commandBody.get(0);
@@ -169,43 +117,12 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<String, String> editSectionMap = cmdParser.parseCommandBody(editCommandSection);
+        Map<String, String> editSectionMap = cmdParser
+                .parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS);
 
-        return detectEdit(editSectionMap, id);
-    }
+        Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
-    private CommandObject detectEdit(Map<String, String> editSectionMap, int id) {
-
-        String name = editSectionMap.get("name");
-
-        Period recurringAmount = null;
-
-        if (editSectionMap.containsKey("every")) {
-            recurringAmount = DURATION_PARSER.parse(editSectionMap.get("every"));
-        }
-
-        if (validAddEventMap(editSectionMap)) {
-            if (!editSectionMap.containsKey("from")) {
-                editSectionMap.put("from", "");
-            }
-
-            if (!editSectionMap.containsKey("to")) {
-                editSectionMap.put("to", "");
-            }
-
-            List<LocalDateTime> dateTimes = DATE_TIME_PARSER
-                    .parseDoubleDateTime(editSectionMap.get("from"), editSectionMap.get("to"));
-
-            return commandObjectFactory.edit(id, name, dateTimes.get(0), dateTimes.get(1), recurringAmount);
-        } else if (validAddDeadlineTaskMap(editSectionMap)) {
-            LocalDateTime due = DATE_TIME_PARSER.parseSingleDateTime(editSectionMap.get("by"));
-
-            return commandObjectFactory.edit(id, name, null, due, recurringAmount);
-        } else if (validAddFloatingTaskMap(editSectionMap)) {
-            return commandObjectFactory.edit(id, name, null, null, null);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        return processParametersForEdit(id, params);
     }
 
     private CommandObject processFind(List<String> commandBody) {
@@ -237,6 +154,90 @@ public class ParserImpl implements Parser {
         } catch (NumberFormatException ex) {
             throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
         }
+    }
+
+    private CommandObject processParametersForAdd(Parameters params) {
+        switch (params.commandClass) {
+            case GENERIC:
+                return commandObjectFactory.addFloatingTask(params.name);
+            case DEADLINE:
+                return commandObjectFactory.addDeadlineTask(params.name, params.endDateTime);
+            case RECURRING_TASK:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod);
+            case RECURRING_TASK_DATE:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                                params.dateLimit);
+            case RECURRING_TASK_OCCURRENCES:
+                return commandObjectFactory
+                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                                params.occurLimit);
+            case EVENT:
+                return commandObjectFactory.addEvent(params.name, params.startDateTime, params.endDateTime);
+            case RECURRING_EVENT:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod);
+            case RECURRING_EVENT_OCCURRENCES:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod, params.occurLimit);
+            case RECURRING_EVENT_DATE:
+                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                        params.recurringPeriod, params.dateLimit);
+            default:
+                assert false;
+                return null;
+        }
+    }
+
+    private CommandObject processParametersForEdit(int id, Parameters params) {
+        switch (params.commandClass) {
+            case GENERIC:
+                return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
+            case DEADLINE:
+                return commandObjectFactory
+                        .editDeadline(id, params.name, params.endDateTime, params.isForcedOverwrite);
+            case RECURRING_TASK:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.isForcedOverwrite);
+            case RECURRING_TASK_DATE:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.dateLimit);
+            case RECURRING_TASK_OCCURRENCES:
+                return commandObjectFactory
+                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                                params.occurLimit);
+            case EVENT:
+                return commandObjectFactory.editEvent(id, params.name, params.startDateTime, params.endDateTime,
+                        params.isForcedOverwrite);
+            case RECURRING_EVENT:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.isForcedOverwrite);
+            case RECURRING_EVENT_DATE:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.dateLimit);
+            case RECURRING_EVENT_OCCURRENCES:
+                return commandObjectFactory
+                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                                params.recurringPeriod, params.occurLimit);
+            case RECURRING:
+                return commandObjectFactory
+                        .editRecurring(id, params.name, params.recurringPeriod, params.isForcedOverwrite);
+            case RECURRING_DATE:
+                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.dateLimit);
+            case RECURRING_OCCURRENCES:
+                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
+            case STOP:
+                return commandObjectFactory.editStop(id, params.name);
+            default:
+                assert false;
+                return null;
+        }
+
     }
 
     private String restoreCommandSections(List<String> stringList) {

@@ -1,7 +1,5 @@
 package lifetracker.parser;
 
-import com.joestelmach.natty.DateGroup;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,24 +12,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.joestelmach.natty.DateGroup;
+
 //@@author A0091173J
 
 /**
  * A parser that parses DateTime strings.
  * <p>
- * This class uses natty to parse date and time strings. After parsing, the datetimes are adjusted accordingly to the
- * rules below.
+ * This class uses natty to parse date and time strings. After parsing, the
+ * datetimes are adjusted accordingly to the rules below.
  * <p>
  * Single DateTime:
  * <ul>
  * <li>If original string did not specify time, time is set to 2359
- * <li>If original string did not specify date, date is set to the next date where the DateTime is in the future.
+ * <li>If original string did not specify date, date is set to the next date
+ * where the DateTime is in the future.
  * </ul>
  */
 class DateTimeParser {
     private static DateTimeParser instance = new DateTimeParser();
 
-    static DateTimeParser getInstance() {
+    public static DateTimeParser getInstance() {
         return instance;
     }
 
@@ -44,13 +45,13 @@ class DateTimeParser {
     private DateTimeParser() {
     }
 
-    boolean isDateTime(String dateTimeString) {
+    public boolean isDateTime(String dateTimeString) {
         assert dateTimeString != null;
 
         return dateTimeString.isEmpty() || nattyParser.parse(dateTimeString).size() == 1;
     }
 
-    LocalDateTime parseSingleDateTime(String dateTimeString) {
+    public LocalDateTime parseSingleDateTime(String dateTimeString) {
         assert isDateTime(dateTimeString);
 
         dateTimeString = fillEmpty(dateTimeString);
@@ -62,7 +63,7 @@ class DateTimeParser {
         return adjustSingleDateToDefault(parsedDateTimeObj, parsedDateGroup.getParseLocations().keySet());
     }
 
-    List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
+    public List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
         assert isDateTime(startString);
         assert isDateTime(endString);
 
@@ -80,15 +81,22 @@ class DateTimeParser {
         LocalDateTime endDateTime = convertDateGroupToLocalDateTime(endDateGroup);
 
         Set<String> startParseElements = startDateGroup.getParseLocations().keySet();
-        //If end datetime was empty to begin with, we have to pretend nothing was parsed.
+        // If end datetime was empty to begin with, we have to pretend nothing
+        // was parsed.
         Set<String> endParseElements = isEndEmpty ? Collections.emptySet() : endDateGroup.getParseLocations().keySet();
 
-        LocalDateTime[] adjustedDates
-                = adjustDoubleDateToDefault(startDateTime, endDateTime, startParseElements, endParseElements);
+        LocalDateTime[] adjustedDates = adjustDoubleDateToDefault(startDateTime, endDateTime, startParseElements,
+                endParseElements);
 
         dateTimeResults.addAll(Arrays.asList(adjustedDates));
 
         return dateTimeResults;
+    }
+
+    public LocalDateTime parseDateTimeAsIs(String dateTimeString) {
+        DateGroup parsedDateGroup = parseWithNatty(dateTimeString);
+
+        return convertDateGroupToLocalDateTime(parsedDateGroup);
     }
 
     private String fillEmpty(String dateTimeString) {
@@ -133,12 +141,14 @@ class DateTimeParser {
         adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
 
         if (adjustedDateTimes[1].isBefore(LocalDateTime.now())) {
-            //jointParse will detect if both dates can be adjusted
+            // jointParse will detect if both dates can be adjusted
             Set<String> jointParse = new HashSet<>(startParseElements);
             jointParse.addAll(endParseElements);
 
-            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now().withNano(0), jointParse);
-            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now().withNano(0), jointParse);
+            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now().withNano(0),
+                    jointParse);
+            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now().withNano(0),
+                    jointParse);
         }
 
         return adjustedDateTimes;

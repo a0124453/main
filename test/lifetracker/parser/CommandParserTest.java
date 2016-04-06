@@ -32,15 +32,14 @@ public class CommandParserTest {
 
     private String defaultCommand = "add";
 
-    private String fullCommandSeperator = "| ";
+    private String fullCommandSeparator = "| ";
 
-    private CommandParser cmdParser = new CommandParser(commands, keyWordVerification, defaultCommand,
-            fullCommandSeperator);
+    private CommandParser cmdParser = new CommandParser(commands, defaultCommand);
 
     @Test
     public void testParseFullCommand() throws Exception {
 
-        //Parition: Default (no) command with spaces
+        //Partition: Default (no) command with spaces
         String command = "abc testcommand";
 
         List<String> expected = new ArrayList<>();
@@ -48,7 +47,7 @@ public class CommandParserTest {
         expected.add(defaultCommand);
         expected.add(command);
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Partition: Explicit command specified
         //Boundary: more than one space between words
@@ -58,14 +57,14 @@ public class CommandParserTest {
         expected.add("testcommand");
         expected.add(" add  testcommand ");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Partition: Command with mulitple sections
         command = "testcommand add testcommand |  add";
         expected.set(1, "add testcommand ");
         expected.add(" add");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         expected.clear();
 
@@ -76,7 +75,7 @@ public class CommandParserTest {
         expected.add("add");
         expected.add("two");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
         //Boundary: Spaces right after separator
         command = "testcommand|  abc |def";
@@ -84,7 +83,7 @@ public class CommandParserTest {
         expected.add("testcommand");
         expected.add(" abc |def");
 
-        Assert.assertEquals(expected, cmdParser.parseFullCommand(command));
+        Assert.assertEquals(expected, cmdParser.parseFullCommand(command, fullCommandSeparator));
 
     }
 
@@ -100,7 +99,7 @@ public class CommandParserTest {
         expected.put("empty", "");
         expected.put("name", "name");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
 
         //Boundary: Blank name
         commandBody = "empty empty2";
@@ -110,7 +109,7 @@ public class CommandParserTest {
         expected.put("empty", "");
         expected.put("name", "");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
 
         //Partition: repeated keywords
         commandBody = "name anything abs anything abc def three abc";
@@ -120,7 +119,7 @@ public class CommandParserTest {
         expected.put("anything", "abc def");
         expected.put("name", "name anything abs");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
 
         //Partition: Invalid keyword arguements
         commandBody = "anything something something empty aaa";
@@ -128,6 +127,6 @@ public class CommandParserTest {
         expected.clear();
         expected.put("name", "anything something something empty aaa");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
     }
 }

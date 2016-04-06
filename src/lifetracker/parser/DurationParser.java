@@ -56,7 +56,7 @@ public class DurationParser {
     }
 
     private boolean isValidFormat(String durationString) {
-        return durationString.matches(DURATION_PATTERN);
+        return durationString != null && durationString.matches(DURATION_PATTERN);
     }
 
     private int getNum(String durationString) {

@@ -239,6 +239,20 @@ public class CalendarListImpl implements CalendarList {
     }
 
     @Override
+    public CalendarEntry get(int id) {
+        if (taskList.containsKey(id)) {
+            return taskList.get(id);
+        } else if (eventList.containsKey(id)) {
+            return eventList.get(id);
+        } else if (archivedEventList.containsKey(id)) {
+            return archivedEventList.get(id);
+        } else if (archivedTaskList.containsKey(id)) {
+            return archivedTaskList.get(id);
+        }
+        throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, id));
+    }
+
+    @Override
     public CalendarList findByName(String toSearch) {
         CalendarListTemp result = new CalendarListTemp();
         TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
@@ -271,10 +285,14 @@ public class CalendarListImpl implements CalendarList {
 
     private CalendarEntry updateWithVisitor(EntryVisitor<OldNewEntryPair> visitor, int id) {
         CalendarEntry entryToEdit = delete(id);
-        OldNewEntryPair pair = entryToEdit.accept(visitor);
-
-        add(pair.newEntry);
-        return pair.oldEntry;
+        try {
+            OldNewEntryPair pair = entryToEdit.accept(visitor);
+            add(pair.newEntry);
+            return pair.oldEntry;
+        } catch (IllegalArgumentException ex) {
+            add(entryToEdit);
+            throw ex;
+        }
     }
 
     TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {

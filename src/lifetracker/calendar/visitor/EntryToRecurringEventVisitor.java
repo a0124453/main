@@ -80,6 +80,7 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
         }
 
         RecurringEvent event = new RecurringEvent(entry.getName(), startDateTime, endDateTime, recurringPeriod);
+        event.setId(entry.getId());
 
         return edit(entry, event);
     }
@@ -96,6 +97,8 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
         RecurringEvent event = new RecurringEvent(task.getName(), startDateTime,
                 task.getDateTime(CalendarProperty.END), recurringPeriod);
 
+        event.setId(task.getId());
+
         return edit(task, event);
     }
 
@@ -106,6 +109,7 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
         }
 
         RecurringEvent event = createRecurringEventFromRecurringTask(task);
+        event.setId(task.getId());
 
         return edit(task, event);
     }
@@ -118,6 +122,7 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
 
         RecurringEvent newEvent = new RecurringEvent(event.getName(), event.getDateTime(CalendarProperty.START),
                 event.getDateTime(CalendarProperty.END), recurringPeriod);
+        newEvent.setId(event.getId());
 
         return edit(event, newEvent);
     }
@@ -148,7 +153,7 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
 
         if (occurLimit == LIMIT_INF && !isLimitKept) {
             event.removeLimit();
-        } else if (occurLimit == LIMIT_DATE && limitDate!=null) {
+        } else if (occurLimit == LIMIT_DATE && limitDate != null) {
             event.setDateTime(CalendarProperty.DATE_LIMIT, limitDate.atStartOfDay());
         } else if (occurLimit != LIMIT_INF && occurLimit != LIMIT_DATE) {
             event.setOccurrenceLimit(occurLimit);
@@ -164,6 +169,8 @@ public class EntryToRecurringEventVisitor implements EntryVisitor<OldNewEntryPai
 
         RecurringEvent newEvent = new RecurringEvent(task.getName(), startDateTime,
                 task.getDateTime(CalendarProperty.END), task.getPeriod());
+
+        newEvent.setId(task.getId());
 
         if (task.isProperty(CalendarProperty.DATE_LIMITED)) {
             newEvent.setDateTime(CalendarProperty.DATE_LIMIT, task.getDateTime(CalendarProperty.DATE_LIMIT));
