@@ -78,6 +78,9 @@ public class LogicImpl implements Logic {
         if (commandString.equals("exit")) {
             runResult.setType(CommandType.EXIT);
             return runResult;
+        } else if (commandContent[0].equals("help")) {
+            runResult.setType(CommandType.HELP);
+            return runResult;
         } else if (commandContent[0].equals("saveat")) {
             return processSaveatResults(commandString, runResult);
         } else {
