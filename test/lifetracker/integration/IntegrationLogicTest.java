@@ -293,8 +293,8 @@ public class IntegrationLogicTest {
         assertExecuteResult(expected, actual);
 
         //Boundary: Case insensitivity
-        actual = logic.executeCommand("search BCD EF");
-        expected.setComment("Displaying entries with: \"BCD EF\".");
+        actual = logic.executeCommand("search XYZT");
+        expected.setComment("Displaying entries with: \"XYZT\".");
         assertExecuteResult(expected, actual);
 
         //Partition: Search all
