@@ -58,10 +58,14 @@ public class IntegrationLogicTest {
         Logger globalLogger = Logger.getGlobal();
         globalLogger.addHandler(new FileHandler(LOG_FOLDER + LOG_FILE));
 
+        File configFile = new File(CONFIG_FILE);
+        if(!configFile.exists()){
+            configFile.createNewFile();
+        }
 
         Properties properties = new Properties();
         properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILE)));
-        storageFileName = properties.getProperty(SAVE_FILE_PROPERTY);
+        storageFileName = properties.getProperty(SAVE_FILE_PROPERTY, "lifetracker.dat");
 
         File origFile = new File(storageFileName);
 
