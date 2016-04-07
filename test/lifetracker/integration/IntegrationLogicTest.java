@@ -23,6 +23,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 //@@author A0091173J
 public class IntegrationLogicTest {
@@ -35,12 +38,26 @@ public class IntegrationLogicTest {
 
     private static final String ALT_FILENAME_EXTENSION = ".orig";
 
+    private static final String LOG_FOLDER = "logs/";
+    private static final String LOG_FILE = "lifetracker_test.log";
+
     private static String storageFileName;
     private Storage storage;
     private Logic logic;
 
     @BeforeClass
     public static void setUpTestFile() throws Exception {
+        File logDir = new File(LOG_FOLDER);
+
+        if (!logDir.exists()) {
+            logDir.mkdir();
+        }
+
+        LogManager.getLogManager().reset();
+
+        Logger globalLogger = Logger.getGlobal();
+        globalLogger.addHandler(new FileHandler(LOG_FOLDER + LOG_FILE));
+
 
         Properties properties = new Properties();
         properties.load(new BufferedInputStream(new FileInputStream(CONFIG_FILE)));
@@ -115,8 +132,8 @@ public class IntegrationLogicTest {
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: Add deadline tasks
-        actual = logic.executeCommand("meeting by 12-5-16 3.30pm");
-        expected.addTaskLine(1, "meeting", LocalDateTime.of(LocalDate.of(2016, 5, 12), LocalTime.of(15, 30)), false,
+        actual = logic.executeCommand("meeting by 12-5-15 3.30pm");
+        expected.addTaskLine(1, "meeting", LocalDateTime.of(LocalDate.of(2015, 5, 12), LocalTime.of(15, 30)), true,
                 true, null, 0, null, false);
         expected.setComment(String.format(MESSAGE_ADD, "meeting"));
         assertExecuteResult(expected, actual);
@@ -159,12 +176,9 @@ public class IntegrationLogicTest {
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: Add recurring deadline tasks
-        actual = logic.executeCommand("add report by 2pm every 2 days");
-        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
-        if (expectedDateTime.isBefore(LocalDateTime.now())) {
-            expectedDateTime = expectedDateTime.plusDays(1);
-        }
-        expected.addTaskLine(1, "report", expectedDateTime, false, true, Period.ofDays(2), -1, null, false);
+        actual = logic.executeCommand("add report by 14/1/15 2pm every 2 days");
+        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.of(2015,1,14), LocalTime.of(14, 0));
+        expected.addTaskLine(1, "report", expectedDateTime, true, true, Period.ofDays(2), -1, null, false);
         expected.setComment(String.format(MESSAGE_ADD, "report"));
         assertExecuteResult(expected, actual);
 

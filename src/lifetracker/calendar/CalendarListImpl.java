@@ -458,9 +458,9 @@ public class CalendarListImpl implements CalendarList {
             if (date1 == null && date2 == null) {
                 return 0;
             } else if (date1 == null) {
-                return -1;
-            } else if (date2 == null) {
                 return 1;
+            } else if (date2 == null) {
+                return -1;
             } else if (date1.isBefore(date2)) {
                 return -1;
             } else if (date1.isAfter(date2)) {
@@ -476,6 +476,24 @@ public class CalendarListImpl implements CalendarList {
     private List<CalendarEntry> sortReverseByDateTime(CalendarProperty property, List<CalendarEntry> list) {
         list = sortByDateTime(property, list);
         Collections.reverse(list);
+
+        Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
+            LocalDateTime date1 = entry1.getDateTime(property);
+            LocalDateTime date2 = entry2.getDateTime(property);
+
+            if (date1 == null && date2 == null) {
+                return 0;
+            } else if (date1 == null) {
+                return 1;
+            } else if (date2 == null) {
+                return -1;
+            } else{
+                return 0;
+            }
+        };
+
+        Collections.sort(list, comparator);
+
         return list;
     }
 
