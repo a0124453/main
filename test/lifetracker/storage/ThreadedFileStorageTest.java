@@ -12,11 +12,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.FileHandler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class ThreadedFileStorageTest {
 
     public static final String TEST_FILE_NAME = "test.dat";
     public static final String ALT_TEST_FILE_NAME = "alt_test.dat";
+    private static final String LOG_FOLDER = "logs/";
+    private static final String LOG_FILE = "lifetracker_test.log";
 
     public static final String jsonTestData = "{\\n  \"taskList\": {\\n    \"1\": {\\n      \"name\": \"floating\",\\n      \"entryType\": \"FLOATING\",\\n      \"id\": 1\\n    },\\n    \"2\": {\\n      \"name\": \"task\",\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"DEADLINE\",\\n      \"id\": 2\\n    },\\n    \"3\": {\\n      \"name\": \"recurring task\",\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 2016,\\n          \"month\": 3,\\n          \"day\": 27\\n        },\\n        \"time\": {\\n          \"hour\": 11,\\n          \"minute\": 29,\\n          \"second\": 43,\\n          \"nano\": 322000000\\n        }\\n      },\\n      \"entryType\": \"DEADLINE\",\\n      \"id\": 3\\n    }\\n  },\\n  \"eventList\": {\\n    \"4\": {\\n      \"name\": \"event\",\\n      \"startDateTime\": {\\n        \"date\": {\\n          \"year\": -999999999,\\n          \"month\": 1,\\n          \"day\": 1\\n        },\\n        \"time\": {\\n          \"hour\": 0,\\n          \"minute\": 0,\\n          \"second\": 0,\\n          \"nano\": 0\\n        }\\n      },\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"EVENT\",\\n      \"id\": 4\\n    },\\n    \"5\": {\\n      \"name\": \"recurring event\",\\n      \"startDateTime\": {\\n        \"date\": {\\n          \"year\": -999999999,\\n          \"month\": 1,\\n          \"day\": 1\\n        },\\n        \"time\": {\\n          \"hour\": 0,\\n          \"minute\": 0,\\n          \"second\": 0,\\n          \"nano\": 0\\n        }\\n      },\\n      \"endDateTime\": {\\n        \"date\": {\\n          \"year\": 999999999,\\n          \"month\": 12,\\n          \"day\": 31\\n        },\\n        \"time\": {\\n          \"hour\": 23,\\n          \"minute\": 59,\\n          \"second\": 59,\\n          \"nano\": 999999999\\n        }\\n      },\\n      \"entryType\": \"EVENT\",\\n      \"id\": 5\\n    }\\n  }\\n}";
 
@@ -24,6 +29,17 @@ public class ThreadedFileStorageTest {
 
     @Before
     public void setUp() throws Exception {
+        File logDir = new File(LOG_FOLDER);
+
+        if (!logDir.exists()) {
+            logDir.mkdir();
+        }
+
+        LogManager.getLogManager().reset();
+
+        Logger globalLogger = Logger.getGlobal();
+        globalLogger.addHandler(new FileHandler(LOG_FOLDER + LOG_FILE));
+
         storage = new ThreadedFileStorage(TEST_FILE_NAME);
         deleteTestFiles();
     }
