@@ -1,15 +1,5 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
-import lifetracker.calendar.visitor.EntryToEventVisitor;
-import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
-import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
-import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
-import lifetracker.calendar.visitor.EntryVisitor;
-import lifetracker.calendar.visitor.MarkVisitor;
-import lifetracker.calendar.visitor.OldNewEntryPair;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -22,9 +12,22 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
+import lifetracker.calendar.visitor.EntryToDeadlineTaskVisitor;
+import lifetracker.calendar.visitor.EntryToEventVisitor;
+import lifetracker.calendar.visitor.EntryToGenericTaskVisitor;
+import lifetracker.calendar.visitor.EntryToRecurringEventVisitor;
+import lifetracker.calendar.visitor.EntryToRecurringTaskVisitor;
+import lifetracker.calendar.visitor.EntryVisitor;
+import lifetracker.calendar.visitor.MarkVisitor;
+import lifetracker.calendar.visitor.OldNewEntryPair;
+
 public class CalendarListImpl implements CalendarList {
 
     private static final String ERROR_EMPTY_NAME = "Task/Event's name cannot be empty!";
+
+    private static final double WORD_SIMILARITY_THRESHOLD_INDEX = 0.85;
 
     // variables
     protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
@@ -338,7 +341,7 @@ public class CalendarListImpl implements CalendarList {
         while (iterator.hasNext()) {
             Map.Entry<Integer, CalendarEntry> entry = iterator.next();
             String entryName = entry.getValue().getName();
-            if (containsAnyWord(entryName, toSearch)) {
+            if (!containsAnyWord(entryName, toSearch)) {
                 iterator.remove();
             }
         }
@@ -428,16 +431,6 @@ public class CalendarListImpl implements CalendarList {
         return idToSet;
     }
 
-    boolean containsAnyWord(String entryName, String toSearch) {
-        String[] arrayOfWords = toSearch.split(" ");
-        for (String word : arrayOfWords) {
-            if (StringUtils.containsIgnoreCase(entryName, word)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean isValidId(int id) {
         return id > BASE_ID && !isPresent(id);
     }
@@ -477,6 +470,23 @@ public class CalendarListImpl implements CalendarList {
         list = sortByDateTime(property, list);
         Collections.reverse(list);
         return list;
+    }
+
+    private boolean containsAnyWord(String entryName, String toSearch) {
+        String[] toSearchArray = toSearch.split(" ");
+        String[] entryNameArray = entryName.split(" ");
+        for (String word1 : toSearchArray) {
+            for (String word2 : entryNameArray) {
+                if (isSimilar(word1, word2)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSimilar(String word1, String word2) {
+        return StringUtils.getJaroWinklerDistance(word1, word2) > WORD_SIMILARITY_THRESHOLD_INDEX;
     }
 
 }
