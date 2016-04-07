@@ -36,8 +36,7 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public List<CalendarEntry> getTaskList() {
         List<CalendarEntry> list = new ArrayList<>(taskList.values());
-        List<CalendarEntry> sortedList = sortByDateTime(CalendarProperty.END, list);
-        return sortedList;
+        return sortByDateTime(CalendarProperty.END, list);
     }
 
     @Override
@@ -51,8 +50,7 @@ public class CalendarListImpl implements CalendarList {
     @Override
     public List<CalendarEntry> getArchivedTaskList() {
         List<CalendarEntry> list = new ArrayList<>(archivedTaskList.values());
-        List<CalendarEntry> sortedList = sortReverseByDateTime(CalendarProperty.END, list);
-        return sortedList;
+        return sortReverseByDateTime(CalendarProperty.END, list);
     }
 
     @Override
@@ -433,14 +431,17 @@ public class CalendarListImpl implements CalendarList {
         Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
             LocalDateTime date1 = entry1.getDateTime(property);
             LocalDateTime date2 = entry2.getDateTime(property);
-            if (date1 == null && date2 != null) {
-                return 1;
-            } else if (date1 != null && date2 == null) {
+
+            if(date1 == null && date2 == null){
+                return 0;
+            } else if (date1 == null) {
                 return -1;
+            } else if (date2 == null) {
+                return 1;
             } else if (date1.isBefore(date2)) {
-                return 1;
-            } else if (date1.isAfter(date2)) {
                 return -1;
+            } else if (date1.isAfter(date2)) {
+                return 1;
             } else {
                 return 0;
             }
@@ -450,22 +451,8 @@ public class CalendarListImpl implements CalendarList {
     }
 
     private List<CalendarEntry> sortReverseByDateTime(CalendarProperty property, List<CalendarEntry> list) {
-        Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
-            LocalDateTime date1 = entry1.getDateTime(property);
-            LocalDateTime date2 = entry2.getDateTime(property);
-            if (date1 == null && date2 != null) {
-                return 1;
-            } else if (date1 != null && date2 == null) {
-                return -1;
-            } else if (date1.isBefore(date2)) {
-                return -1;
-            } else if (date1.isAfter(date2)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        };
-        Collections.sort(list, comparator);
+        list = sortByDateTime(property, list);
+        Collections.reverse(list);
         return list;
     }
 
