@@ -25,6 +25,8 @@
         <pathelement location="bin"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <path refid="hamcrest-core-1.3.userclasspath"/>
+        <pathelement location="lib/junit-4.12.jar" />
+        <pathelement location="lib/hamcrest-core-1.3.jar" />
         <pathelement location="lib/natty.jar"/>
         <pathelement location="lib/slf4j-nop-1.7.19.jar"/>
         <pathelement location="lib/j-text-utils-0.3.3.jar"/>
