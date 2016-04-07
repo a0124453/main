@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class CalendarListImpl implements CalendarList {
 
@@ -35,16 +36,38 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public List<CalendarEntry> getTaskList() {
-        List<CalendarEntry> list = new ArrayList<>(taskList.values());
-        return sortByDateTime(CalendarProperty.END, list);
+        List<CalendarEntry> active = taskList.values().stream()
+                .filter(entry -> entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
+
+        sortByDateTime(CalendarProperty.END, active);
+
+        List<CalendarEntry> nonActive = taskList.values().stream()
+                .filter(entry -> !entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
+
+        sortReverseByDateTime(CalendarProperty.END, nonActive);
+        active.addAll(nonActive);
+
+        return active;
     }
 
     @Override
     public List<CalendarEntry> getEventList() {
-        List<CalendarEntry> list = new ArrayList<>(eventList.values());
-        List<CalendarEntry> sortedList = sortByDateTime(CalendarProperty.END, list);
-        sortedList = sortByDateTime(CalendarProperty.START, sortedList);
-        return sortedList;
+
+        List<CalendarEntry> active = eventList.values().stream()
+                .filter(entry-> entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
+
+        sortByDateTime(CalendarProperty.END, active);
+        sortByDateTime(CalendarProperty.START, active);
+
+        List<CalendarEntry> nonActive = eventList.values().stream()
+                .filter(entry -> !entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
+
+        sortReverseByDateTime(CalendarProperty.END, nonActive);
+        sortReverseByDateTime(CalendarProperty.START, nonActive);
+
+        active.addAll(nonActive);
+
+        return active;
     }
 
     @Override
@@ -432,7 +455,7 @@ public class CalendarListImpl implements CalendarList {
             LocalDateTime date1 = entry1.getDateTime(property);
             LocalDateTime date2 = entry2.getDateTime(property);
 
-            if(date1 == null && date2 == null){
+            if (date1 == null && date2 == null) {
                 return 0;
             } else if (date1 == null) {
                 return -1;
