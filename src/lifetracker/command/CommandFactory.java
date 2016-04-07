@@ -41,6 +41,10 @@ public interface CommandFactory {
 
     CommandObject findAll(String searchString);
 
+    CommandObject findOld();
+
+    CommandObject findOld(String searchTerm);
+
     CommandObject delete(int id);
 
     CommandObject mark(int id);

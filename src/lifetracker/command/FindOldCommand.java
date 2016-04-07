@@ -2,12 +2,12 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-//@@author A0091173J
-public class FindAllCommand extends FindCommand {
-    public FindAllCommand() {
+public class FindOldCommand extends FindCommand{
+
+    public FindOldCommand() {
     }
 
-    public FindAllCommand(String searchTerm) {
+    public FindOldCommand(String searchTerm) {
         super(searchTerm);
     }
 
@@ -15,11 +15,10 @@ public class FindAllCommand extends FindCommand {
     public CalendarList execute(CalendarList calendar) {
         super.execute(calendar);
 
-
         if (searchTerm.isEmpty()) {
-            return calendar.findAllByName("");
+            return calendar.findArchivedByName("");
         } else {
-            return calendar.findAllByName(searchTerm);
+            return calendar.findArchivedByName(searchTerm);
         }
     }
 }

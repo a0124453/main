@@ -77,6 +77,16 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
+    public CommandObject findOld(){
+        return new FindOldCommand();
+    }
+
+    @Override
+    public CommandObject findOld(String searchTerm){
+        return new FindOldCommand(searchTerm);
+    }
+
+    @Override
     public CommandObject delete(int id) {
         return new DeleteCommand(id);
     }

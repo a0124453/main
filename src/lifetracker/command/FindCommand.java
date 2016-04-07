@@ -8,7 +8,7 @@ public class FindCommand extends CommandObject {
     private static final String MESSAGE_SEARCH_TERM = "Displaying entries with: \"%1$s\".";
     private static final String MESSAGE_SEARCH_ALL = "Displaying all entries.";
 
-    private final String searchTerm;
+    final String searchTerm;
 
     private CalendarList originalCalendar;
 
@@ -39,9 +39,5 @@ public class FindCommand extends CommandObject {
         setComment(MESSAGE_SEARCH_ALL);
 
         return originalCalendar;
-    }
-
-    String getSearchTerm(){
-        return searchTerm;
     }
 }
