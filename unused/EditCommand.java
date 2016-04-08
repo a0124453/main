@@ -7,7 +7,8 @@ import lifetracker.calendar.CalendarProperty;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-//@@author A0091173J
+//@@author A0091173J-unused
+//Was replaced with numerous subclasses
 public class EditCommand extends CommandObject {
 
     private static final String MESSAGE_EDITED = "\"%1$d\" is edited.";

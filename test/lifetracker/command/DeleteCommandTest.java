@@ -1,17 +1,10 @@
 package lifetracker.command;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.time.LocalDateTime;
-
+import lifetracker.calendar.CalendarListImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import lifetracker.calendar.CalendarList;
-import lifetracker.calendar.CalendarListImpl;
-
+//@@author A0114240B
 public class DeleteCommandTest {
     
     @Test
