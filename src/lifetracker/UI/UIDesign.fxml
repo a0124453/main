@@ -32,7 +32,7 @@
                         <WebView prefHeight="-1.0" prefWidth="-1.0" />
                         <VBox alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: transparent;" StackPane.alignment="TOP_CENTER">
                            <children>
-                              <TableView fx:id="tableEvent" prefHeight="225.0" stylesheets="@application.css" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="tableEvent" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" stylesheets="@application.css" VBox.vgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="columnEventStartTime" editable="false" maxWidth="180.0" minWidth="2.0" prefWidth="180.0" resizable="false" sortable="false" text="START TIME" />
                                     <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="180.0" minWidth="2.0" prefWidth="180.0" resizable="false" sortable="false" text="END TIME" />
@@ -40,6 +40,9 @@
                                   <TableColumn fx:id="columnEventID" editable="false" maxWidth="60.0" prefWidth="60.0" resizable="false" sortable="false" text="#ID" />
                                     <TableColumn fx:id="columnEventRecurring" editable="false" maxWidth="140.0" minWidth="0.0" prefWidth="140.0" resizable="false" sortable="false" text="EVERY" />
                                 </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
                               </TableView>
                               <TableView fx:id="tableTask" prefHeight="225.0" VBox.vgrow="ALWAYS">
                                  <columns>
