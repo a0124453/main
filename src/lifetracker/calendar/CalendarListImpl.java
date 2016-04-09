@@ -454,15 +454,24 @@ public class CalendarListImpl implements CalendarList {
     // }
 
     private int getNextId() {
-        int taskMax = this.taskList.isEmpty() ? BASE_ID : this.taskList.lastKey();
-        int eventMax = this.eventList.isEmpty() ? BASE_ID : this.eventList.lastKey();
-        int archivedTaskMax = this.archivedTaskList.isEmpty() ? BASE_ID : this.archivedTaskList.lastKey();
-        int archivedEventMax = this.archivedEventList.isEmpty() ? BASE_ID : this.archivedEventList.lastKey();
-        int idToSet = Math.max(taskMax, eventMax);
-        idToSet = Math.max(idToSet, archivedTaskMax);
-        idToSet = Math.max(idToSet, archivedEventMax);
-        idToSet += 1;
+        int taskMax = getLastKey(this.taskList);
+        int eventMax = getLastKey(this.eventList);
+        int archivedTaskMax = getLastKey(this.archivedTaskList);
+        int archivedEventMax = getLastKey(this.archivedEventList);
+        int idToSet = maxId(taskMax, eventMax, archivedTaskMax, archivedEventMax) + 1;
         return idToSet;
+    }
+
+    private int getLastKey(TreeMap<Integer, CalendarEntry> treeMap) {
+        int key = treeMap.isEmpty() ? BASE_ID : treeMap.lastKey();
+        return key;
+    }
+
+    private int maxId(int taskMax, int eventMax, int archivedTaskMax, int archivedEventMax) {
+        int maxId = Math.max(taskMax, eventMax);
+        maxId = Math.max(maxId, archivedTaskMax);
+        maxId = Math.max(maxId, archivedEventMax);
+        return maxId;
     }
 
     private boolean isValidId(int id) {
