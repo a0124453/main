@@ -230,13 +230,18 @@ public class UIController implements Initializable {
 
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                        LocalDate limitDate = param.getValue().getLimitDate();
-                        int limitOccur = param.getValue().getLimitOccur();
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-                        periodString += parseLimit(limitDate, limitOccur);
+                        String periodString = parsePeriodFromLogicEvent(param);
                         return new ReadOnlyStringWrapper(periodString);
                     }
                 });
+    }
+
+    private String parsePeriodFromLogicEvent(CellDataFeatures<LogicEvent, String> param) {
+        LocalDate limitDate = param.getValue().getLimitDate();
+        int limitOccur = param.getValue().getLimitOccur();
+        String periodString = convertTemporalToString(param.getValue().getPeriod());
+        periodString += parseLimit(limitDate, limitOccur);
+        return periodString;
     }
 
     private void initColumnEventEndTime() {
@@ -282,13 +287,17 @@ public class UIController implements Initializable {
 
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        LocalDate limitDate = param.getValue().getLimitDate();
-                        int limitOccur = param.getValue().getLimitOccur();
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-                        periodString += parseLimit(limitDate, limitOccur);
-                        return new ReadOnlyStringWrapper(periodString);
+                        return parsePeriodFromLogicTask(param);
                     }
                 });
+    }
+
+    private ObservableValue<String> parsePeriodFromLogicTask(CellDataFeatures<LogicTask, String> param) {
+        LocalDate limitDate = param.getValue().getLimitDate();
+        int limitOccur = param.getValue().getLimitOccur();
+        String periodString = convertTemporalToString(param.getValue().getPeriod());
+        periodString += parseLimit(limitDate, limitOccur);
+        return new ReadOnlyStringWrapper(periodString);
     }
 
     private String parseLimit(LocalDate limitDate, int limitOccur) {
