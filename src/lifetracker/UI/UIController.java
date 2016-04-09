@@ -41,11 +41,13 @@ import java.util.ResourceBundle;
 public class UIController implements Initializable {
 
 
+    private static final String TEXT_EMPTY = "";
     private static final String DAY_FIELD = "day(s)";
     private static final String MONTH_FIELD = "month(s)";
     private static final String YEAR_FIELD = "year(s)";
     private static final String MINUTE_FIELD = "minute(s)";
     private static final String HOUR_FIELD = "hour(s)";
+    
     private static Logic l;
     private static List<String> inputHistory;
     private static int inputHistoryIndex;
@@ -72,14 +74,10 @@ public class UIController implements Initializable {
 
     @FXML
     public void getInput() {
-        String userInput;
-
-        userInput = textInput.getText();
-
+        String userInput = textInput.getText();
         addInputToHistory(userInput);
-
         process(userInput);
-        textInput.setText("");
+        textInput.setText(TEXT_EMPTY);
 
     }
 
@@ -151,7 +149,7 @@ public class UIController implements Initializable {
                         if (deadline != null) {
                             deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
                         } else {
-                            deadlineString = "";
+                            deadlineString = TEXT_EMPTY;
                         }
 
                         return new ReadOnlyStringWrapper(deadlineString);
@@ -259,7 +257,7 @@ public class UIController implements Initializable {
                         textInput.setText(inputHistory.get(inputHistoryIndex));
                         textInput.positionCaret(textInput.getText().length());
                     } else {
-                        textInput.setText("");
+                        textInput.setText(TEXT_EMPTY);
                     }
                 }
             }
@@ -277,7 +275,7 @@ public class UIController implements Initializable {
     private String convertTemporalToString(TemporalAmount period) {
         String periodString;
         if (period == null) {
-            periodString = "";
+            periodString = TEXT_EMPTY;
         } else if (period instanceof Period) {
             periodString = convertPeriodToString(((Period) period).normalized());
         } else {
@@ -303,7 +301,7 @@ public class UIController implements Initializable {
     }
 
     private String formatDuration(long duration, String label) {
-        return duration == 0 ? "" : duration + " " + label + " ";
+        return duration == 0 ? TEXT_EMPTY : duration + " " + label + " ";
     }
 
     public static void populateList(ExecuteResult result) {
