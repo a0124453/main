@@ -36,9 +36,15 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //@@author A0114240B
 public class UIController implements Initializable {
+    private static final Logger STORE_LOG = Logger.getGlobal();
+    private static final String LOG_STARTUP = "UI: Starting";
+    private static final String LOG_SHUTDOWN = "UI: Exiting";
+    
     private static final String PATH_README_CSS = "/lifetracker/UI/README.css";
     private static final String PATH_README_HTML = "/lifetracker/UI/README.html";
     private static final String FIELD_EMPTY = "";
@@ -93,6 +99,7 @@ public class UIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initLog();
         initTabBehaviour();
         initWebView();
         initInputHistory();
@@ -102,6 +109,10 @@ public class UIController implements Initializable {
         focusTextInput();
     }
     
+    private void initLog() {
+        STORE_LOG.log(Level.INFO, LOG_STARTUP);
+    }
+
     @FXML
     public void getInput() {
         String userInput = textInput.getText();
@@ -112,6 +123,7 @@ public class UIController implements Initializable {
     }
     
     public static Logic getLogic() {
+        assert l != null;
         return l;
     }
 
@@ -275,7 +287,7 @@ public class UIController implements Initializable {
             showWebView();
             break;
         case EXIT :
-            Platform.exit();
+            processExit();
             break;
         case DISPLAY :
             hideWebView();
@@ -287,6 +299,11 @@ public class UIController implements Initializable {
             labelFeedback.setText(comment);
             break;
         }
+    }
+
+    private void processExit() {
+        STORE_LOG.log(Level.INFO, LOG_SHUTDOWN);
+        Platform.exit();
     }
 
     private void hideWebView() {

@@ -33,19 +33,19 @@
                            <children>
                               <TableView fx:id="tableEvent" prefHeight="225.0" stylesheets="@application.css" VBox.vgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="columnEventStartTime" editable="false" maxWidth="180.0" minWidth="2.0" prefWidth="180.0" resizable="false" sortable="false" text="START TIME" />
-                                    <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="180.0" minWidth="2.0" prefWidth="180.0" resizable="false" sortable="false" text="END TIME" />
+                                    <TableColumn fx:id="columnEventStartTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="START TIME" />
+                                    <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="END TIME" />
                                   <TableColumn fx:id="columnEventName" editable="false" minWidth="0.0" prefWidth="340.0" resizable="false" sortable="false" text="EVENT" />
                                   <TableColumn fx:id="columnEventId" editable="false" maxWidth="60.0" prefWidth="60.0" resizable="false" sortable="false" text="#ID" />
-                                    <TableColumn fx:id="columnEventRecurring" editable="false" maxWidth="200.0" minWidth="0.0" prefWidth="200.0" resizable="false" sortable="false" text="EVERY" />
+                                    <TableColumn fx:id="columnEventRecurring" editable="false" maxWidth="250.0" minWidth="0.0" prefWidth="265.0" resizable="false" sortable="false" text="EVERY" />
                                 </columns>
                               </TableView>
                               <TableView fx:id="tableTask" prefHeight="225.0" VBox.vgrow="ALWAYS">
                                  <columns>
-                                    <TableColumn fx:id="columnTaskTime" editable="false" maxWidth="360.0" minWidth="2.0" prefWidth="360.0" resizable="false" sortable="false" text="TIME" />
+                                    <TableColumn fx:id="columnTaskTime" editable="false" maxWidth="400.0" minWidth="2.0" prefWidth="400.0" resizable="false" sortable="false" text="TIME" />
                                     <TableColumn fx:id="columnTaskName" editable="false" maxWidth="340.0" prefWidth="340.0" resizable="false" sortable="false" text="TASK" />
                                     <TableColumn fx:id="columnTaskId" editable="false" maxWidth="60.0" prefWidth="60.0" resizable="false" sortable="false" text="#ID" />
-                                    <TableColumn fx:id="columnTaskRecurring" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="EVERY" />
+                                    <TableColumn fx:id="columnTaskRecurring" editable="false" maxWidth="250.0" minWidth="2.0" prefWidth="265.0" resizable="false" sortable="false" text="EVERY" />
                                  </columns>
                               </TableView>
                            </children>

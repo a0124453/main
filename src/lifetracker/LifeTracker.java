@@ -28,6 +28,7 @@ public class LifeTracker extends Application {
     private Storage fileStorage;
 
     public static void main(String args[]) throws Exception {
+        setLogger();
         launch(args);
     }
 
@@ -48,13 +49,12 @@ public class LifeTracker extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        fileStorage = new ThreadedFileStorage();
         Parent root = FXMLLoader.load(getClass().getResource("/lifetracker/UI/UIDesign.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/lifetracker/UI/application.css").toExternalForm());
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
-        fileStorage = new ThreadedFileStorage();
-        setLogger();
         Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
         UIController.setLogic(programLogic);
