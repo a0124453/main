@@ -5,8 +5,9 @@ import lifetracker.command.CommandObject;
 import lifetracker.parser.datetime.DateTimeParser;
 import lifetracker.parser.datetime.DurationParser;
 import lifetracker.parser.syntax.AddParameterParser;
+import lifetracker.parser.syntax.CommandBodyParser;
 import lifetracker.parser.syntax.CommandOptions;
-import lifetracker.parser.syntax.CommandParser;
+import lifetracker.parser.syntax.CommandSectionsParser;
 import lifetracker.parser.syntax.EditOneParametersParser;
 import lifetracker.parser.syntax.EditParameterParser;
 import lifetracker.parser.syntax.Parameters;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+//@@author A0091173J
 public class ParserImpl implements Parser {
 
     private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
@@ -28,30 +30,30 @@ public class ParserImpl implements Parser {
 
     private static final DurationParser DURATION_PARSER = DurationParser.getInstance();
 
-    private static final Map<String, Predicate<String>> EDITONE_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+    private static final Map<CommandOptions, Predicate<String>> EDITONE_OPTIONS_WITH_VERIFICATIONS = new HashMap<>();
 
     static {
-        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
-        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
-        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+        EDITONE_OPTIONS_WITH_VERIFICATIONS.put(CommandOptions.BY, DATE_TIME_PARSER::isDateTime);
+        EDITONE_OPTIONS_WITH_VERIFICATIONS.put(CommandOptions.FROM, DATE_TIME_PARSER::isDateTime);
+        EDITONE_OPTIONS_WITH_VERIFICATIONS.put(CommandOptions.TO, DATE_TIME_PARSER::isDateTime);
     }
 
-    private static final Map<String, Predicate<String>> ADD_KEYWORDS_WITH_VERIFICATIONS
-            = new HashMap<>(EDITONE_KEYWORDS_WITH_VERIFICATIONS);
+    private static final Map<CommandOptions, Predicate<String>> ADD_OPTIONS_VERIFICATIONS
+            = new HashMap<>(EDITONE_OPTIONS_WITH_VERIFICATIONS);
 
     static {
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
+        ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.EVERY, DURATION_PARSER::isDurationString);
+        ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.UNTIL, DATE_TIME_PARSER::isDateTime);
+        ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.FOR, StringUtils::isNumeric);
     }
 
-    private static final Map<String, Predicate<String>> EDIT_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>(
-            ADD_KEYWORDS_WITH_VERIFICATIONS);
+    private static final Map<CommandOptions, Predicate<String>> EDIT_OPTIONS_VERIFICATIONS = new HashMap<>(
+            ADD_OPTIONS_VERIFICATIONS);
 
     static {
-        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("nodue", StringUtils::isBlank);
-        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("stop", StringUtils::isBlank);
-        EDIT_KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
+        EDIT_OPTIONS_VERIFICATIONS.put(CommandOptions.NODUE, StringUtils::isBlank);
+        EDIT_OPTIONS_VERIFICATIONS.put(CommandOptions.STOP, StringUtils::isBlank);
+        EDIT_OPTIONS_VERIFICATIONS.put(CommandOptions.FOREVER, StringUtils::isBlank);
     }
 
     private static final Map<String, CommandOptions> KEYWORD_TO_ENUM_MAP = new HashMap<>();
@@ -91,12 +93,12 @@ public class ParserImpl implements Parser {
         commands.put("mark", this::processMark);
     }
 
-    private final CommandParser cmdParser;
+    private final CommandSectionsParser cmdParser;
 
     private final CommandFactory commandObjectFactory;
 
     public ParserImpl(CommandFactory commandFactory) {
-        cmdParser = new CommandParser(commands.keySet(), defaultCommand);
+        cmdParser = new CommandSectionsParser(commands.keySet(), defaultCommand);
         commandObjectFactory = commandFactory;
     }
 
@@ -113,8 +115,10 @@ public class ParserImpl implements Parser {
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
-        Map<CommandOptions, String> commandBodySectionsMap = cmdParser
-                .parseCommandBody(addCommandBody, ADD_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
+        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+                ADD_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
+
+        Map<CommandOptions, String> commandBodySectionsMap = bodyParser.parseCommandBody(addCommandBody);
 
         Parameters params = AddParameterParser.getInstance().parseCommandMap(commandBodySectionsMap);
 
@@ -141,8 +145,10 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<CommandOptions, String> editSectionMap = cmdParser
-                .parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
+        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+                EDIT_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
+
+        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);
 
         Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
@@ -157,8 +163,10 @@ public class ParserImpl implements Parser {
         int id = getIDFromList(commandBody);
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<CommandOptions, String> editSectionMap = cmdParser
-                .parseCommandBody(editCommandSection, EDITONE_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
+        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+                EDITONE_OPTIONS_WITH_VERIFICATIONS, CommandOptions.NAME);
+
+        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);
 
         Parameters params = EditOneParametersParser.getInstance().parseCommandMap(editSectionMap);
 
