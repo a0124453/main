@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
+//@@author A0149467N
+
 public interface ExecuteResult {
 
     public enum CommandType {

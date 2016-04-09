@@ -20,6 +20,8 @@ import java.util.EmptyStackException;
 import java.util.Properties;
 import java.util.Stack;
 
+//@@author A0149467N
+
 public class LogicImpl implements Logic {
 
     private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";
