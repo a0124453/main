@@ -352,14 +352,14 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
+    private TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
         copyMap.putAll(treeMap);
         filterByName(copyMap, toSearch);
         return copyMap;
     }
 
-    void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
+    private void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         if (toSearch == null || toSearch.isEmpty()) {
             return;
         }
