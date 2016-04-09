@@ -198,22 +198,13 @@ public class LogicImplTest {
         assertEquals(expected3.getType(), actual.getType());
     }
 
-    /*----------test adding error event----------*/
+    //test error month
+    //This is the boundary case for the invalid partition
     @Test
-    public void testAddError() {
+    public void testAddErrorMonth() {
         when(parser.parse("add error meeting by 2016-00-31 23:59:59")).thenThrow(new IllegalArgumentException());
         when(parser.parse("add error meeting by 2016-13-31 23:59:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-00 23:59:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-32 23:59:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 -1:59:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 24:59:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 23:-1:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 23:60:59")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 23:59:-1")).thenThrow(new IllegalArgumentException());
-        when(parser.parse("add error meeting by 2016-12-31 23:59:60")).thenThrow(new IllegalArgumentException());
-
-        //test error month
-        //This is the boundary case for the invalid partition
+        
         ExecuteResult actual1 = logicTest.executeCommand("add error meeting by 2016-00-31 23:59:59");
         verify(parser).parse("add error meeting by 2016-00-31 23:59:59");
         assertEquals(error.getComment(), actual1.getComment());
@@ -223,9 +214,15 @@ public class LogicImplTest {
         verify(parser).parse("add error meeting by 2016-13-31 23:59:59");
         assertEquals(error.getComment(), actual2.getComment());
         assertEquals(error.getType(), actual2.getType());
-
-        //test error day
-        //This is the boundary case for the invalid partition
+    }
+    
+    //test error day
+    //This is the boundary case for the invalid partition
+    @Test
+    public void testAddErrorDay() {
+        when(parser.parse("add error meeting by 2016-12-00 23:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-32 23:59:59")).thenThrow(new IllegalArgumentException());
+        
         ExecuteResult actual3 = logicTest.executeCommand("add error meeting by 2016-12-00 23:59:59");
         verify(parser).parse("add error meeting by 2016-12-00 23:59:59");
         assertEquals(error.getComment(), actual3.getComment());
@@ -235,9 +232,15 @@ public class LogicImplTest {
         verify(parser).parse("add error meeting by 2016-12-32 23:59:59");
         assertEquals(error.getComment(), actual4.getComment());
         assertEquals(error.getType(), actual4.getType());
+    }
+    
+    //test error hour
+    //This is the boundary case for the invalid partition
+    @Test
+    public void testAddErrorHour() {
+        when(parser.parse("add error meeting by 2016-12-31 -1:59:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 24:59:59")).thenThrow(new IllegalArgumentException());
 
-        //test error hour
-        //This is the boundary case for the invalid partition
         ExecuteResult actual5 = logicTest.executeCommand("add error meeting by 2016-12-31 -1:59:59");
         verify(parser).parse("add error meeting by 2016-12-31 -1:59:59");
         assertEquals(error.getComment(), actual5.getComment());
@@ -247,9 +250,15 @@ public class LogicImplTest {
         verify(parser).parse("add error meeting by 2016-12-31 24:59:59");
         assertEquals(error.getComment(), actual6.getComment());
         assertEquals(error.getType(), actual6.getType());
+    }
+    
+    //test error minute
+    //This is the boundary case for the invalid partition
+    @Test
+    public void testAddErrorMinute() {
+        when(parser.parse("add error meeting by 2016-12-31 23:-1:59")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:60:59")).thenThrow(new IllegalArgumentException());
 
-        //test error minute
-        //This is the boundary case for the invalid partition
         ExecuteResult actual7 = logicTest.executeCommand("add error meeting by 2016-12-31 23:-1:59");
         verify(parser).parse("add error meeting by 2016-12-31 23:-1:59");
         assertEquals(error.getComment(), actual7.getComment());
@@ -259,9 +268,15 @@ public class LogicImplTest {
         verify(parser).parse("add error meeting by 2016-12-31 23:60:59");
         assertEquals(error.getComment(), actual8.getComment());
         assertEquals(error.getType(), actual8.getType());
-
-        //test error second
-        //This is the boundary case for the invalid partition
+    }
+    
+    //test error second
+    //This is the boundary case for the invalid partition
+    @Test
+    public void testAddErrorSecond() {
+        when(parser.parse("add error meeting by 2016-12-31 23:59:-1")).thenThrow(new IllegalArgumentException());
+        when(parser.parse("add error meeting by 2016-12-31 23:59:60")).thenThrow(new IllegalArgumentException());
+        
         ExecuteResult actual9 = logicTest.executeCommand("add error meeting by 2016-12-31 23:59:-1");
         verify(parser).parse("add error meeting by 2016-12-31 23:59:-1");
         assertEquals(error.getComment(), actual9.getComment());
