@@ -33,13 +33,13 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public List<LogicEvent> getEventList() {
-        return eventList;
-    }
-
-    @Override
     public List<LogicTask> getTaskList() {
         return taskList;
+    }
+    
+    @Override
+    public List<LogicEvent> getEventList() {
+        return eventList;
     }
 
     @Override
@@ -76,12 +76,14 @@ public class CommandLineResult implements ExecuteResult {
     }
 
     @Override
-    public void setType(CommandType type) {
-        this.commandType = type;
-    }
-
-    @Override
     public CommandType getType() {
         return this.commandType;
+    }
+    
+    @Override
+    public void setType(CommandType type) {
+        assert type != null;
+        
+        this.commandType = type;
     }
 }

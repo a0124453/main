@@ -17,9 +17,9 @@ public interface ExecuteResult {
 
     void setComment(String comment);
 
-    List<LogicEvent> getEventList();
-
     List<LogicTask> getTaskList();
+    
+    List<LogicEvent> getEventList();
 
     void addTaskLine(int id, String name, LocalDateTime deadline, boolean isOverdue, boolean isActive,
             Period period, int limitOccur, LocalDate limitDate, boolean isNew);
