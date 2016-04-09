@@ -149,9 +149,19 @@ public class LogicImpl implements Logic {
         }
     }
 
+    private void store() {
+        try {
+            StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
+            storageAdapter.store(calendar);
+        } catch (IOException ex) {
+            System.err.println(ERROR_SAVE);
+        }
+    }
+    
     private ExecuteResult processSaveatResults(String commandString, ExecuteResult runResult) {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
+        
         try {
             calendarStorage.setStoreAndStart(location);
             property.setProperty(SAVE_FILE_PROPERTY, location);
@@ -164,15 +174,6 @@ public class LogicImpl implements Logic {
         runResult.setType(CommandType.SAVE);
         runResult.setComment(COMMENT_SAVE + location);
         return runResult;
-    }
-
-    private void store() {
-        try {
-            StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
-            storageAdapter.store(calendar);
-        } catch (IOException ex) {
-            System.err.println(ERROR_SAVE);
-        }
     }
 
     private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted,
