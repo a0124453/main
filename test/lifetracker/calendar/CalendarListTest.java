@@ -3,6 +3,9 @@ package lifetracker.calendar;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,16 +29,49 @@ public class CalendarListTest {
     private static final LocalDateTime THIS_TIME_YESTERDAY = LocalDateTime.now().minusDays(1);
     private static final LocalDateTime THIS_TIME_TWO_DAYS_AGO = LocalDateTime.now().minusDays(2);
 
+    private static final Period EVERY_DAY = Period.ofDays(1);
+    private static final Period EVERY_TWO_DAYS = Period.ofDays(2);
+    private static final Period EVERY_WEEK = Period.ofWeeks(1);
+    private static final Period EVERY_MONTH = Period.ofMonths(1);
+
     private static int floatingTaskCount = 0;
     private static int deadlineTaskCount = 0;
     private static int eventCount = 0;
     private static int recurringTaskCount = 0;
     private static int recurringEntryCount = 0;
 
+    private static List<CalendarEntry> expectedTaskList = new ArrayList<>();
+    private static List<CalendarEntry> expectedEventList = new ArrayList<>();
+    private static List<CalendarEntry> expectedArchivedTaskList = new ArrayList<>();
+    private static List<CalendarEntry> expectedArchivedEventList = new ArrayList<>();
+
     private static CalendarList testCalendar = new CalendarListImpl();
 
     private String getTestEntryName(String name, int num) {
         return String.format(name, num);
+    }
+
+    private int incrementCount(int count) {
+        count += 1;
+        return count;
+    }
+
+    private void resetAllCounts() {
+        floatingTaskCount = 0;
+        deadlineTaskCount = 0;
+        eventCount = 0;
+        recurringTaskCount = 0;
+        recurringEntryCount = 0;
+    }
+
+    private void resetTestCalendar() {
+        testCalendar = new CalendarListImpl();
+        resetAllCounts();
+        testCalendar.add(getTestEntryName(NAME_FLOATING_TASK, floatingTaskCount++));
+        testCalendar.add(getTestEntryName(NAME_DEADLINE_TASK, deadlineTaskCount++), TWO_HOURS_FROM_NOW);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY);
+        
+        
     }
 
     @BeforeClass
