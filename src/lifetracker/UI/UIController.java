@@ -220,26 +220,7 @@ public class UIController implements Initializable {
         initColumnTaskId();
         initColumnTaskName();
         initColumnTaskTime();
-        
-        columnTaskRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-
-                        LocalDate limitDate = param.getValue().getLimitDate();
-                        int limitOccur = param.getValue().getLimitOccur();
-
-                        if (limitOccur > 0) {
-                            periodString += " for " + limitOccur + " time(s)";
-                        } else if (limitDate != null) {
-                            periodString += " until "
-                                    + limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-                        }
-                        return new ReadOnlyStringWrapper(periodString);
-                    }
-                });
+        initColumnTaskRecurring();
         
         tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
             @Override
@@ -265,6 +246,37 @@ public class UIController implements Initializable {
         tableTask.setItems(taskList);
     }
 
+    private void initColumnTaskRecurring() {
+        columnTaskRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        LocalDate limitDate = param.getValue().getLimitDate();
+                        int limitOccur = param.getValue().getLimitOccur();
+                        String periodString = convertPeriodToString(param, limitDate, limitOccur);
+                        return new ReadOnlyStringWrapper(periodString);
+                    }
+                });
+    }
+    
+    private String convertPeriodToString(CellDataFeatures<LogicTask, String> param, LocalDate limitDate,
+            int limitOccur) {
+        String periodString = convertTemporalToString(param.getValue().getPeriod());
+        if (limitOccur > 0) {
+            periodString += " for " + limitOccur + " time(s)";
+        } else if (limitDate != null) {
+            periodString += " until "
+                    + convertDateToString(limitDate);
+        }
+        return periodString;
+    }
+
+    private String convertDateToString(LocalDate limitDate) {
+        String dateString = limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        return dateString;
+    }
+
     private void initColumnTaskTime() {
         columnTaskTime.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
@@ -283,11 +295,16 @@ public class UIController implements Initializable {
     private String convertDeadlineToString(LocalDateTime deadline) {
         String deadlineString;
         if (deadline != null) {
-            deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+            deadlineString = convertDateTimeToString(deadline);
         } else {
             deadlineString = TEXT_EMPTY;
         }
         return deadlineString;
+    }
+
+    private String convertDateTimeToString(LocalDateTime deadline) {
+        String dateTimeString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+        return dateTimeString;
     }
 
     private void initColumnTaskName() {
