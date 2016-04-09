@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 //@@author A0091173J
 public class EditOneCommand extends CommandObject {
 
-    public static final String ERORR_NON_RECURRING = "Cannot edit single occurrence of non-recurring task!";
+    public static final String ERROR_NON_RECURRING = "Cannot edit single occurrence of non-recurring task!";
     private static String MESSAGE_EDITED = "Single occurrence of \"%1$d\" edited to \"%2$d\".";
-    private static String MESSSAGE_UNDO = "Single occurrence changes undone.";
+    private static String MESSAGE_UNDO = "Single occurrence changes undone.";
 
     private final int id;
     private final String name;
@@ -65,7 +65,7 @@ public class EditOneCommand extends CommandObject {
         calendar.delete(newEntryId);
         calendar.update(editedEntry);
 
-        setComment(MESSSAGE_UNDO);
+        setComment(MESSAGE_UNDO);
 
         return calendar;
     }
