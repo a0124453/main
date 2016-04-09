@@ -89,25 +89,26 @@ public class UIController implements Initializable {
     private void process(String userInput) {
         ExecuteResult result = l.executeCommand(userInput);
         ExecuteResult.CommandType commnadType = result.getType();
+        String comment = result.getComment();
         
         switch (commnadType) {
         case HELP :
             showWebView();
             break;
+        case EXIT :
+            Platform.exit();
+            break;
+        case DISPLAY :
+            hideWebView();
+            labelFeedback.setText(comment);
+            populateList(result);
+            break;
         default :
             hideWebView();
+            labelFeedback.setText(comment);
             break;
         }
 
-        if (result.getType() == ExecuteResult.CommandType.EXIT) {
-            Platform.exit();
-        }
-
-        labelFeedback.setText(result.getComment());
-
-        if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
-            populateList(result);
-        }
     }
 
     private void hideWebView() {
