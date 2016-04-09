@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ public class CalendarListImpl implements CalendarList {
     public List<CalendarEntry> getEventList() {
 
         List<CalendarEntry> active = eventList.values().stream()
-                .filter(entry-> entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
+                .filter(entry -> entry.isProperty(CalendarProperty.ACTIVE)).collect(Collectors.toList());
 
         sortByDateTime(CalendarProperty.END, active);
         sortByDateTime(CalendarProperty.START, active);
@@ -307,10 +308,35 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findAllByName(String toSearch) {
-        CalendarListTemp result = (CalendarListTemp) this.findByName(toSearch);
-        CalendarListTemp resultArchived = (CalendarListTemp) this.findArchivedByName(toSearch);
-        result.taskList.putAll(resultArchived.taskList);
-        result.eventList.putAll(resultArchived.eventList);
+        CalendarListTemp result = new CalendarListTemp();
+
+        TreeMap<Integer, CalendarEntry> combinedTask = new TreeMap<>(taskList);
+        combinedTask.putAll(archivedTaskList);
+        result.setTaskList(combinedTask);
+
+        TreeMap<Integer, CalendarEntry> combinedEvent = new TreeMap<>(eventList);
+        combinedEvent.putAll(archivedEventList);
+        result.setEventList(combinedEvent);
+
+        return result.findByName(toSearch);
+    }
+
+    @Override
+    public CalendarList findToday() {
+        CalendarListTemp result = new CalendarListTemp();
+
+        Map<Integer, CalendarEntry> todayTasks = taskList.entrySet().stream()
+                .filter(e -> e.getValue().isProperty(CalendarProperty.TODAY))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+        result.setTaskList(new TreeMap<>(todayTasks));
+
+        Map<Integer, CalendarEntry> todayEvents = eventList.entrySet().stream()
+                .filter(e -> e.getValue().isProperty(CalendarProperty.TODAY))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+        result.setEventList(new TreeMap<>(todayEvents));
+
         return result;
     }
 
@@ -326,14 +352,14 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
+    private TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
         copyMap.putAll(treeMap);
         filterByName(copyMap, toSearch);
         return copyMap;
     }
 
-    void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
+    private void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         if (toSearch == null || toSearch.isEmpty()) {
             return;
         }
@@ -347,88 +373,105 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    //    void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate startDate) {
-    //        if (startDate == null) {
-    //            return;
-    //        }
-    //        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-    //        while (iterator.hasNext()) {
-    //            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    //            if (entry.getValue().getStart() == null) {
-    //                iterator.remove();
-    //            } else {
-    //                LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
-    //                if (!entryStartDate.equals(startDate)) {
-    //                    iterator.remove();
-    //                }
-    //            }
-    //        }
-    //    }
+    // void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate
+    // startDate) {
+    // if (startDate == null) {
+    // return;
+    // }
+    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
+    // treeMap.entrySet().iterator();
+    // while (iterator.hasNext()) {
+    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+    // if (entry.getValue().getStart() == null) {
+    // iterator.remove();
+    // } else {
+    // LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
+    // if (!entryStartDate.equals(startDate)) {
+    // iterator.remove();
+    // }
+    // }
+    // }
+    // }
     //
-    //    void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime startTime) {
-    //        if (startTime == null) {
-    //            return;
-    //        }
-    //        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-    //        while (iterator.hasNext()) {
-    //            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    //            if (entry.getValue().getStart() == null) {
-    //                iterator.remove();
-    //            } else {
-    //                LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
-    //                if (!entryStartTime.equals(startTime)) {
-    //                    iterator.remove();
-    //                }
-    //            }
-    //        }
-    //    }
+    // void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime
+    // startTime) {
+    // if (startTime == null) {
+    // return;
+    // }
+    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
+    // treeMap.entrySet().iterator();
+    // while (iterator.hasNext()) {
+    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+    // if (entry.getValue().getStart() == null) {
+    // iterator.remove();
+    // } else {
+    // LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
+    // if (!entryStartTime.equals(startTime)) {
+    // iterator.remove();
+    // }
+    // }
+    // }
+    // }
     //
-    //    void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate endDate) {
-    //        if (endDate == null) {
-    //            return;
-    //        }
-    //        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-    //        while (iterator.hasNext()) {
-    //            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    //            if (entry.getValue().getEnd() == null) {
-    //                iterator.remove();
-    //            } else {
-    //                LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
-    //                if (!entryEndDate.equals(endDate)) {
-    //                    iterator.remove();
-    //                }
-    //            }
-    //        }
-    //    }
+    // void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate
+    // endDate) {
+    // if (endDate == null) {
+    // return;
+    // }
+    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
+    // treeMap.entrySet().iterator();
+    // while (iterator.hasNext()) {
+    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+    // if (entry.getValue().getEnd() == null) {
+    // iterator.remove();
+    // } else {
+    // LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
+    // if (!entryEndDate.equals(endDate)) {
+    // iterator.remove();
+    // }
+    // }
+    // }
+    // }
     //
-    //    void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime endTime) {
-    //        if (endTime == null) {
-    //            return;
-    //        }
-    //        Iterator<Map.Entry<Integer, CalendarEntry>> iterator = treeMap.entrySet().iterator();
-    //        while (iterator.hasNext()) {
-    //            Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    //            if (entry.getValue().getEnd() == null) {
-    //                iterator.remove();
-    //            } else {
-    //                LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
-    //                if (!entryEndTime.equals(endTime)) {
-    //                    iterator.remove();
-    //                }
-    //            }
-    //        }
-    //    }
+    // void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime
+    // endTime) {
+    // if (endTime == null) {
+    // return;
+    // }
+    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
+    // treeMap.entrySet().iterator();
+    // while (iterator.hasNext()) {
+    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
+    // if (entry.getValue().getEnd() == null) {
+    // iterator.remove();
+    // } else {
+    // LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
+    // if (!entryEndTime.equals(endTime)) {
+    // iterator.remove();
+    // }
+    // }
+    // }
+    // }
 
     private int getNextId() {
-        int taskMax = this.taskList.isEmpty() ? BASE_ID : this.taskList.lastKey();
-        int eventMax = this.eventList.isEmpty() ? BASE_ID : this.eventList.lastKey();
-        int archivedTaskMax = this.archivedTaskList.isEmpty() ? BASE_ID : this.archivedTaskList.lastKey();
-        int archivedEventMax = this.archivedEventList.isEmpty() ? BASE_ID : this.archivedEventList.lastKey();
-        int idToSet = Math.max(taskMax, eventMax);
-        idToSet = Math.max(idToSet, archivedTaskMax);
-        idToSet = Math.max(idToSet, archivedEventMax);
-        idToSet += 1;
+        int taskMax = getLastKey(this.taskList);
+        int eventMax = getLastKey(this.eventList);
+        int archivedTaskMax = getLastKey(this.archivedTaskList);
+        int archivedEventMax = getLastKey(this.archivedEventList);
+        int idToSet = maxId(taskMax, eventMax, archivedTaskMax, archivedEventMax) + 1;
         return idToSet;
+    }
+
+    private int getLastKey(TreeMap<Integer, CalendarEntry> treeMap) {
+        int key = treeMap.isEmpty() ? BASE_ID : treeMap.lastKey();
+        return key;
+    }
+
+    private int maxId(int taskMax, int eventMax, int archivedTaskMax, int archivedEventMax) {
+        int maxId = Math.max(taskMax, eventMax);
+        maxId = Math.max(maxId, archivedTaskMax);
+        maxId = Math.max(maxId, archivedEventMax);
+        return maxId;
     }
 
     private boolean isValidId(int id) {
@@ -480,7 +523,7 @@ public class CalendarListImpl implements CalendarList {
                 return 1;
             } else if (date2 == null) {
                 return -1;
-            } else{
+            } else {
                 return 0;
             }
         };
