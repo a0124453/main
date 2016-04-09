@@ -176,7 +176,6 @@ public class LogicImpl implements Logic {
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
-            // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
             executedState.getTaskList().forEach(task -> {
                 LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
 
@@ -194,7 +193,6 @@ public class LogicImpl implements Logic {
         }
 
         if (!executedState.getEventList().isEmpty()) {
-            // TODO load the variable for int limitOccur, LocalDateTime limitDate, boolean isNew
             executedState.getEventList().forEach(event -> {
 
                 LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
