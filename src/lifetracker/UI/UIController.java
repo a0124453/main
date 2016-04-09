@@ -76,12 +76,16 @@ public class UIController implements Initializable {
 
         userInput = textInput.getText();
 
-        inputHistory.add(userInput);
-        inputHistoryIndex = inputHistory.size();
+        addInputToHistory(userInput);
 
         process(userInput);
         textInput.setText("");
 
+    }
+
+    private void addInputToHistory(String userInput) {
+        inputHistory.add(userInput);
+        inputHistoryIndex = inputHistory.size();
     }
 
     private void process(String userInput) {
