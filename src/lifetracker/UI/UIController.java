@@ -197,15 +197,7 @@ public class UIController implements Initializable {
         initColumnEventName();
         initColumnEventStartTime();
         initColumnEventEndTime();
-        columnEventRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-                        return new ReadOnlyStringWrapper(periodString);
-                    }
-                });
+        initColumnEventRecurring();
 
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
             @Override
@@ -230,6 +222,21 @@ public class UIController implements Initializable {
         });
 
         tableEvent.setItems(eventList);
+    }
+
+    private void initColumnEventRecurring() {
+        columnEventRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
+                        LocalDate limitDate = param.getValue().getLimitDate();
+                        int limitOccur = param.getValue().getLimitOccur();
+                        String periodString = convertTemporalToString(param.getValue().getPeriod());
+                        periodString += parseLimit(limitDate, limitOccur);
+                        return new ReadOnlyStringWrapper(periodString);
+                    }
+                });
     }
 
     private void initColumnEventEndTime() {
@@ -277,21 +284,21 @@ public class UIController implements Initializable {
                     public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
                         LocalDate limitDate = param.getValue().getLimitDate();
                         int limitOccur = param.getValue().getLimitOccur();
-                        String periodString = convertPeriodToString(param, limitDate, limitOccur);
+                        String periodString = convertTemporalToString(param.getValue().getPeriod());
+                        periodString += parseLimit(limitDate, limitOccur);
                         return new ReadOnlyStringWrapper(periodString);
                     }
                 });
     }
 
-    private String convertPeriodToString(CellDataFeatures<LogicTask, String> param, LocalDate limitDate,
-            int limitOccur) {
-        String periodString = convertTemporalToString(param.getValue().getPeriod());
+    private String parseLimit(LocalDate limitDate, int limitOccur) {
+        String limit = "";
         if (limitOccur > 0) {
-            periodString += parseLimitOccur(limitOccur);
+            limit = parseLimitOccur(limitOccur);
         } else if (limitDate != null) {
-            periodString += parseLimitDate(limitDate);
+            limit = parseLimitDate(limitDate);
         }
-        return periodString;
+        return limit;
     }
 
     private String parseLimitDate(LocalDate limitDate) {
