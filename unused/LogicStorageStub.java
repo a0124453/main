@@ -5,6 +5,8 @@ import java.io.IOException;
 import lifetracker.calendar.CalendarList;
 import lifetracker.storage.Storage;
 
+//@@author A0149467N-unused
+
 public class LogicStorageStub implements Storage {
 
     @Override
