@@ -18,6 +18,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+//@@author A0149467N
+
 public class LogicImplTest {
 
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: null";
