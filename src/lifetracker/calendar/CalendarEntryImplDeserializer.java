@@ -46,7 +46,7 @@ public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarE
         JsonElement classSerialID = jsonElement.getAsJsonObject().get(SERIAL_CLASS_ID_FIELD);
 
         if (classSerialID == null) {
-            throw new RuntimeException("Invalid file format! Save file might have been corrupted!");
+            throw new JsonParseException("Invalid file format! Save file might have been corrupted!");
         }
 
         return CLASS_MAP.get(classSerialID.getAsString());
