@@ -29,8 +29,29 @@ public interface CalendarList {
      */
     int add(String name); // floating task
 
+    /**
+     * Adds a deadline task.
+     *
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of said task.
+     * @return The entry ID of the newly added task.
+     */
     int add(String name, LocalDateTime deadline); // deadline task
 
+    /**
+     * Adds a recurring deadline task that occurs periodically with unlimited
+     * occurrences.
+     *
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of said task.
+     * @param period
+     *            Period between each deadline.
+     * @return The entry ID of the newly added task.
+     */
     int add(String name, LocalDateTime deadline, Period period); // recurring task
 
     int add(String name, LocalDateTime deadline, Period period, int limit);
@@ -62,28 +83,36 @@ public interface CalendarList {
     /**
      * Updates an entry into a RecurringTask.
      * <p>
-     * Empty fields will be skipped during update, unless a conversion for the entry requires it, in which case an
-     * {@code IllegalArgumentException} will be thrown.
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
      * <p>
-     * If {@code isConvertForced} is set, then this method will forcefully convert the entry into a recurring task,
-     * even
-     * if information will be lost. For example, if the entry was a {@code RecurringEvent}, the start date time will be
-     * lost.
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code RecurringEvent}, the start
+     * date time will be lost.
      * <p>
-     * {@code newLimit} specifies the new number of occurrences to happen after and including the current occurrence.
-     * For
-     * example, if {@code newLimit} is set to 4, then the recurring task will happen 4 more times (including the
-     * current
-     * iteration), not matter how many times it had occurred in the past.
+     * {@code newLimit} specifies the new number of occurrences to happen after
+     * and including the current occurrence. For example, if {@code newLimit} is
+     * set to 4, then the recurring task will happen 4 more times (including the
+     * current iteration), not matter how many times it had occurred in the
+     * past.
      *
-     * @param id              The ID of the entry to update
-     * @param newName         The new name
-     * @param newDeadLine     The new deadline
-     * @param newPeriod       The new period
-     * @param newLimit        The new occurrence limit
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newDeadLine
+     *            The new deadline.
+     * @param newPeriod
+     *            The new period.
+     * @param newLimit
+     *            The new occurrence limit.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             int newLimit, boolean isConvertForced);
