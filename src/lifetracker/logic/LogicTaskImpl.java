@@ -20,6 +20,8 @@ public class LogicTaskImpl implements LogicTask {
     
     @Override
     public void setName(String name) {
+        assert name != null;
+        
         this.name = name;
     }
     
@@ -30,6 +32,8 @@ public class LogicTaskImpl implements LogicTask {
     
     @Override
     public void setId(int id) {
+        assert id > 0;
+        
         this.id = id;
     }
     
