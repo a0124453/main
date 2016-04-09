@@ -1,5 +1,7 @@
 package lifetracker.parser;
 
+//@@author A0114240B-unused
+//Replaced by CommandObject
 public class TaskObject {
     private String command;
     private String task;

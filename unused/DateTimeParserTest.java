@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
+//@@author A0114240B-unused
+/*
+* This class was previously used to test DateTimeParser.
+* DateTimeParser was replaced by external library called Natty.
+*/
 public class DateTimeParserTest {
 
     private LocalDateTime[] dates;

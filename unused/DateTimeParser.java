@@ -5,6 +5,12 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//@@author A0114240B-unused
+/*
+* This class was previously used to parse a set of strings identified by 
+* different regular expression patterns into a LocalDateTime object.
+* This class was replaced by external library called Natty.
+*/
 public class DateTimeParser {
     private static final String END_TIME_DEFAULT = "2359";
     private static final String START_TIME_DEFAULT = "0900";
