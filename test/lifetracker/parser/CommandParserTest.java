@@ -1,5 +1,6 @@
 package lifetracker.parser;
 
+import lifetracker.parser.syntax.CommandParser;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,6 @@
-package lifetracker.parser;
+package lifetracker.parser.datetime;
+
+import com.joestelmach.natty.DateGroup;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,8 +13,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.joestelmach.natty.DateGroup;
 
 //@@author A0091173J
 
@@ -29,7 +29,7 @@ import com.joestelmach.natty.DateGroup;
  * where the DateTime is in the future.
  * </ul>
  */
-class DateTimeParser {
+public class DateTimeParser {
     private static DateTimeParser instance = new DateTimeParser();
 
     public static DateTimeParser getInstance() {

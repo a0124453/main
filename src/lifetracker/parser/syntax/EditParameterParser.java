@@ -1,8 +1,8 @@
-package lifetracker.parser;
+package lifetracker.parser.syntax;
 
 import java.util.Map;
 
-import static lifetracker.parser.CommandParametersParser.checkMutuallyExclusiveKeywords;
+import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
 public class EditParameterParser extends AddParameterParser {

@@ -1,10 +1,13 @@
-package lifetracker.parser;
+package lifetracker.parser.syntax;
+
+import lifetracker.parser.datetime.DateTimeParser;
+import lifetracker.parser.datetime.DurationParser;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static lifetracker.parser.CommandParametersParser.checkMutuallyExclusiveKeywords;
+import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
 public class EditOneParametersParser implements CommandParametersParser {

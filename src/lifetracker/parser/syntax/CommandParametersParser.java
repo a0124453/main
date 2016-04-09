@@ -1,4 +1,4 @@
-package lifetracker.parser;
+package lifetracker.parser.syntax;
 
 import java.util.Map;
 
