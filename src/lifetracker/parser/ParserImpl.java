@@ -76,7 +76,27 @@ public class ParserImpl implements Parser {
 
     private final Map<String, Function<List<String>, CommandObject>> commands = new HashMap<>();
 
-    {
+    private final CommandSectionsParser cmdParser;
+
+    private final CommandFactory commandObjectFactory;
+
+    public ParserImpl(CommandFactory commandFactory) {
+        populateCommand();
+        cmdParser = new CommandSectionsParser(commands.keySet(), defaultCommand);
+        commandObjectFactory = commandFactory;
+    }
+
+    @Override
+    public CommandObject parse(String userInput) {
+        List<String> commandSegments = cmdParser.parseFullCommand(userInput, FULL_COMMAND_SEPARATOR);
+
+        String command = commandSegments.get(0).toLowerCase();
+        commandSegments.remove(0);
+
+        return commands.get(command).apply(commandSegments);
+    }
+    
+    private void populateCommand() {
         commands.put("add", this::processAdd);
         commands.put("delete", this::processDelete);
         commands.put("edit", this::processEdit);
@@ -91,25 +111,6 @@ public class ParserImpl implements Parser {
         commands.put("listold", this::processFindOld);
         commands.put("searchold", this::processFindOld);
         commands.put("mark", this::processMark);
-    }
-
-    private final CommandSectionsParser cmdParser;
-
-    private final CommandFactory commandObjectFactory;
-
-    public ParserImpl(CommandFactory commandFactory) {
-        cmdParser = new CommandSectionsParser(commands.keySet(), defaultCommand);
-        commandObjectFactory = commandFactory;
-    }
-
-    @Override
-    public CommandObject parse(String userInput) {
-        List<String> commandSegments = cmdParser.parseFullCommand(userInput, FULL_COMMAND_SEPARATOR);
-
-        String command = commandSegments.get(0).toLowerCase();
-        commandSegments.remove(0);
-
-        return commands.get(command).apply(commandSegments);
     }
 
     private CommandObject processAdd(List<String> commandBody) {
