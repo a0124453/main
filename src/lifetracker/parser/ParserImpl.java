@@ -20,16 +20,21 @@ public class ParserImpl implements Parser {
 
     private static final DurationParser DURATION_PARSER = DurationParser.getInstance();
 
-    private static final Map<String, Predicate<String>> ADD_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
+    private static final Map<String, Predicate<String>> EDITONE_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>();
 
     static {
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
-        ADD_KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("by", DATE_TIME_PARSER::isDateTime);
+        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("from", DATE_TIME_PARSER::isDateTime);
+        EDITONE_KEYWORDS_WITH_VERIFICATIONS.put("to", DATE_TIME_PARSER::isDateTime);
+    }
+
+    private static final Map<String, Predicate<String>> ADD_KEYWORDS_WITH_VERIFICATIONS
+            = new HashMap<>(EDITONE_KEYWORDS_WITH_VERIFICATIONS);
+
+    static {
         ADD_KEYWORDS_WITH_VERIFICATIONS.put("every", DURATION_PARSER::isDurationString);
         ADD_KEYWORDS_WITH_VERIFICATIONS.put("until", DATE_TIME_PARSER::isDateTime);
         ADD_KEYWORDS_WITH_VERIFICATIONS.put("for", StringUtils::isNumeric);
-
     }
 
     private static final Map<String, Predicate<String>> EDIT_KEYWORDS_WITH_VERIFICATIONS = new HashMap<>(
@@ -51,6 +56,7 @@ public class ParserImpl implements Parser {
         commands.put("add", this::processAdd);
         commands.put("delete", this::processDelete);
         commands.put("edit", this::processEdit);
+        commands.put("editone", this::processEditOne);
         commands.put("list", this::processFind);
         commands.put("find", this::processFind);
         commands.put("search", this::processFind);
@@ -109,14 +115,7 @@ public class ParserImpl implements Parser {
             throw new IllegalArgumentException(ERROR_INVALID_EDIT);
         }
 
-        String idString = commandBody.get(0);
-        int id;
-
-        try {
-            id = Integer.parseInt(idString);
-        } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
-        }
+        int id = getIDFromList(commandBody);
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
@@ -126,6 +125,21 @@ public class ParserImpl implements Parser {
         Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
         return processParametersForEdit(id, params);
+    }
+
+    private CommandObject processEditOne(List<String> commandBody) {
+        if (commandBody.size() < 2) {
+            throw new IllegalArgumentException(ERROR_INVALID_EDIT);
+        }
+
+        int id = getIDFromList(commandBody);
+        String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
+
+        Map<String, String> editSectionMap = cmdParser
+                .parseCommandBody(editCommandSection, EDITONE_KEYWORDS_WITH_VERIFICATIONS);
+
+        //TODO add parameter parser
+        return null;
     }
 
     private CommandObject processFind(List<String> commandBody) {
@@ -251,6 +265,18 @@ public class ParserImpl implements Parser {
                 return null;
         }
 
+    }
+
+    private int getIDFromList(List<String> stringList) {
+        String idString = stringList.get(0);
+        int id;
+
+        try {
+            id = Integer.parseInt(idString);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_ID, idString));
+        }
+        return id;
     }
 
     private String restoreCommandSections(List<String> stringList) {
