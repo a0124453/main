@@ -158,30 +158,7 @@ public class UIController implements Initializable {
         initInputHistory();
         initTableTask();
         initTableEvent();
-
-        textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.UP) {
-
-                    if (inputHistoryIndex > 0) {
-                        inputHistoryIndex--;
-                        textInput.setText(inputHistory.get(inputHistoryIndex));
-                        textInput.positionCaret(textInput.getText().length());
-                    }
-                }
-
-                if (event.getCode() == KeyCode.DOWN) {
-                    if (inputHistoryIndex < inputHistory.size() - 1) {
-                        inputHistoryIndex++;
-                        textInput.setText(inputHistory.get(inputHistoryIndex));
-                        textInput.positionCaret(textInput.getText().length());
-                    } else {
-                        textInput.setText(TEXT_EMPTY);
-                    }
-                }
-            }
-        });
+        initTextInputKeyDetection();
 
         Platform.runLater(new Runnable() {
 
@@ -192,6 +169,39 @@ public class UIController implements Initializable {
         });
     }
 
+    private void initTextInputKeyDetection() {
+        textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.UP) {
+
+                    processUpKey();
+                }
+                if (event.getCode() == KeyCode.DOWN) {
+                    processDownKey();
+                }
+            }
+        });
+    }
+    
+    private void processUpKey() {
+        if (inputHistoryIndex > 0) {
+            inputHistoryIndex--;
+            textInput.setText(inputHistory.get(inputHistoryIndex));
+            textInput.positionCaret(textInput.getText().length());
+        }
+    }
+
+    private void processDownKey() {
+        if (inputHistoryIndex < inputHistory.size() - 1) {
+            inputHistoryIndex++;
+            textInput.setText(inputHistory.get(inputHistoryIndex));
+            textInput.positionCaret(textInput.getText().length());
+        } else {
+            textInput.setText(TEXT_EMPTY);
+        }
+    }
+    
     private void initTableEvent() {
         initColumnEventId();
         initColumnEventName();
