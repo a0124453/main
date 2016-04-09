@@ -85,77 +85,27 @@ public class LogicImpl implements Logic {
 
         String[] commandContent = commandString.split(" ");
         ExecuteResult runResult = new CommandLineResult();
-
-        if (commandString.equals("exit")) {
-            runResult.setType(CommandType.EXIT);
-            return runResult;
-        } else if (commandContent[0].equals("help")) {
-            runResult.setType(CommandType.HELP);
-            return runResult;
-        } else if (commandContent[0].equals("saveat")) {
+        
+        if (commandContent[0].equals("saveat"))
             return processSaveatResults(commandString, runResult);
-        } else {
-            CommandObject commandToExecute;
-            CalendarList executedState;
 
-            runResult.setType(CommandType.DISPLAY);
-
-            switch (commandString) {
+        switch (commandString) {
+            case "exit":
+                runResult.setType(CommandType.EXIT);
+                return runResult;
+            case "help":
+                runResult.setType(CommandType.HELP);
+                return runResult;
+            default:
+                runResult.setType(CommandType.DISPLAY);
+                switch (commandString) {
                 case "undo":
-
-                    try {
-                        commandToExecute = commandStack.pop();
-                        redoStack.push(commandToExecute);
-                        executedState = commandToExecute.undo(calendar);
-                    } catch (EmptyStackException ex) {
-                        ExecuteResult errorResult = new CommandLineResult();
-                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
-                        errorResult.setType(CommandType.ERROR);
-                        return errorResult;
-                    }
-
-                    break;
+                    return undo(runResult);
                 case "redo":
-
-                    try {
-                        commandToExecute = redoStack.pop();
-                        commandStack.push(commandToExecute);
-                        executedState = commandToExecute.execute(calendar);
-                    } catch (EmptyStackException ex) {
-                        ExecuteResult errorResult = new CommandLineResult();
-                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
-                        errorResult.setType(CommandType.ERROR);
-                        return errorResult;
-                    }
-
-                    break;
+                    return redo(runResult);
                 default:
-
-                    try {
-                        commandToExecute = commandParser.parse(commandString);
-                        executedState = commandToExecute.execute(calendar);
-                    } catch (IllegalArgumentException ex) {
-                        ExecuteResult errorResult = new CommandLineResult();
-                        errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
-                        errorResult.setType(CommandType.ERROR);
-                        return errorResult;
-                    }
-
-                    commandStack.push(commandToExecute);
-                    redoStack.clear();
-                    break;
-            }
-            store();
-            return processExecutionResults(runResult, commandToExecute, executedState);
-        }
-    }
-
-    private void store() {
-        try {
-            StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
-            storageAdapter.store(calendar);
-        } catch (IOException ex) {
-            System.err.println(ERROR_SAVE);
+                    return otherCommand(commandString, runResult);
+                }
         }
     }
     
@@ -176,6 +126,74 @@ public class LogicImpl implements Logic {
             property.setProperty(SAVE_FILE_PROPERTY, location);
             OutputStream fileOutputStream = new BufferedOutputStream(new FileOutputStream(propertyFile));
             property.store(fileOutputStream, "");
+        } catch (IOException ex) {
+            System.err.println(ERROR_SAVE);
+        }
+    }
+
+    private ExecuteResult undo(ExecuteResult runResult) {
+        CommandObject commandToExecute;
+        CalendarList executedState;
+        
+        try {
+            commandToExecute = commandStack.pop();
+            redoStack.push(commandToExecute);
+            executedState = commandToExecute.undo(calendar);
+        } catch (EmptyStackException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
+            errorResult.setType(CommandType.ERROR);
+            return errorResult;
+        }
+        
+        store();
+        return processExecutionResults(runResult, commandToExecute, executedState);
+    }
+    
+    private ExecuteResult redo(ExecuteResult runResult) {
+        CommandObject commandToExecute;
+        CalendarList executedState;
+        
+        try {
+            commandToExecute = redoStack.pop();
+            commandStack.push(commandToExecute);
+            executedState = commandToExecute.execute(calendar);
+        } catch (EmptyStackException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
+            errorResult.setType(CommandType.ERROR);
+            return errorResult;
+        }
+        
+        store();
+        return processExecutionResults(runResult, commandToExecute, executedState);
+    }
+    
+    private ExecuteResult otherCommand(String commandString, ExecuteResult runResult) {
+        CommandObject commandToExecute;
+        CalendarList executedState;
+        
+        try {
+            commandToExecute = commandParser.parse(commandString);
+            executedState = commandToExecute.execute(calendar);
+        } catch (IllegalArgumentException ex) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
+            errorResult.setType(CommandType.ERROR);
+            return errorResult;
+        }
+   
+        commandStack.push(commandToExecute);
+        redoStack.clear();
+        
+        store();
+        return processExecutionResults(runResult, commandToExecute, executedState);
+    }
+
+    private void store() {
+        try {
+            StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
+            storageAdapter.store(calendar);
         } catch (IOException ex) {
             System.err.println(ERROR_SAVE);
         }
