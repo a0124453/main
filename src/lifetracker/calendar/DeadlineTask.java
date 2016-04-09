@@ -6,15 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DeadlineTask extends GenericEntry {
-    {
-        SERIAL_TYPE_IDENTIFIER = "DeadlineTask";
-    }
 
     private LocalDateTime deadline;
 
     public DeadlineTask(String name, LocalDateTime deadline) {
         super(name);
         this.setDateTime(CalendarProperty.END, deadline);
+        SERIAL_TYPE_IDENTIFIER = "DeadlineTask";
     }
 
     public DeadlineTask(DeadlineTask entry) {

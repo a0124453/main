@@ -8,16 +8,13 @@ import java.time.Period;
 
 public class RecurringEvent extends RecurringTask {
 
-    {
-        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
-    }
-
     private LocalDateTime startDateTime;
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period) {
         super(name, end, period);
         CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
+        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
     }
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period, int limit) {

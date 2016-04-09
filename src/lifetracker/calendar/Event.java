@@ -6,16 +6,13 @@ import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
 
-    {
-        SERIAL_TYPE_IDENTIFIER = "Event";
-    }
-
     private LocalDateTime startDateTime;
 
     public Event(String name, LocalDateTime start, LocalDateTime end) {
         super(name, end);
         CalendarEntry.checkStartBeforeEnd(start, end);
         this.startDateTime = start;
+        SERIAL_TYPE_IDENTIFIER = "Event";
     }
 
     public Event(Event entry) {
