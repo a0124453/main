@@ -1,5 +1,6 @@
 package lifetracker.logic;
 
+import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 import lifetracker.calendar.CalendarProperty;
 import lifetracker.command.CommandObject;
@@ -162,6 +163,14 @@ public class LogicImpl implements Logic {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
         
+        saveat(location);
+
+        runResult.setType(CommandType.SAVE);
+        runResult.setComment(COMMENT_SAVE + location);
+        return runResult;
+    }
+
+    private void saveat(String location) {
         try {
             calendarStorage.setStoreAndStart(location);
             property.setProperty(SAVE_FILE_PROPERTY, location);
@@ -170,10 +179,6 @@ public class LogicImpl implements Logic {
         } catch (IOException ex) {
             System.err.println(ERROR_SAVE);
         }
-
-        runResult.setType(CommandType.SAVE);
-        runResult.setComment(COMMENT_SAVE + location);
-        return runResult;
     }
 
     private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted,
@@ -185,39 +190,45 @@ public class LogicImpl implements Logic {
 
         if (!executedState.getTaskList().isEmpty()) {
             executedState.getTaskList().forEach(task -> {
-                LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
-
-                runResult.addTaskLine(
-                        task.getId(),
-                        task.getName(),
-                        task.getDateTime(CalendarProperty.END),
-                        task.isProperty(CalendarProperty.OVER),
-                        task.isProperty(CalendarProperty.ACTIVE),
-                        task.getPeriod(),
-                        task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
-                        limitDate == null ? null : limitDate.toLocalDate(),
-                        false);
+                addTask(runResult, task);
             });
         }
 
         if (!executedState.getEventList().isEmpty()) {
             executedState.getEventList().forEach(event -> {
-
-                LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
-                runResult.addEventLine(
-                        event.getId(),
-                        event.getName(),
-                        event.getDateTime(CalendarProperty.START),
-                        event.getDateTime(CalendarProperty.END),
-                        event.isProperty(CalendarProperty.OVER),
-                        event.isProperty(CalendarProperty.ACTIVE),
-                        event.getPeriod(),
-                        event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
-                        limitDate == null ? null : limitDate.toLocalDate(),
-                        false);
+                addEvent(runResult, event);
             });
         }
 
         return runResult;
+    }
+
+    private void addTask(ExecuteResult runResult, CalendarEntry task) {
+        LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
+        runResult.addTaskLine(
+                task.getId(),
+                task.getName(),
+                task.getDateTime(CalendarProperty.END),
+                task.isProperty(CalendarProperty.OVER),
+                task.isProperty(CalendarProperty.ACTIVE),
+                task.getPeriod(),
+                task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                limitDate == null ? null : limitDate.toLocalDate(),
+                false);
+    }
+    
+    private void addEvent(ExecuteResult runResult, CalendarEntry event) {
+        LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
+        runResult.addEventLine(
+                event.getId(),
+                event.getName(),
+                event.getDateTime(CalendarProperty.START),
+                event.getDateTime(CalendarProperty.END),
+                event.isProperty(CalendarProperty.OVER),
+                event.isProperty(CalendarProperty.ACTIVE),
+                event.getPeriod(),
+                event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
+                limitDate == null ? null : limitDate.toLocalDate(),
+                false);
     }
 }
