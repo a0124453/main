@@ -70,7 +70,7 @@ public class UIController implements Initializable {
     @FXML TableColumn<LogicEvent, String> columnEventEndTime;
     @FXML TableColumn<LogicEvent, String> columnEventRecurring;
     @FXML WebView webView;
-    WebEngine webEngine;
+    private WebEngine webEngine;
 
     @FXML
     public void getInput() {
@@ -87,17 +87,16 @@ public class UIController implements Initializable {
     }
 
     private void process(String userInput) {
-        ExecuteResult result;
-        result = l.executeCommand(userInput);
-
-        if (result.getType() == ExecuteResult.CommandType.HELP) {
-            webView.setVisible(true);
-            tableEvent.setVisible(false);
-            tableTask.setVisible(false);
-        } else {
-            webView.setVisible(false);
-            tableEvent.setVisible(true);
-            tableTask.setVisible(true);
+        ExecuteResult result = l.executeCommand(userInput);
+        ExecuteResult.CommandType commnadType = result.getType();
+        
+        switch (commnadType) {
+        case HELP :
+            showWebView();
+            break;
+        default :
+            hideWebView();
+            break;
         }
 
         if (result.getType() == ExecuteResult.CommandType.EXIT) {
@@ -109,6 +108,18 @@ public class UIController implements Initializable {
         if (result.getType() == ExecuteResult.CommandType.DISPLAY) {
             populateList(result);
         }
+    }
+
+    private void hideWebView() {
+        webView.setVisible(false);
+        tableEvent.setVisible(true);
+        tableTask.setVisible(true);
+    }
+
+    private void showWebView() {
+        webView.setVisible(true);
+        tableEvent.setVisible(false);
+        tableTask.setVisible(false);
     }
 
     public static Logic getLogic() {
