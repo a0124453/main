@@ -52,7 +52,7 @@ public class UIController implements Initializable {
     private static final String FIELD_LIMIT_DATE = " until ";
     private static final PseudoClass PSEUDO_CLASS_OVERDUE = PseudoClass.getPseudoClass("overdue");
     private static final PseudoClass PSEUDO_CLASS_DONE = PseudoClass.getPseudoClass("done");
-    
+
     private static Logic l;
     private static List<String> inputHistory;
     private static int inputHistoryIndex;
@@ -60,21 +60,36 @@ public class UIController implements Initializable {
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
 
-    @FXML Label labelTitle;
-    @FXML TextField textInput;
-    @FXML Label labelFeedback;
-    @FXML TableView<LogicTask> tableTask;
-    @FXML TableColumn<LogicTask, String> columnTaskID;
-    @FXML TableColumn<LogicTask, String> columnTaskName;
-    @FXML TableColumn<LogicTask, String> columnTaskTime;
-    @FXML TableColumn<LogicTask, String> columnTaskRecurring;
-    @FXML TableView<LogicEvent> tableEvent;
-    @FXML TableColumn<LogicEvent, String> columnEventID;
-    @FXML TableColumn<LogicEvent, String> columnEventName;
-    @FXML TableColumn<LogicEvent, String> columnEventStartTime;
-    @FXML TableColumn<LogicEvent, String> columnEventEndTime;
-    @FXML TableColumn<LogicEvent, String> columnEventRecurring;
-    @FXML WebView webView;
+    @FXML
+    Label labelTitle;
+    @FXML
+    TextField textInput;
+    @FXML
+    Label labelFeedback;
+    @FXML
+    TableView<LogicTask> tableTask;
+    @FXML
+    TableColumn<LogicTask, String> columnTaskId;
+    @FXML
+    TableColumn<LogicTask, String> columnTaskName;
+    @FXML
+    TableColumn<LogicTask, String> columnTaskTime;
+    @FXML
+    TableColumn<LogicTask, String> columnTaskRecurring;
+    @FXML
+    TableView<LogicEvent> tableEvent;
+    @FXML
+    TableColumn<LogicEvent, String> columnEventId;
+    @FXML
+    TableColumn<LogicEvent, String> columnEventName;
+    @FXML
+    TableColumn<LogicEvent, String> columnEventStartTime;
+    @FXML
+    TableColumn<LogicEvent, String> columnEventEndTime;
+    @FXML
+    TableColumn<LogicEvent, String> columnEventRecurring;
+    @FXML
+    WebView webView;
 
     @FXML
     public void getInput() {
@@ -94,7 +109,7 @@ public class UIController implements Initializable {
         ExecuteResult result = l.executeCommand(userInput);
         ExecuteResult.CommandType commnadType = result.getType();
         String comment = result.getComment();
-        
+
         switch (commnadType) {
         case HELP :
             showWebView();
@@ -142,49 +157,7 @@ public class UIController implements Initializable {
         initWebView();
         initInputHistory();
         initTableTask();
-        
-        columnEventID
-                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
-        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
-        columnEventStartTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(
-                param.getValue().getStart().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
-        columnEventEndTime.setCellValueFactory(param -> new ReadOnlyStringWrapper(
-                param.getValue().getEnd().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))));
-        columnEventRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-                        return new ReadOnlyStringWrapper(periodString);
-                    }
-                });
-
-
-        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
-            @Override
-            public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
-                return new TableRow<LogicEvent>() {
-                    @Override
-                    protected void updateItem(LogicEvent event, boolean b) {
-                        super.updateItem(event, b);
-                        boolean overdue = event != null && event.getOverdue();
-                        boolean done = event != null && !event.isDone();
-
-                        if (!done) {
-                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
-                        }
-
-                        super.updateItem(event, b);
-                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
-                    }
-
-                };
-            }
-        });
-
-
-        tableEvent.setItems(eventList);
+        initTableEvent();
 
         textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
@@ -219,6 +192,65 @@ public class UIController implements Initializable {
         });
     }
 
+    private void initTableEvent() {
+        initColumnEventId();
+        initColumnEventName();
+        initColumnEventStartTime();
+        initColumnEventEndTime();
+        columnEventRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
+                        String periodString = convertTemporalToString(param.getValue().getPeriod());
+                        return new ReadOnlyStringWrapper(periodString);
+                    }
+                });
+
+        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
+            @Override
+            public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
+                return new TableRow<LogicEvent>() {
+                    @Override
+                    protected void updateItem(LogicEvent event, boolean b) {
+                        super.updateItem(event, b);
+                        boolean overdue = event != null && event.getOverdue();
+                        boolean done = event != null && !event.isDone();
+
+                        if (!done) {
+                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
+                        }
+
+                        super.updateItem(event, b);
+                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
+                    }
+
+                };
+            }
+        });
+
+        tableEvent.setItems(eventList);
+    }
+
+    private void initColumnEventEndTime() {
+        columnEventEndTime.setCellValueFactory(
+                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getEnd())));
+    }
+
+    private void initColumnEventStartTime() {
+        columnEventStartTime.setCellValueFactory(
+                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getStart())));
+    }
+
+    private void initColumnEventName() {
+        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
+    }
+
+    private void initColumnEventId() {
+        columnEventId
+                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
+    }
+
     private void initTableTask() {
         initColumnTaskId();
         initColumnTaskName();
@@ -250,7 +282,7 @@ public class UIController implements Initializable {
                     }
                 });
     }
-    
+
     private String convertPeriodToString(CellDataFeatures<LogicTask, String> param, LocalDate limitDate,
             int limitOccur) {
         String periodString = convertTemporalToString(param.getValue().getPeriod());
@@ -288,10 +320,9 @@ public class UIController implements Initializable {
                         return new ReadOnlyStringWrapper(deadlineString);
                     }
 
-
                 });
     }
-    
+
     private String convertDeadlineToString(LocalDateTime deadline) {
         String deadlineString;
         if (deadline != null) {
@@ -312,7 +343,8 @@ public class UIController implements Initializable {
     }
 
     private void initColumnTaskId() {
-        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
+        columnTaskId
+                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
 
     private void initInputHistory() {
@@ -356,7 +388,7 @@ public class UIController implements Initializable {
         int days = period.getDays();
         String periodString = formatDuration(years, FIELD_YEAR) + formatDuration(months, FIELD_MONTH)
                 + formatDuration(days, FIELD_DAY);
- 
+
         return periodString;
     }
 
@@ -389,7 +421,7 @@ public class UIController implements Initializable {
             taskList.add(task);
         }
     }
-    
+
     private class TableTaskRowOverdueAndDone extends TableRow<LogicTask> {
         @Override
         protected void updateItem(LogicTask task, boolean b) {
