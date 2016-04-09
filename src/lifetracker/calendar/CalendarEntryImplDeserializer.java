@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -30,10 +29,6 @@ public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarE
     public CalendarEntry deserialize(JsonElement jsonElement, Type type,
             JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
 
-        Gson typeQuery = new Gson();
-
-        TypeAdapter temporalAmountTypeAdapter;
-
         Class<? extends CalendarEntry> entryClass = resolveEntryClass(jsonElement);
 
         Gson gsonParser = new GsonBuilder().create();
@@ -46,7 +41,7 @@ public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarE
         JsonElement classSerialID = jsonElement.getAsJsonObject().get(SERIAL_CLASS_ID_FIELD);
 
         if (classSerialID == null) {
-            throw new RuntimeException("Invalid file format! Save file might have been corrupted!");
+            throw new JsonParseException("Invalid file format! Save file might have been corrupted!");
         }
 
         return CLASS_MAP.get(classSerialID.getAsString());

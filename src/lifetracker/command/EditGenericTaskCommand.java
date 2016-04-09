@@ -6,8 +6,8 @@ import lifetracker.calendar.CalendarList;
 //@@author A0091173J
 public class EditGenericTaskCommand extends CommandObject {
 
-    static final String MESSAGE_EDITED = "%1$s was edited.";
-    static final String MESSAGE_UNEDITED = "Changes to %1$s were reverted.";
+    protected static final String MESSAGE_EDITED = "%1$s was edited.";
+    protected static final String MESSAGE_UNEDITED = "Changes to %1$s were reverted.";
 
     final int id;
     final String name;

@@ -1,4 +1,4 @@
-package lifetracker.parser;
+package lifetracker.parser.datetime;
 
 import lifetracker.parser.datetime.DurationParser;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package lifetracker.parser;
+package lifetracker.parser.syntax;
 
 import lifetracker.parser.syntax.CommandSectionsParser;
 import org.junit.Assert;
