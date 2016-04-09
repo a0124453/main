@@ -1,4 +1,4 @@
-package lifetracker.UI;
+package lifetracker.ui;
 
 import java.util.List;
 

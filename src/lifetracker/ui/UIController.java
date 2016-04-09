@@ -1,4 +1,4 @@
-package lifetracker.UI;
+package lifetracker.ui;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -45,8 +45,8 @@ public class UIController implements Initializable {
     private static final String LOG_STARTUP = "UI: Starting";
     private static final String LOG_SHUTDOWN = "UI: Exiting";
     
-    private static final String PATH_README_CSS = "/lifetracker/UI/README.css";
-    private static final String PATH_README_HTML = "/lifetracker/UI/README.html";
+    private static final String PATH_README_CSS = "/lifetracker/ui/README.css";
+    private static final String PATH_README_HTML = "/lifetracker/ui/README.html";
     private static final String FIELD_EMPTY = "";
     private static final String FIELD_DAY = "day(s)";
     private static final String FIELD_MONTH = "month(s)";
