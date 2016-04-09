@@ -218,7 +218,7 @@ public class UIController implements Initializable {
 
     private void initTableTask() {
         initColumnTaskId();
-        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
+        initColumnTaskName();
         columnTaskTime.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
 
@@ -278,6 +278,10 @@ public class UIController implements Initializable {
         });
 
         tableTask.setItems(taskList);
+    }
+
+    private void initColumnTaskName() {
+        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
     }
 
     private void initColumnTaskId() {
