@@ -7,11 +7,6 @@ import java.time.LocalDateTime;
 import java.time.Period;
 
 public class RecurringTask extends DeadlineTask {
-
-    {
-        SERIAL_TYPE_IDENTIFIER = "RecurringTask";
-    }
-
     protected static final int INF_LIMIT_CONST = -1;
     protected static final int DATE_LIMIT_CONST = -2;
     private static final String MESSAGE_ERROR_NEGATIVE_LIMIT = "Number of occurrences must be positive!";
@@ -25,6 +20,7 @@ public class RecurringTask extends DeadlineTask {
         super(name, deadline);
         this.period = period;
         this.occurrenceLimit = INF_LIMIT_CONST;
+        SERIAL_TYPE_IDENTIFIER = "RecurringTask";
     }
 
     public RecurringTask(String name, LocalDateTime deadline, Period period, int limit) {
