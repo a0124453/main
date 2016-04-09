@@ -1,4 +1,4 @@
-package lifetracker.parser;
+package lifetracker.parser.datetime;
 
 import java.time.Period;
 import java.util.HashMap;

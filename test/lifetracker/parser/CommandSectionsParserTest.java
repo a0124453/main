@@ -1,18 +1,15 @@
 package lifetracker.parser;
 
+import lifetracker.parser.syntax.CommandSectionsParser;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
-public class CommandParserTest {
+public class CommandSectionsParserTest {
 
     private Set<String> commands = new HashSet<>();
 
@@ -21,20 +18,11 @@ public class CommandParserTest {
         commands.add("testcommand");
     }
 
-    private Map<String, Predicate<String>> keyWordVerification = new HashMap<>();
-
-    {
-        keyWordVerification.put("three", s -> s.length() == 3);
-        keyWordVerification.put("empty", String::isEmpty);
-        keyWordVerification.put("empty2", String::isEmpty);
-        keyWordVerification.put("anything", s -> true);
-    }
-
     private String defaultCommand = "add";
 
     private String fullCommandSeparator = "| ";
 
-    private CommandParser cmdParser = new CommandParser(commands, defaultCommand);
+    private CommandSectionsParser cmdParser = new CommandSectionsParser(commands, defaultCommand);
 
     @Test
     public void testParseFullCommand() throws Exception {
@@ -87,46 +75,4 @@ public class CommandParserTest {
 
     }
 
-    @Test
-    public void testParseCommandBody() throws Exception {
-
-        //Partition: All keyword arguments valid
-        String commandBody = "name empty three abc";
-
-        Map<String, String> expected = new LinkedHashMap<>();
-
-        expected.put("three", "abc");
-        expected.put("empty", "");
-        expected.put("name", "name");
-
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
-
-        //Boundary: Blank name
-        commandBody = "empty empty2";
-
-        expected.clear();
-        expected.put("empty2", "");
-        expected.put("empty", "");
-        expected.put("name", "");
-
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
-
-        //Partition: repeated keywords
-        commandBody = "name anything abs anything abc def three abc";
-
-        expected.clear();
-        expected.put("three", "abc");
-        expected.put("anything", "abc def");
-        expected.put("name", "name anything abs");
-
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
-
-        //Partition: Invalid keyword arguements
-        commandBody = "anything something something empty aaa";
-
-        expected.clear();
-        expected.put("name", "anything something something empty aaa");
-
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
-    }
 }

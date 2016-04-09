@@ -1,4 +1,4 @@
-package lifetracker.parser;
+package lifetracker.parser.syntax;
 
 public enum CommandClass {
     GENERIC,
@@ -13,5 +13,5 @@ public enum CommandClass {
     RECURRING,
     RECURRING_OCCURRENCES,
     RECURRING_DATE,
-    STOP
+    STOP_RECURRING
 }

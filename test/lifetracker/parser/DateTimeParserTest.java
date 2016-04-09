@@ -1,5 +1,6 @@
 package lifetracker.parser;
 
+import lifetracker.parser.datetime.DateTimeParser;
 import org.junit.Assert;
 import org.junit.Test;
 
