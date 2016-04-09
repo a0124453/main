@@ -1,11 +1,15 @@
 package lifetracker.parser;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 import java.time.LocalTime;
 import lifetracker.parser.TimeParser;
 
+//@@author A0114240B-unused
+/*
+* This class was previously used to test TimeParser.
+* TimeParser was replaced by external library called Natty.
+*/
 public class TimeParserTest {
 
     @Test
