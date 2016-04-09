@@ -1,5 +1,13 @@
 package lifetracker.parser;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.StringUtils;
+
 import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 import lifetracker.parser.datetime.DateTimeParser;
@@ -11,13 +19,6 @@ import lifetracker.parser.syntax.CommandSectionsParser;
 import lifetracker.parser.syntax.EditOneParametersParser;
 import lifetracker.parser.syntax.EditParameterParser;
 import lifetracker.parser.syntax.Parameters;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 //@@author A0091173J
 public class ParserImpl implements Parser {
@@ -60,6 +61,7 @@ public class ParserImpl implements Parser {
 
     static {
         KEYWORD_TO_ENUM_MAP.put("by", CommandOptions.BY);
+        KEYWORD_TO_ENUM_MAP.put("at", CommandOptions.BY);
         KEYWORD_TO_ENUM_MAP.put("from", CommandOptions.FROM);
         KEYWORD_TO_ENUM_MAP.put("to", CommandOptions.TO);
         KEYWORD_TO_ENUM_MAP.put("every", CommandOptions.EVERY);
