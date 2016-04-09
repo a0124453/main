@@ -11,7 +11,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.UI.UIController">
    <children>
       <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="2.5" style="-fx-background-color: transparent;" stylesheets="@application.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -29,7 +28,7 @@
                <children>
                   <StackPane maxHeight="1.7976931348623157E308" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <WebView prefHeight="-1.0" prefWidth="-1.0" />
+                        <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" />
                         <VBox alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: transparent;" StackPane.alignment="TOP_CENTER">
                            <children>
                               <TableView fx:id="tableEvent" prefHeight="225.0" stylesheets="@application.css" VBox.vgrow="ALWAYS">
@@ -38,7 +37,7 @@
                                     <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="180.0" minWidth="2.0" prefWidth="180.0" resizable="false" sortable="false" text="END TIME" />
                                   <TableColumn fx:id="columnEventName" editable="false" minWidth="0.0" prefWidth="340.0" resizable="false" sortable="false" text="EVENT" />
                                   <TableColumn fx:id="columnEventID" editable="false" maxWidth="60.0" prefWidth="60.0" resizable="false" sortable="false" text="#ID" />
-                                    <TableColumn fx:id="columnEventRecurring" editable="false" maxWidth="140.0" minWidth="0.0" prefWidth="140.0" resizable="false" sortable="false" text="EVERY" />
+                                    <TableColumn fx:id="columnEventRecurring" editable="false" maxWidth="200.0" minWidth="0.0" prefWidth="200.0" resizable="false" sortable="false" text="EVERY" />
                                 </columns>
                               </TableView>
                               <TableView fx:id="tableTask" prefHeight="225.0" VBox.vgrow="ALWAYS">
@@ -46,7 +45,7 @@
                                     <TableColumn fx:id="columnTaskTime" editable="false" maxWidth="360.0" minWidth="2.0" prefWidth="360.0" resizable="false" sortable="false" text="TIME" />
                                     <TableColumn fx:id="columnTaskName" editable="false" maxWidth="340.0" prefWidth="340.0" resizable="false" sortable="false" text="TASK" />
                                     <TableColumn fx:id="columnTaskID" editable="false" maxWidth="60.0" prefWidth="60.0" resizable="false" sortable="false" text="#ID" />
-                                    <TableColumn fx:id="columnTaskRecurring" editable="false" maxWidth="140.0" minWidth="2.0" prefWidth="140.0" resizable="false" sortable="false" text="EVERY" />
+                                    <TableColumn fx:id="columnTaskRecurring" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="EVERY" />
                                  </columns>
                               </TableView>
                            </children>

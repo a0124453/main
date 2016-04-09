@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lifetracker.UI.UIController;
 import lifetracker.command.CommandFactoryImpl;
@@ -58,8 +59,9 @@ public class LifeTracker extends Application {
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
         UIController.setLogic(programLogic);
         UIController.populateList(programLogic.executeCommand("list"));
+        primaryStage.getIcons().add(new Image("/lifetracker/icon.png"));
         primaryStage.show();
-
+        
     }
     
     @Override
