@@ -219,22 +219,7 @@ public class UIController implements Initializable {
     private void initTableTask() {
         initColumnTaskId();
         initColumnTaskName();
-        columnTaskTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        LocalDateTime deadline = param.getValue().getDeadline();
-                        String deadlineString;
-                        if (deadline != null) {
-                            deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
-                        } else {
-                            deadlineString = TEXT_EMPTY;
-                        }
-
-                        return new ReadOnlyStringWrapper(deadlineString);
-                    }
-                });
+        initColumnTaskTime();
         
         columnTaskRecurring.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
@@ -278,6 +263,31 @@ public class UIController implements Initializable {
         });
 
         tableTask.setItems(taskList);
+    }
+
+    private void initColumnTaskTime() {
+        columnTaskTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        LocalDateTime deadline = param.getValue().getDeadline();
+                        String deadlineString = convertDeadlineToString(deadline);
+                        return new ReadOnlyStringWrapper(deadlineString);
+                    }
+
+
+                });
+    }
+    
+    private String convertDeadlineToString(LocalDateTime deadline) {
+        String deadlineString;
+        if (deadline != null) {
+            deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+        } else {
+            deadlineString = TEXT_EMPTY;
+        }
+        return deadlineString;
     }
 
     private void initColumnTaskName() {
