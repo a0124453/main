@@ -13,5 +13,5 @@ public enum CommandClass {
     RECURRING,
     RECURRING_OCCURRENCES,
     RECURRING_DATE,
-    STOP
+    STOP_RECURRING
 }

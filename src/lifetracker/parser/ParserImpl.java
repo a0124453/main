@@ -5,6 +5,7 @@ import lifetracker.command.CommandObject;
 import lifetracker.parser.datetime.DateTimeParser;
 import lifetracker.parser.datetime.DurationParser;
 import lifetracker.parser.syntax.AddParameterParser;
+import lifetracker.parser.syntax.CommandOptions;
 import lifetracker.parser.syntax.CommandParser;
 import lifetracker.parser.syntax.EditOneParametersParser;
 import lifetracker.parser.syntax.EditParameterParser;
@@ -53,6 +54,20 @@ public class ParserImpl implements Parser {
         EDIT_KEYWORDS_WITH_VERIFICATIONS.put("forever", StringUtils::isBlank);
     }
 
+    private static final Map<String, CommandOptions> KEYWORD_TO_ENUM_MAP = new HashMap<>();
+
+    static {
+        KEYWORD_TO_ENUM_MAP.put("by", CommandOptions.BY);
+        KEYWORD_TO_ENUM_MAP.put("from", CommandOptions.FROM);
+        KEYWORD_TO_ENUM_MAP.put("to", CommandOptions.TO);
+        KEYWORD_TO_ENUM_MAP.put("every", CommandOptions.EVERY);
+        KEYWORD_TO_ENUM_MAP.put("until", CommandOptions.UNTIL);
+        KEYWORD_TO_ENUM_MAP.put("for", CommandOptions.FOR);
+        KEYWORD_TO_ENUM_MAP.put("stop", CommandOptions.STOP);
+        KEYWORD_TO_ENUM_MAP.put("nodue", CommandOptions.NODUE);
+        KEYWORD_TO_ENUM_MAP.put("forever", CommandOptions.FOREVER);
+    }
+
     private static final String defaultCommand = "add";
 
     private static final String FULL_COMMAND_SEPARATOR = " > ";
@@ -98,8 +113,8 @@ public class ParserImpl implements Parser {
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
-        Map<String, String> commandBodySectionsMap = cmdParser
-                .parseCommandBody(addCommandBody, ADD_KEYWORDS_WITH_VERIFICATIONS);
+        Map<CommandOptions, String> commandBodySectionsMap = cmdParser
+                .parseCommandBody(addCommandBody, ADD_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
 
         Parameters params = AddParameterParser.getInstance().parseCommandMap(commandBodySectionsMap);
 
@@ -126,8 +141,8 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<String, String> editSectionMap = cmdParser
-                .parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS);
+        Map<CommandOptions, String> editSectionMap = cmdParser
+                .parseCommandBody(editCommandSection, EDIT_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
 
         Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
@@ -142,8 +157,8 @@ public class ParserImpl implements Parser {
         int id = getIDFromList(commandBody);
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        Map<String, String> editSectionMap = cmdParser
-                .parseCommandBody(editCommandSection, EDITONE_KEYWORDS_WITH_VERIFICATIONS);
+        Map<CommandOptions, String> editSectionMap = cmdParser
+                .parseCommandBody(editCommandSection, EDITONE_KEYWORDS_WITH_VERIFICATIONS, KEYWORD_TO_ENUM_MAP, CommandOptions.NAME);
 
         Parameters params = EditOneParametersParser.getInstance().parseCommandMap(editSectionMap);
 
@@ -266,7 +281,7 @@ public class ParserImpl implements Parser {
                 return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.dateLimit);
             case RECURRING_OCCURRENCES:
                 return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
-            case STOP:
+            case STOP_RECURRING:
                 return commandObjectFactory.editStop(id, params.name);
             default:
                 assert false;

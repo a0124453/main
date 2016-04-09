@@ -22,6 +22,10 @@ public class CommandParserTest {
         commands.add("testcommand");
     }
 
+    private enum Options{
+        NAME, THREE, EMPTY, EMPTY2, ANYTHING
+    }
+
     private Map<String, Predicate<String>> keyWordVerification = new HashMap<>();
 
     {
@@ -29,6 +33,15 @@ public class CommandParserTest {
         keyWordVerification.put("empty", String::isEmpty);
         keyWordVerification.put("empty2", String::isEmpty);
         keyWordVerification.put("anything", s -> true);
+    }
+
+    private Map<String, Options> keywordToEnumMap =  new HashMap<>();
+
+    {
+        keywordToEnumMap.put("three", Options.THREE);
+        keywordToEnumMap.put("empty", Options.EMPTY);
+        keywordToEnumMap.put("empty2", Options.EMPTY2);
+        keywordToEnumMap.put("anything", Options.ANYTHING);
     }
 
     private String defaultCommand = "add";
@@ -94,40 +107,40 @@ public class CommandParserTest {
         //Partition: All keyword arguments valid
         String commandBody = "name empty three abc";
 
-        Map<String, String> expected = new LinkedHashMap<>();
+        Map<Options, String> expected = new LinkedHashMap<>();
 
-        expected.put("three", "abc");
-        expected.put("empty", "");
-        expected.put("name", "name");
+        expected.put(Options.THREE, "abc");
+        expected.put(Options.EMPTY, "");
+        expected.put(Options.NAME, "name");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification, keywordToEnumMap, Options.NAME));
 
         //Boundary: Blank name
         commandBody = "empty empty2";
 
         expected.clear();
-        expected.put("empty2", "");
-        expected.put("empty", "");
-        expected.put("name", "");
+        expected.put(Options.EMPTY2, "");
+        expected.put(Options.EMPTY, "");
+        expected.put(Options.NAME, "");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification, keywordToEnumMap, Options.NAME));
 
         //Partition: repeated keywords
         commandBody = "name anything abs anything abc def three abc";
 
         expected.clear();
-        expected.put("three", "abc");
-        expected.put("anything", "abc def");
-        expected.put("name", "name anything abs");
+        expected.put(Options.THREE, "abc");
+        expected.put(Options.ANYTHING, "abc def");
+        expected.put(Options.NAME, "name anything abs");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification, keywordToEnumMap, Options.NAME));
 
         //Partition: Invalid keyword arguements
         commandBody = "anything something something empty aaa";
 
         expected.clear();
-        expected.put("name", "anything something something empty aaa");
+        expected.put(Options.NAME, "anything something something empty aaa");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification));
+        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody, keyWordVerification, keywordToEnumMap, Options.NAME));
     }
 }

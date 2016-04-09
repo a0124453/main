@@ -2,6 +2,27 @@ package lifetracker.parser.syntax;
 
 import java.util.Map;
 
+import static lifetracker.parser.syntax.CommandClass.GENERIC;
+import static lifetracker.parser.syntax.CommandClass.RECURRING;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_DATE;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_EVENT;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_EVENT_DATE;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_EVENT_OCCURRENCES;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_OCCURRENCES;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_TASK;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_TASK_DATE;
+import static lifetracker.parser.syntax.CommandClass.RECURRING_TASK_OCCURRENCES;
+import static lifetracker.parser.syntax.CommandClass.STOP_RECURRING;
+import static lifetracker.parser.syntax.CommandOptions.BY;
+import static lifetracker.parser.syntax.CommandOptions.EVERY;
+import static lifetracker.parser.syntax.CommandOptions.FOR;
+import static lifetracker.parser.syntax.CommandOptions.FOREVER;
+import static lifetracker.parser.syntax.CommandOptions.FROM;
+import static lifetracker.parser.syntax.CommandOptions.NAME;
+import static lifetracker.parser.syntax.CommandOptions.NODUE;
+import static lifetracker.parser.syntax.CommandOptions.STOP;
+import static lifetracker.parser.syntax.CommandOptions.TO;
+import static lifetracker.parser.syntax.CommandOptions.UNTIL;
 import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
@@ -12,22 +33,18 @@ public class EditParameterParser extends AddParameterParser {
         return ourInstance;
     }
 
-    protected static final String RECURRING_STOP_MARKER = "stop";
-    protected static final String RECURRING_UNLIMIT_MARKER = "forever";
-    protected static final String REMOVE_DATE_MARKER = "nodue";
-
     @Override
-    public Parameters parseCommandMap(Map<String, String> commandMap) {
+    public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
         Parameters result = new Parameters();
 
-        result.name = commandMap.get(NAME_FIELD);
+        result.name = commandMap.get(NAME);
 
         determineTypeAndPopulateFields(commandMap, result);
 
         return result;
     }
 
-    void determineTypeAndPopulateFields(Map<String, String> commandMap, Parameters result) {
+    void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
         if (isEventMap(commandMap)) {
             fillUpEventNull(commandMap);
             populateEventParameters(commandMap, result);
@@ -36,93 +53,90 @@ public class EditParameterParser extends AddParameterParser {
             populateTaskParameters(commandMap, result);
             resolveAndProcessRecurringCommandType(commandMap, result);
         } else {
-            result.commandClass = CommandClass.GENERIC;
-            if (commandMap.containsKey(REMOVE_DATE_MARKER)) {
+            result.commandClass = GENERIC;
+            if (commandMap.containsKey(NODUE)) {
                 result.isForcedOverwrite = true;
             } else {
                 resolveAndProcessRecurringCommandType(commandMap, result);
-                if(isStopMap(commandMap)){
-                    result.commandClass = CommandClass.STOP;
+                if (isStopMap(commandMap)) {
+                    result.commandClass = STOP_RECURRING;
                 }
             }
         }
     }
 
     @Override
-    boolean isRecurringMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_STOP_MARKER, RECURRING_PERIOD_FIELD);
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, RECURRING_LIMIT_DATE,
-                RECURRING_UNLIMIT_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, REMOVE_DATE_MARKER, RECURRING_PERIOD_FIELD);
+    boolean isRecurringMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, NODUE, EVERY);
+        checkMutuallyExclusiveKeywords(commandMap, FOREVER, FOR, UNTIL);
+        checkMutuallyExclusiveKeywords(commandMap, STOP, EVERY);
 
         return super.isRecurringMap(commandMap)
-                || commandMap.containsKey(RECURRING_UNLIMIT_MARKER)
-                || commandMap.containsKey(RECURRING_LIMIT_OCCURRENCES);
+                || commandMap.containsKey(FOR)
+                || commandMap.containsKey(UNTIL);
     }
 
     @Override
-    boolean isEventMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, REMOVE_DATE_MARKER);
+    boolean isEventMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, BY, NODUE);
         return super.isEventMap(commandMap);
     }
 
     @Override
-    boolean isTaskMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_END_FIELD, REMOVE_DATE_MARKER);
+    boolean isTaskMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, FROM, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, TO, NODUE);
         return super.isTaskMap(commandMap);
     }
 
     @Override
-    void populateRecurringParameters(Map<String, String> commandMap, Parameters result) {
+    void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
 
-        if(commandMap.containsKey(RECURRING_PERIOD_FIELD)){
-            result.recurringPeriod = durationParser.parse(commandMap.get(RECURRING_PERIOD_FIELD));
+        if (commandMap.containsKey(EVERY)) {
+            result.recurringPeriod = durationParser.parse(commandMap.get(EVERY));
         }
 
-        if (commandMap.containsKey(RECURRING_LIMIT_DATE)) {
-            result.dateLimit = dateTimeParser.parseDateTimeAsIs(commandMap.get(RECURRING_LIMIT_DATE)).toLocalDate();
+        if (commandMap.containsKey(UNTIL)) {
+            result.dateLimit = dateTimeParser.parseDateTimeAsIs(commandMap.get(UNTIL)).toLocalDate();
 
-            assignRecurringClass(commandMap, result, CommandClass.RECURRING_EVENT_DATE,
-                    CommandClass.RECURRING_TASK_DATE, CommandClass.RECURRING_DATE);
-        } else if (commandMap.containsKey(RECURRING_LIMIT_OCCURRENCES)) {
-            result.occurLimit = Integer.parseInt(commandMap.get(RECURRING_LIMIT_OCCURRENCES));
+            assignRecurringClass(commandMap, result, RECURRING_EVENT_DATE,
+                    RECURRING_TASK_DATE, RECURRING_DATE);
 
-            assignRecurringClass(commandMap, result, CommandClass.RECURRING_EVENT_OCCURRENCES,
-                    CommandClass.RECURRING_TASK_OCCURRENCES, CommandClass.RECURRING_OCCURRENCES);
+        } else if (commandMap.containsKey(FOR)) {
+            result.occurLimit = Integer.parseInt(commandMap.get(FOR));
+
+            assignRecurringClass(commandMap, result, RECURRING_EVENT_OCCURRENCES,
+                    RECURRING_TASK_OCCURRENCES, RECURRING_OCCURRENCES);
         } else {
-            assignRecurringClass(commandMap, result, CommandClass.RECURRING_EVENT, CommandClass.RECURRING_TASK,
-                    CommandClass.RECURRING);
+            assignRecurringClass(commandMap, result, RECURRING_EVENT, RECURRING_TASK, RECURRING);
         }
     }
 
-    boolean isStopMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_STOP_MARKER, RECURRING_PERIOD_FIELD);
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, RECURRING_LIMIT_DATE,
-                RECURRING_UNLIMIT_MARKER);
+    boolean isStopMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, STOP, EVERY);
+        checkMutuallyExclusiveKeywords(commandMap, FOR, UNTIL,FOREVER);
 
-        return commandMap.containsKey(RECURRING_STOP_MARKER);
+        return commandMap.containsKey(STOP);
     }
 
-    boolean isUnlimitMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, RECURRING_LIMIT_DATE,
-                RECURRING_UNLIMIT_MARKER);
+    boolean isUnlimitMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, FOR, UNTIL, FOREVER);
 
-        return commandMap.containsKey(RECURRING_UNLIMIT_MARKER);
+        return commandMap.containsKey(FOREVER);
     }
 
-    boolean isRemoveDateMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_END_FIELD, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_PERIOD_FIELD, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_OCCURRENCES, REMOVE_DATE_MARKER);
-        checkMutuallyExclusiveKeywords(commandMap, RECURRING_LIMIT_DATE, REMOVE_DATE_MARKER);
+    boolean isRemoveDateMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, BY, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, TO, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, FROM, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, EVERY, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, FOR, NODUE);
+        checkMutuallyExclusiveKeywords(commandMap, UNTIL, NODUE);
 
-        return commandMap.containsKey(REMOVE_DATE_MARKER);
+        return commandMap.containsKey(NODUE);
     }
 
-    private void resolveAndProcessRecurringCommandType(Map<String, String> commandMap, Parameters result) {
+    private void resolveAndProcessRecurringCommandType(Map<CommandOptions, String> commandMap, Parameters result) {
         if (isRecurringMap(commandMap)) {
             populateRecurringParameters(commandMap, result);
         } else if (isUnlimitMap(commandMap)) {
@@ -133,7 +147,7 @@ public class EditParameterParser extends AddParameterParser {
         }
     }
 
-    private void assignRecurringClass(Map<String, String> commandMap, Parameters result, CommandClass eventEnum,
+    private void assignRecurringClass(Map<CommandOptions, String> commandMap, Parameters result, CommandClass eventEnum,
             CommandClass taskEnum, CommandClass genericEnum) {
         if (isEventMap(commandMap)) {
             result.commandClass = eventEnum;

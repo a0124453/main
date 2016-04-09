@@ -11,11 +11,14 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+//@@author A0091173J
+
 /**
  * This class deals with separating commands into distinct components.
  * <p>
  * For example, this class can separate a complete command into key words and command bodies. It can the further
  * separate the command body into sections defined by keywords, such as "from".
+ *
  */
 public class CommandParser {
 
@@ -26,9 +29,7 @@ public class CommandParser {
     private final Set<String> commands;
     private final String defaultCommand;
 
-    public CommandParser(Set<String> commands,
-            String defaultCommand) {
-
+    public CommandParser(Set<String> commands, String defaultCommand) {
         this.commands = commands;
         this.defaultCommand = defaultCommand;
     }
@@ -75,13 +76,15 @@ public class CommandParser {
      * The method returns a map that can be iterated in parse order (i.e. components iterated from the back of the
      * command). The keys are the keywords and the values are the arguments.
      *
-     * @param commandBody The command body to parse
+     * @param commandBody               The command body to parse
+     * @param keywordsWithVerifications The keyword map to verify options.
      * @return A map with the components parsed
      */
-    public Map<String, String> parseCommandBody(String commandBody,
-            Map<String, Predicate<String>> keywordsWithVerifications) {
 
-        Map<String, String> keyWordArgumentMap = new LinkedHashMap<>();
+    public <T>Map<T, String> parseCommandBody(String commandBody,
+            Map<String, Predicate<String>> keywordsWithVerifications, Map<String, T> keywordToEnumMap, T defaultField) {
+
+        Map<T, String> keyWordArgumentMap = new LinkedHashMap<>();
 
         Deque<String> processStack = commandBodyToDeque(commandBody);
         Deque<String> intermediateStack = new LinkedList<>();
@@ -89,18 +92,20 @@ public class CommandParser {
         while (!processStack.isEmpty()) {
             String element = processStack.removeLast();
 
-            if (keywordsWithVerifications.containsKey(element)) {
+
+            if (keywordToEnumMap.containsKey(element)) {
+                T field = keywordToEnumMap.get(element);
 
                 String argument = collapseDeque(intermediateStack);
                 intermediateStack.clear();
 
-                if (keywordsWithVerifications.get(element).test(argument) && !keyWordArgumentMap.containsKey(element)) {
-                    keyWordArgumentMap.put(element, argument);
+                if (keywordsWithVerifications.get(element).test(argument) && !keyWordArgumentMap.containsKey(field)) {
+                    keyWordArgumentMap.put(field, argument);
                 } else {
                     processStack.add(element);
                     processStack.add(argument);
 
-                    keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseDeque(processStack));
+                    keyWordArgumentMap.put(defaultField, collapseDeque(processStack));
                     processStack.clear();
                 }
             } else {
@@ -108,8 +113,8 @@ public class CommandParser {
             }
         }
 
-        if (!keyWordArgumentMap.containsKey(COMMAND_BODY_NAME_FIELD_KEY)) {
-            keyWordArgumentMap.put(COMMAND_BODY_NAME_FIELD_KEY, collapseDeque(intermediateStack));
+        if (!keyWordArgumentMap.containsKey(defaultField)) {
+            keyWordArgumentMap.put(defaultField, collapseDeque(intermediateStack));
         }
 
         return keyWordArgumentMap;

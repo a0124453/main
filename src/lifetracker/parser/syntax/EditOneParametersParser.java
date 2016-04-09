@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static lifetracker.parser.syntax.CommandOptions.BY;
+import static lifetracker.parser.syntax.CommandOptions.FROM;
+import static lifetracker.parser.syntax.CommandOptions.NAME;
+import static lifetracker.parser.syntax.CommandOptions.TO;
 import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
@@ -18,25 +22,20 @@ public class EditOneParametersParser implements CommandParametersParser {
         return ourInstance;
     }
 
-    protected static final String NAME_FIELD = "name";
-    protected static final String EVENT_START_FIELD = "from";
-    protected static final String EVENT_END_FIELD = "to";
-    protected static final String TASK_DEADLINE_FIELD = "by";
-
     protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
     protected final DurationParser durationParser = DurationParser.getInstance();
 
     @Override
-    public Parameters parseCommandMap(Map<String, String> commandMap) {
+    public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
         Parameters results = new Parameters();
-        results.name = commandMap.get(NAME_FIELD);
+        results.name = commandMap.get(NAME);
 
         determineTypeAndPopulateFields(commandMap, results);
 
         return results;
     }
 
-    void determineTypeAndPopulateFields(Map<String, String> commandMap, Parameters results){
+    void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters results){
         if(isEventMap(commandMap)){
             fillUpEventNull(commandMap);
             populateEventParameters(commandMap, results);
@@ -47,40 +46,40 @@ public class EditOneParametersParser implements CommandParametersParser {
         }
     }
 
-    boolean isTaskMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_START_FIELD);
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_END_FIELD);
+    boolean isTaskMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, BY, FROM);
+        checkMutuallyExclusiveKeywords(commandMap, BY, TO);
 
-        return commandMap.containsKey(TASK_DEADLINE_FIELD);
+        return commandMap.containsKey(BY);
     }
 
-    boolean isEventMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, TASK_DEADLINE_FIELD);
+    boolean isEventMap(Map<CommandOptions, String> commandMap) {
+        checkMutuallyExclusiveKeywords(commandMap, FROM, BY);
 
-        return commandMap.containsKey(EVENT_START_FIELD);
+        return commandMap.containsKey(FROM);
     }
 
-    void populateEventParameters(Map<String, String> commandMap, Parameters result) {
+    void populateEventParameters(Map<CommandOptions, String> commandMap, Parameters result) {
         List<LocalDateTime> startEndDateTime = dateTimeParser
-                .parseDoubleDateTime(commandMap.get(EVENT_START_FIELD), commandMap.get(EVENT_END_FIELD));
+                .parseDoubleDateTime(commandMap.get(FROM), commandMap.get(TO));
 
         result.startDateTime = startEndDateTime.get(0);
         result.endDateTime = startEndDateTime.get(1);
         result.commandClass = CommandClass.EVENT;
     }
 
-    void fillUpEventNull(Map<String, String> commandMap) {
-        if (!commandMap.containsKey(EVENT_START_FIELD)) {
-            commandMap.put(EVENT_START_FIELD, "");
+    void fillUpEventNull(Map<CommandOptions, String> commandMap) {
+        if (!commandMap.containsKey(FROM)) {
+            commandMap.put(FROM, "");
         }
 
-        if (!commandMap.containsKey(EVENT_END_FIELD)) {
-            commandMap.put(EVENT_END_FIELD, "");
+        if (!commandMap.containsKey(TO)) {
+            commandMap.put(TO, "");
         }
     }
 
-    void populateTaskParameters(Map<String, String> commandMap, Parameters result) {
-        result.endDateTime = dateTimeParser.parseSingleDateTime(commandMap.get(TASK_DEADLINE_FIELD));
+    void populateTaskParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+        result.endDateTime = dateTimeParser.parseSingleDateTime(commandMap.get(BY));
         result.commandClass = CommandClass.DEADLINE;
     }
 }
