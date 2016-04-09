@@ -354,16 +354,17 @@ public class UIController implements Initializable {
         int years = period.getYears();
         int months = period.getMonths();
         int days = period.getDays();
-
-        return formatDuration(years, FIELD_YEAR) + formatDuration(months, FIELD_MONTH)
+        String periodString = formatDuration(years, FIELD_YEAR) + formatDuration(months, FIELD_MONTH)
                 + formatDuration(days, FIELD_DAY);
+ 
+        return periodString;
     }
 
     private String convertDurationToString(Duration duration) {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
-
-        return formatDuration(hours, FIELD_HOUR) + formatDuration(minutes, FIELD_MINUTE);
+        String durationString = formatDuration(hours, FIELD_HOUR) + formatDuration(minutes, FIELD_MINUTE);
+        return durationString;
     }
 
     private String formatDuration(long duration, String label) {
@@ -371,13 +372,21 @@ public class UIController implements Initializable {
     }
 
     public static void populateList(ExecuteResult result) {
-        taskList.clear();
-        for (LogicTask task : result.getTaskList()) {
-            taskList.add(task);
-        }
+        populateTaskList(result);
+        populateEventList(result);
+    }
+
+    private static void populateEventList(ExecuteResult result) {
         eventList.clear();
         for (LogicEvent event : result.getEventList()) {
             eventList.add(event);
+        }
+    }
+
+    private static void populateTaskList(ExecuteResult result) {
+        taskList.clear();
+        for (LogicTask task : result.getTaskList()) {
+            taskList.add(task);
         }
     }
     
