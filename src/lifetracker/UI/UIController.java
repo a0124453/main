@@ -138,44 +138,8 @@ public class UIController implements Initializable {
         initTabBehaviour();
         initWebView();
         initInputHistory();
+        initTableTask();
         
-        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
-        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
-        columnTaskTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        LocalDateTime deadline = param.getValue().getDeadline();
-                        String deadlineString;
-                        if (deadline != null) {
-                            deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
-                        } else {
-                            deadlineString = TEXT_EMPTY;
-                        }
-
-                        return new ReadOnlyStringWrapper(deadlineString);
-                    }
-                });
-        columnTaskRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        String periodString = convertTemporalToString(param.getValue().getPeriod());
-
-                        LocalDate limitDate = param.getValue().getLimitDate();
-                        int limitOccur = param.getValue().getLimitOccur();
-
-                        if (limitOccur > 0) {
-                            periodString += " for " + limitOccur + " time(s)";
-                        } else if (limitDate != null) {
-                            periodString += " until "
-                                    + limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-                        }
-                        return new ReadOnlyStringWrapper(periodString);
-                    }
-                });
         columnEventID
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
         columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
@@ -216,28 +180,7 @@ public class UIController implements Initializable {
             }
         });
 
-        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
-            @Override
-            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
-                return new TableRow<LogicTask>() {
-                    @Override
-                    protected void updateItem(LogicTask task, boolean b) {
-                        super.updateItem(task, b);
-                        boolean overdue = task != null && task.getOverdue();
-                        boolean done = task != null && !task.isDone();
-                        if (!done) {
-                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
-                        }
 
-                        super.updateItem(task, b);
-                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
-                    }
-
-                };
-            }
-        });
-
-        tableTask.setItems(taskList);
         tableEvent.setItems(eventList);
 
         textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -271,6 +214,74 @@ public class UIController implements Initializable {
                 textInput.requestFocus();
             }
         });
+    }
+
+    private void initTableTask() {
+        initColumnTaskId();
+        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
+        columnTaskTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        LocalDateTime deadline = param.getValue().getDeadline();
+                        String deadlineString;
+                        if (deadline != null) {
+                            deadlineString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+                        } else {
+                            deadlineString = TEXT_EMPTY;
+                        }
+
+                        return new ReadOnlyStringWrapper(deadlineString);
+                    }
+                });
+        
+        columnTaskRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        String periodString = convertTemporalToString(param.getValue().getPeriod());
+
+                        LocalDate limitDate = param.getValue().getLimitDate();
+                        int limitOccur = param.getValue().getLimitOccur();
+
+                        if (limitOccur > 0) {
+                            periodString += " for " + limitOccur + " time(s)";
+                        } else if (limitDate != null) {
+                            periodString += " until "
+                                    + limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+                        }
+                        return new ReadOnlyStringWrapper(periodString);
+                    }
+                });
+        
+        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
+            @Override
+            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
+                return new TableRow<LogicTask>() {
+                    @Override
+                    protected void updateItem(LogicTask task, boolean b) {
+                        super.updateItem(task, b);
+                        boolean overdue = task != null && task.getOverdue();
+                        boolean done = task != null && !task.isDone();
+                        if (!done) {
+                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
+                        }
+
+                        super.updateItem(task, b);
+                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
+                    }
+
+                };
+            }
+        });
+
+        tableTask.setItems(taskList);
+    }
+
+    private void initColumnTaskId() {
+        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
 
     private void initInputHistory() {
