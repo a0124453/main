@@ -99,14 +99,7 @@ public class UIController implements Initializable {
         initTableTask();
         initTableEvent();
         initTextInputKeyDetection();
-
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                textInput.requestFocus();
-            }
-        });
+        focusTextInput();
     }
     
     private void initTabBehaviour() {
@@ -116,6 +109,57 @@ public class UIController implements Initializable {
         webView.setFocusTraversable(true);
         labelFeedback.setFocusTraversable(false);
         labelTitle.setFocusTraversable(false);
+    }
+    
+    private void initWebView() {
+        String htmlURL = LifeTracker.class.getResource(PATH_README_HTML).toExternalForm();
+        String cssURL = LifeTracker.class.getResource(PATH_README_CSS).toString();
+        webEngine = webView.getEngine();
+        webEngine.setUserStyleSheetLocation(cssURL);
+        webEngine.load(htmlURL);
+        webView.setVisible(false);
+    }
+    
+    private void initInputHistory() {
+        inputHistory = new ArrayList<String>();
+        inputHistoryIndex = -1;
+    }
+    
+    private void initTableTask() {
+        initColumnTaskId();
+        initColumnTaskName();
+        initColumnTaskTime();
+        initColumnTaskRecurring();
+        setTableTaskRowStyle();
+        tableTask.setItems(taskList);
+    }
+    
+    private void initTableEvent() {
+        initColumnEventId();
+        initColumnEventName();
+        initColumnEventStartTime();
+        initColumnEventEndTime();
+        initColumnEventRecurring();
+        setTableEventRowStyle();
+        tableEvent.setItems(eventList);
+    }
+    
+    private void initTextInputKeyDetection() {
+        textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                processKeyCode(event);
+            }
+        });
+    }
+    
+    private void focusTextInput() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                textInput.requestFocus();
+            }
+        });
     }
 
     @FXML
@@ -180,15 +224,6 @@ public class UIController implements Initializable {
         UIController.l = l;
     }
 
-    private void initTextInputKeyDetection() {
-        textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                processKeyCode(event);
-            }
-        });
-    }
-
     private void processKeyCode(KeyEvent event) {
         KeyCode keyCode = event.getCode();
         switch (keyCode) {
@@ -227,16 +262,6 @@ public class UIController implements Initializable {
 
     private void setTextInputHistory() {
         textInput.setText(inputHistory.get(inputHistoryIndex));
-    }
-
-    private void initTableEvent() {
-        initColumnEventId();
-        initColumnEventName();
-        initColumnEventStartTime();
-        initColumnEventEndTime();
-        initColumnEventRecurring();
-        setTableEventRowStyle();
-        tableEvent.setItems(eventList);
     }
 
     private void setTableEventRowStyle() {
@@ -284,15 +309,6 @@ public class UIController implements Initializable {
     private void initColumnEventId() {
         columnEventId
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
-    }
-
-    private void initTableTask() {
-        initColumnTaskId();
-        initColumnTaskName();
-        initColumnTaskTime();
-        initColumnTaskRecurring();
-        setTableTaskRowStyle();
-        tableTask.setItems(taskList);
     }
 
     private void setTableTaskRowStyle() {
@@ -394,20 +410,6 @@ public class UIController implements Initializable {
     private void initColumnTaskId() {
         columnTaskId
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
-    }
-
-    private void initInputHistory() {
-        inputHistory = new ArrayList<String>();
-        inputHistoryIndex = -1;
-    }
-
-    private void initWebView() {
-        String htmlURL = LifeTracker.class.getResource(PATH_README_HTML).toExternalForm();
-        String cssURL = LifeTracker.class.getResource(PATH_README_CSS).toString();
-        webEngine = webView.getEngine();
-        webEngine.setUserStyleSheetLocation(cssURL);
-        webEngine.load(htmlURL);
-        webView.setVisible(false);
     }
 
     private String convertTemporalToString(TemporalAmount period) {
