@@ -25,7 +25,7 @@ import java.util.Stack;
 
 public class LogicImpl implements Logic {
 
-    //configure file
+    //configure file constant
     private static final String CONFIG_FILE_NAME = "config.properties";
     private static final String SAVE_FILE_PROPERTY = "savefile";
     private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";

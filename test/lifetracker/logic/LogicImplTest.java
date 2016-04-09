@@ -23,6 +23,13 @@ import static org.mockito.Mockito.when;
 public class LogicImplTest {
 
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: null";
+    
+    //test store constant
+    private static final String DEFAULT_CONFIG_FILENAME = "config.properties";
+    private static final String ALT_CONFIG_FILENAME = "config.properties.orig";
+    private static final String DEFAULT_TEST_STORE = "lifetracker.dat";
+    private static final String ALT_TEST_STORE = "lifetracker.dat.orig";
+    private static final String TEST_SAVEAT_FILE = "location";
 
     private static Parser parser = mock(Parser.class);
     private static Storage storage = mock(Storage.class);
@@ -34,12 +41,6 @@ public class LogicImplTest {
 
     private static ExecuteResult saveat = new CommandLineResult();
     private static ExecuteResult error = new CommandLineResult();
-
-    private static final String DEFAULT_CONFIG_FILENAME = "config.properties";
-    private static final String ALT_CONFIG_FILENAME = "config.properties.orig";
-    private static final String DEFAULT_TEST_STORE = "lifetracker.dat";
-    private static final String ALT_TEST_STORE = "lifetracker.dat.orig";
-    private static final String TEST_SAVEAT_FILE = "location";
 
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
