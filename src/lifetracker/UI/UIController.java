@@ -39,21 +39,23 @@ import java.util.ResourceBundle;
 
 //@@author A0114240B
 public class UIController implements Initializable {
-
-
+    private static final String PATH_README_CSS = "/lifetracker/UI/README.css";
+    private static final String PATH_README_HTML = "/lifetracker/UI/README.html";
     private static final String TEXT_EMPTY = "";
-    private static final String DAY_FIELD = "day(s)";
-    private static final String MONTH_FIELD = "month(s)";
-    private static final String YEAR_FIELD = "year(s)";
-    private static final String MINUTE_FIELD = "minute(s)";
-    private static final String HOUR_FIELD = "hour(s)";
+    private static final String FIELD_DAY = "day(s)";
+    private static final String FIELD_MONTH = "month(s)";
+    private static final String FIELD_YEAR = "year(s)";
+    private static final String FIELD_MINUTE = "minute(s)";
+    private static final String FIELD_HOUR = "hour(s)";
+    private static final PseudoClass PSEUDO_CLASS_OVERDUE = PseudoClass.getPseudoClass("overdue");
+    private static final PseudoClass PSEUDO_CLASS_DONE = PseudoClass.getPseudoClass("done");
     
     private static Logic l;
     private static List<String> inputHistory;
     private static int inputHistoryIndex;
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
-
+    private static WebEngine webEngine;
 
     @FXML Label labelTitle;
     @FXML TextField textInput;
@@ -70,7 +72,6 @@ public class UIController implements Initializable {
     @FXML TableColumn<LogicEvent, String> columnEventEndTime;
     @FXML TableColumn<LogicEvent, String> columnEventRecurring;
     @FXML WebView webView;
-    private WebEngine webEngine;
 
     @FXML
     public void getInput() {
@@ -134,22 +135,11 @@ public class UIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        webView.setVisible(false);
-        textInput.setFocusTraversable(true);
-        labelFeedback.setFocusTraversable(false);
-        labelTitle.setFocusTraversable(false);
-        tableEvent.setFocusTraversable(true);
-        tableEvent.setFocusTraversable(true);
-        webView.setFocusTraversable(true);
-        webEngine = webView.getEngine();
-        String url = LifeTracker.class.getResource("/lifetracker/UI/README.html").toExternalForm();
-        webEngine.setUserStyleSheetLocation(LifeTracker.class.getResource("/lifetracker/UI/README.css").toString());
-        webEngine.load(url);
-
-        inputHistory = new ArrayList<String>();
-        inputHistoryIndex = -1;
-        columnTaskID
-                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
+        initTabBehaviour();
+        initWebView();
+        initInputHistory();
+        
+        columnTaskID.setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
         columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
         columnTaskTime.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
@@ -203,8 +193,7 @@ public class UIController implements Initializable {
                     }
                 });
 
-        final PseudoClass overduePseudoClass = PseudoClass.getPseudoClass("overdue");
-        final PseudoClass donePseudoClass = PseudoClass.getPseudoClass("done");
+
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
             @Override
             public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
@@ -216,11 +205,11 @@ public class UIController implements Initializable {
                         boolean done = event != null && !event.isDone();
 
                         if (!done) {
-                            pseudoClassStateChanged(overduePseudoClass, overdue);
+                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
                         }
 
                         super.updateItem(event, b);
-                        pseudoClassStateChanged(donePseudoClass, done);
+                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
                     }
 
                 };
@@ -237,11 +226,11 @@ public class UIController implements Initializable {
                         boolean overdue = task != null && task.getOverdue();
                         boolean done = task != null && !task.isDone();
                         if (!done) {
-                            pseudoClassStateChanged(overduePseudoClass, overdue);
+                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
                         }
 
                         super.updateItem(task, b);
-                        pseudoClassStateChanged(donePseudoClass, done);
+                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
                     }
 
                 };
@@ -284,6 +273,29 @@ public class UIController implements Initializable {
         });
     }
 
+    private void initInputHistory() {
+        inputHistory = new ArrayList<String>();
+        inputHistoryIndex = -1;
+    }
+
+    private void initWebView() {
+        String htmlURL = LifeTracker.class.getResource(PATH_README_HTML).toExternalForm();
+        String cssURL = LifeTracker.class.getResource(PATH_README_CSS).toString();
+        webView.setVisible(false);
+        webEngine = webView.getEngine();
+        webEngine.setUserStyleSheetLocation(cssURL);
+        webEngine.load(htmlURL);
+    }
+
+    private void initTabBehaviour() {
+        textInput.setFocusTraversable(true);
+        tableEvent.setFocusTraversable(true);
+        tableEvent.setFocusTraversable(true);
+        webView.setFocusTraversable(true);
+        labelFeedback.setFocusTraversable(false);
+        labelTitle.setFocusTraversable(false);
+    }
+
     private String convertTemporalToString(TemporalAmount period) {
         String periodString;
         if (period == null) {
@@ -301,15 +313,15 @@ public class UIController implements Initializable {
         int months = period.getMonths();
         int days = period.getDays();
 
-        return formatDuration(years, YEAR_FIELD) + formatDuration(months, MONTH_FIELD)
-                + formatDuration(days, DAY_FIELD);
+        return formatDuration(years, FIELD_YEAR) + formatDuration(months, FIELD_MONTH)
+                + formatDuration(days, FIELD_DAY);
     }
 
     private String convertDurationToString(Duration duration) {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
 
-        return formatDuration(hours, HOUR_FIELD) + formatDuration(minutes, MINUTE_FIELD);
+        return formatDuration(hours, FIELD_HOUR) + formatDuration(minutes, FIELD_MINUTE);
     }
 
     private String formatDuration(long duration, String label) {
