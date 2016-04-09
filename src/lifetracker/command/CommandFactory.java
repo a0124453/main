@@ -63,14 +63,15 @@ public interface CommandFactory {
 
     CommandObject editEvent(int id, String name, LocalDateTime start, LocalDateTime end, boolean isLimitKept);
 
-    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end, Period recurringPeriod,
+    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
+            Period recurringPeriod,
             boolean isLimitInf);
 
-    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end, Period recurringPeriod,
-            int limit);
+    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
+            Period recurringPeriod, int limit);
 
-    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end, Period recurringPeriod,
-            LocalDate limitDate);
+    CommandObject editRecurringEvent(int id, String name, LocalDateTime start, LocalDateTime end,
+            Period recurringPeriod, LocalDate limitDate);
 
     CommandObject editStop(int id, String name);
 
@@ -79,4 +80,10 @@ public interface CommandFactory {
     CommandObject editRecurring(int id, String name, Period recurringPeriod, int limit);
 
     CommandObject editRecurring(int id, String name, Period recurringPeriod, LocalDate limitDate);
+
+    CommandObject editOne(int id, String name);
+
+    CommandObject editOneToDeadline(int id, String name, LocalDateTime deadline);
+
+    CommandObject editOneToEvent(int id, String name, LocalDateTime start, LocalDateTime end);
 }

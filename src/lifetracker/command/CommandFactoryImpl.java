@@ -167,4 +167,19 @@ public class CommandFactoryImpl implements CommandFactory {
     public CommandObject editRecurring(int id, String name, Period recurringPeriod, LocalDate limitDate) {
         return new EditRecurringEntryCommand(id, name, recurringPeriod, limitDate);
     }
+
+    @Override
+    public CommandObject editOne(int id, String name) {
+        return new EditOneCommand(id, name);
+    }
+
+    @Override
+    public CommandObject editOneToDeadline(int id, String name, LocalDateTime deadline) {
+        return new EditOneCommand(id,name, deadline);
+    }
+
+    @Override
+    public CommandObject editOneToEvent(int id, String name, LocalDateTime start, LocalDateTime end) {
+        return new EditOneCommand(id, name, start, end);
+    }
 }
