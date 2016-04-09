@@ -102,6 +102,24 @@ public class UIController implements Initializable {
         focusTextInput();
     }
     
+    @FXML
+    public void getInput() {
+        String userInput = textInput.getText();
+        addInputToHistory(userInput);
+        process(userInput);
+        textInput.setText(FIELD_EMPTY);
+
+    }
+    
+    public static Logic getLogic() {
+        return l;
+    }
+
+    public static void setLogic(Logic l) {
+        assert l != null;
+        UIController.l = l;
+    }
+    
     private void initTabBehaviour() {
         textInput.setFocusTraversable(true);
         tableEvent.setFocusTraversable(true);
@@ -161,16 +179,84 @@ public class UIController implements Initializable {
             }
         });
     }
-
-    @FXML
-    public void getInput() {
-        String userInput = textInput.getText();
-        addInputToHistory(userInput);
-        process(userInput);
-        textInput.setText(FIELD_EMPTY);
-
+    
+    private void initColumnTaskId() {
+        columnTaskId
+                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
+    }
+    
+    private void initColumnTaskName() {
+        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
+    }
+    
+    private void initColumnTaskTime() {
+        columnTaskTime.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        return parseDeadlineFromLogicTask(param);
+                    }
+                });
+    }
+    
+    private void initColumnTaskRecurring() {
+        columnTaskRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
+                        return parsePeriodFromLogicTask(param);
+                    }
+                });
+    }
+    
+    private void setTableTaskRowStyle() {
+        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
+            @Override
+            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
+                
+                return new TableTaskRowOverdueAndDone();
+            }
+        });
+    }
+    
+    private void initColumnEventId() {
+        columnEventId
+                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
 
+    private void initColumnEventName() {
+        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
+    }
+
+    private void initColumnEventStartTime() {
+        columnEventStartTime.setCellValueFactory(
+                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getStart())));
+    }
+    
+    private void initColumnEventEndTime() {
+        columnEventEndTime.setCellValueFactory(
+                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getEnd())));
+    }
+    
+    private void initColumnEventRecurring() {
+        columnEventRecurring.setCellValueFactory(
+                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
+                        return parsePeriodFromLogicEvent(param);
+                    }
+                });
+    }
+
+    private void setTableEventRowStyle() {
+        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
+            @Override
+            public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
+                return new TableEventRowOverdueAndDone();
+            }
+        });
+    }
+    
     private void addInputToHistory(String userInput) {
         inputHistory.add(userInput);
         inputHistoryIndex = inputHistory.size();
@@ -215,15 +301,6 @@ public class UIController implements Initializable {
         tableTask.setVisible(false);
     }
 
-    public static Logic getLogic() {
-        return l;
-    }
-
-    public static void setLogic(Logic l) {
-        assert l != null;
-        UIController.l = l;
-    }
-
     private void processKeyCode(KeyEvent event) {
         KeyCode keyCode = event.getCode();
         switch (keyCode) {
@@ -264,25 +341,6 @@ public class UIController implements Initializable {
         textInput.setText(inputHistory.get(inputHistoryIndex));
     }
 
-    private void setTableEventRowStyle() {
-        tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
-            @Override
-            public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
-                return new TableEventRowOverdueAndDone();
-            }
-        });
-    }
-
-    private void initColumnEventRecurring() {
-        columnEventRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                        return parsePeriodFromLogicEvent(param);
-                    }
-                });
-    }
-
     private ObservableValue<String> parsePeriodFromLogicEvent(CellDataFeatures<LogicEvent, String> param) {
         LocalDate limitDate = param.getValue().getLimitDate();
         int limitOccur = param.getValue().getLimitOccur();
@@ -290,45 +348,6 @@ public class UIController implements Initializable {
         periodString += parseLimit(limitDate, limitOccur);
         
         return new ReadOnlyStringWrapper(periodString);
-    }
-
-    private void initColumnEventEndTime() {
-        columnEventEndTime.setCellValueFactory(
-                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getEnd())));
-    }
-
-    private void initColumnEventStartTime() {
-        columnEventStartTime.setCellValueFactory(
-                param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getStart())));
-    }
-
-    private void initColumnEventName() {
-        columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
-    }
-
-    private void initColumnEventId() {
-        columnEventId
-                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
-    }
-
-    private void setTableTaskRowStyle() {
-        tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
-            @Override
-            public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
-                
-                return new TableTaskRowOverdueAndDone();
-            }
-        });
-    }
-
-    private void initColumnTaskRecurring() {
-        columnTaskRecurring.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        return parsePeriodFromLogicTask(param);
-                    }
-                });
     }
 
     private ObservableValue<String> parsePeriodFromLogicTask(CellDataFeatures<LogicTask, String> param) {
@@ -341,7 +360,7 @@ public class UIController implements Initializable {
     }
 
     private String parseLimit(LocalDate limitDate, int limitOccur) {
-        String limit = "";
+        String limit = FIELD_EMPTY;
         if (limitOccur > 0) {
             limit = parseLimitOccur(limitOccur);
         } else if (limitDate != null) {
@@ -369,16 +388,6 @@ public class UIController implements Initializable {
         return dateString;
     }
 
-    private void initColumnTaskTime() {
-        columnTaskTime.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        return parseDeadlineFromLogicTask(param);
-                    }
-                });
-    }
-
     private ObservableValue<String> parseDeadlineFromLogicTask(CellDataFeatures<LogicTask, String> param) {
         LocalDateTime deadline = param.getValue().getDeadline();
         String deadlineString = convertDeadlineToString(deadline);
@@ -401,15 +410,6 @@ public class UIController implements Initializable {
         String dateTimeString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
         
         return dateTimeString;
-    }
-
-    private void initColumnTaskName() {
-        columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
-    }
-
-    private void initColumnTaskId() {
-        columnTaskId
-                .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
 
     private String convertTemporalToString(TemporalAmount period) {
