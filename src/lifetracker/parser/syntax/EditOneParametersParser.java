@@ -17,13 +17,12 @@ import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExc
 public class EditOneParametersParser implements CommandParametersParser {
 
     private static EditOneParametersParser ourInstance = new EditOneParametersParser();
-
+    protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
+    protected final DurationParser durationParser = DurationParser.getInstance();
+    
     public static EditOneParametersParser getInstance() {
         return ourInstance;
     }
-
-    protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
-    protected final DurationParser durationParser = DurationParser.getInstance();
 
     @Override
     public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
