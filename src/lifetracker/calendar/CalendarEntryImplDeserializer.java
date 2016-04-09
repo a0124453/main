@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -29,10 +28,6 @@ public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarE
     @Override
     public CalendarEntry deserialize(JsonElement jsonElement, Type type,
             JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-
-        Gson typeQuery = new Gson();
-
-        TypeAdapter temporalAmountTypeAdapter;
 
         Class<? extends CalendarEntry> entryClass = resolveEntryClass(jsonElement);
 
