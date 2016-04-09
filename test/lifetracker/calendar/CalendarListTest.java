@@ -26,8 +26,21 @@ public class CalendarListTest {
     private static final LocalDateTime THIS_TIME_YESTERDAY = LocalDateTime.now().minusDays(1);
     private static final LocalDateTime THIS_TIME_TWO_DAYS_AGO = LocalDateTime.now().minusDays(2);
 
+    private static int floatingTaskCount = 0;
+    private static int deadlineTaskCount = 0;
+    private static int eventCount = 0;
+    private static int recurringTaskCount = 0;
+    private static int recurringEntryCount = 0;
+
+    private static CalendarList testCalendar = new CalendarListImpl();
+
+    private String getTestEntryName(String name, int num) {
+        return String.format(name, num);
+    }
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+
     }
 
     @AfterClass
