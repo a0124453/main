@@ -82,7 +82,7 @@
 }  
   
   
-  /* 
+/* 
 .table-row-cell:filled:even{  
     -fx-background-color: white;  
 }  
@@ -105,12 +105,10 @@
 } */
 
 .table-row-cell:overdue {
- /* styles specific for low priority row */
  	-fx-background-color: rgba(255, 159, 160, .4);
 }
 
 .table-row-cell:done .text {
- /* styles specific for low priority row */
  	-fx-strikethrough: true;
 }
   
@@ -132,6 +130,7 @@
     -fx-padding: 0;
     -fx-shape: null;
 }
+
 /*
 #columnTaskID, #columnEventID {
 	-fx-border-radius: 10 0 0 0;

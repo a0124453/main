@@ -8,15 +8,13 @@ import java.util.function.Function;
 //@@author A0091173J
 public class DurationParser {
     private static DurationParser ourInstance = new DurationParser();
-
+    private static final String FORMAT_ERROR = "Invalid duration format!";
+    private final String DURATION_PATTERN = "(\\d+\\s+)?\\w+";
+    private final String TERM_SEPARATOR_PATTERN = "\\s+";
+    
     public static DurationParser getInstance() {
         return ourInstance;
     }
-
-    private static final String FORMAT_ERROR = "Invalid duration format!";
-
-    private final String DURATION_PATTERN = "(\\d+\\s+)?\\w+";
-    private final String TERM_SEPARATOR_PATTERN = "\\s+";
 
     private Map<String, Function<Integer, Period>> parserMap = new HashMap<>();
 

@@ -30,15 +30,15 @@ import java.util.Set;
  * </ul>
  */
 public class DateTimeParser {
+    private static final String EMPTY_DATE_DEFAULT_STRING = "today";
+    private static final String NATTY_TIME_FIELD = "explicit_time";
+    private static final String NATTY_DATE_FIELD = "date";
+    
     private static DateTimeParser instance = new DateTimeParser();
 
     public static DateTimeParser getInstance() {
         return instance;
     }
-
-    private static final String EMPTY_DATE_DEFAULT_STRING = "today";
-    private static final String NATTY_TIME_FIELD = "explicit_time";
-    private static final String NATTY_DATE_FIELD = "date";
 
     private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
 
