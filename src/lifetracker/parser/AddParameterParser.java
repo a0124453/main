@@ -1,13 +1,11 @@
 package lifetracker.parser;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static lifetracker.parser.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
-public class AddParameterParser implements CommandParametersParser {
+public class AddParameterParser extends EditOneParametersParser {
     private static AddParameterParser ourInstance = new AddParameterParser();
 
     public static AddParameterParser getInstance() {
@@ -15,16 +13,9 @@ public class AddParameterParser implements CommandParametersParser {
     }
 
     //TODO Set a enum
-    protected static final String NAME_FIELD = "name";
-    protected static final String EVENT_START_FIELD = "from";
-    protected static final String EVENT_END_FIELD = "to";
-    protected static final String TASK_DEADLINE_FIELD = "by";
     protected static final String RECURRING_PERIOD_FIELD = "every";
     protected static final String RECURRING_LIMIT_OCCURRENCES = "for";
     protected static final String RECURRING_LIMIT_DATE = "until";
-
-    protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
-    protected final DurationParser durationParser = DurationParser.getInstance();
 
     @Override
     public Parameters parseCommandMap(Map<String, String> commandMap) {
@@ -39,65 +30,18 @@ public class AddParameterParser implements CommandParametersParser {
     }
 
     void determineTypeAndPopulateFields(Map<String, String> commandMap, Parameters result) {
-        if (isEventMap(commandMap)) {
-            fillUpEventNull(commandMap);
-            populateEventParameters(commandMap, result);
 
-            if (isRecurringMap(commandMap)) {
-                populateRecurringParameters(commandMap, result);
-            }
-        } else if (isTaskMap(commandMap)) {
-            populateTaskParameters(commandMap, result);
+        super.determineTypeAndPopulateFields(commandMap, result);
 
-            if (isRecurringMap(commandMap)) {
-                populateRecurringParameters(commandMap, result);
-            }
-        } else {
-            result.commandClass = CommandClass.GENERIC;
+        if(isRecurringMap(commandMap)){
 
-            if (isRecurringMap(commandMap)) {
+            if(result.commandClass == CommandClass.GENERIC){
                 fillUpTaskNull(commandMap);
                 populateTaskParameters(commandMap, result);
-                populateRecurringParameters(commandMap, result);
             }
+
+            populateRecurringParameters(commandMap, result);
         }
-    }
-
-    boolean isEventMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, EVENT_START_FIELD, TASK_DEADLINE_FIELD);
-
-        return commandMap.containsKey(EVENT_START_FIELD);
-    }
-
-    void populateEventParameters(Map<String, String> commandMap, Parameters result) {
-        List<LocalDateTime> startEndDateTime = dateTimeParser
-                .parseDoubleDateTime(commandMap.get(EVENT_START_FIELD), commandMap.get(EVENT_END_FIELD));
-
-        result.startDateTime = startEndDateTime.get(0);
-        result.endDateTime = startEndDateTime.get(1);
-        result.commandClass = CommandClass.EVENT;
-    }
-
-    void fillUpEventNull(Map<String, String> commandMap) {
-        if (!commandMap.containsKey(EVENT_START_FIELD)) {
-            commandMap.put(EVENT_START_FIELD, "");
-        }
-
-        if (!commandMap.containsKey(EVENT_END_FIELD)) {
-            commandMap.put(EVENT_END_FIELD, "");
-        }
-    }
-
-    boolean isTaskMap(Map<String, String> commandMap) {
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_START_FIELD);
-        checkMutuallyExclusiveKeywords(commandMap, TASK_DEADLINE_FIELD, EVENT_END_FIELD);
-
-        return commandMap.containsKey(TASK_DEADLINE_FIELD);
-    }
-
-    void populateTaskParameters(Map<String, String> commandMap, Parameters result) {
-        result.endDateTime = dateTimeParser.parseSingleDateTime(commandMap.get(TASK_DEADLINE_FIELD));
-        result.commandClass = CommandClass.DEADLINE;
     }
 
     void fillUpTaskNull(Map<String, String> commandMap) {
