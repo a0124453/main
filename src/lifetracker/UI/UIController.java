@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
@@ -26,7 +25,6 @@ import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicEvent;
 import lifetracker.logic.LogicTask;
-
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -38,64 +36,39 @@ import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import com.sun.javafx.scene.control.skin.TableHeaderRow;
-
+//@@author A0114240B
 public class UIController implements Initializable {
 
-    private static Logic l;
+
     private static final String DAY_FIELD = "day(s)";
     private static final String MONTH_FIELD = "month(s)";
     private static final String YEAR_FIELD = "year(s)";
-
     private static final String MINUTE_FIELD = "minute(s)";
     private static final String HOUR_FIELD = "hour(s)";
-
+    private static Logic l;
     private static List<String> inputHistory;
     private static int inputHistoryIndex;
-
-    @FXML WebView webView;
-    WebEngine webEngine;
-    
-    @FXML
-    Label labelTitle;
-    @FXML
-    TextField textInput;
-    @FXML
-    Label labelFeedback;
-    @FXML
-    TableView<LogicTask> tableTask;
-    @FXML
-
-    TableColumn<LogicTask, String> columnTaskID;
-    @FXML
-    TableColumn<LogicTask, String> columnTaskName;
-    @FXML
-    TableColumn<LogicTask, String> columnTaskTime;
-    @FXML
-    TableColumn<LogicTask, String> columnTaskRecurring;
-    @FXML
-
-    TableView<LogicEvent> tableEvent;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventID;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventName;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventActive;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventStartTime;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventEndTime;
-    @FXML
-    TableColumn<LogicEvent, String> columnEventRecurring;
-
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
+
+
+    @FXML Label labelTitle;
+    @FXML TextField textInput;
+    @FXML Label labelFeedback;
+    @FXML TableView<LogicTask> tableTask;
+    @FXML TableColumn<LogicTask, String> columnTaskID;
+    @FXML TableColumn<LogicTask, String> columnTaskName;
+    @FXML TableColumn<LogicTask, String> columnTaskTime;
+    @FXML TableColumn<LogicTask, String> columnTaskRecurring;
+    @FXML TableView<LogicEvent> tableEvent;
+    @FXML TableColumn<LogicEvent, String> columnEventID;
+    @FXML TableColumn<LogicEvent, String> columnEventName;
+    @FXML TableColumn<LogicEvent, String> columnEventStartTime;
+    @FXML TableColumn<LogicEvent, String> columnEventEndTime;
+    @FXML TableColumn<LogicEvent, String> columnEventRecurring;
+    @FXML WebView webView;
+    WebEngine webEngine;
 
     @FXML
     public void getInput() {
@@ -114,7 +87,7 @@ public class UIController implements Initializable {
     private void process(String userInput) {
         ExecuteResult result;
         result = l.executeCommand(userInput);
-        
+
         if (result.getType() == ExecuteResult.CommandType.HELP) {
             webView.setVisible(true);
             tableEvent.setVisible(false);
@@ -155,12 +128,10 @@ public class UIController implements Initializable {
         tableEvent.setFocusTraversable(true);
         webView.setFocusTraversable(true);
         webEngine = webView.getEngine();
-        String url = LifeTracker.class.getResource("/lifetracker/UI/README.html").toExternalForm();  
+        String url = LifeTracker.class.getResource("/lifetracker/UI/README.html").toExternalForm();
         webEngine.setUserStyleSheetLocation(LifeTracker.class.getResource("/lifetracker/UI/README.css").toString());
         webEngine.load(url);
-        
 
-        
         inputHistory = new ArrayList<String>();
         inputHistoryIndex = -1;
         columnTaskID
@@ -188,14 +159,15 @@ public class UIController implements Initializable {
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
                         String periodString = convertTemporalToString(param.getValue().getPeriod());
-                        
+
                         LocalDate limitDate = param.getValue().getLimitDate();
                         int limitOccur = param.getValue().getLimitOccur();
-                        
+
                         if (limitOccur > 0) {
                             periodString += " for " + limitOccur + " time(s)";
                         } else if (limitDate != null) {
-                            periodString += " until " + limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+                            periodString += " until "
+                                    + limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
                         }
                         return new ReadOnlyStringWrapper(periodString);
                     }
