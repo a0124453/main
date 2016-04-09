@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 //@@author A0091173J
 public class EditEventCommand extends EditDeadlineTaskCommand {
 
-    final LocalDateTime startDateTime;
+    protected final LocalDateTime startDateTime;
 
     public EditEventCommand(int id, String name, LocalDateTime startDateTime, LocalDateTime endDateTime, boolean isForcedConvert) {
         super(id, name, endDateTime, isForcedConvert);
