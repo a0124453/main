@@ -1,11 +1,11 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.OldNewEntryPair;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+
+import lifetracker.calendar.visitor.OldNewEntryPair;
 
 public interface CalendarList {
 
@@ -137,5 +137,7 @@ public interface CalendarList {
     CalendarList findArchivedByName(String toSearch);
 
     CalendarList findAllByName(String toSearch);
+
+    CalendarList findToday();
 
 }
