@@ -32,7 +32,8 @@ public class DateTimeParserTest {
     public void parseSingleDateTime() throws Exception {
         DateTimeParser parser = DateTimeParser.getInstance();
 
-        LocalDateTime expected, actual;
+        LocalDateTime expected;
+        LocalDateTime actual;
 
         //Partition: Case where everything is specified
         actual = parser.parseSingleDateTime("today 2:30pm");
