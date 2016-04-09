@@ -7,6 +7,12 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 
+//@@author A0114240B-unused
+/*
+ * This class was previously used to parse a set of strings identified by 
+ * different regular expression patterns into a LocalDate object.
+ * This class was replaced by external library called Natty.
+ */
 public class DateParser {
     static final String PATTERN_0_REGEX = "^([a-zA-Z]+)|([a-zA-Z]+ [a-zA-Z]+)$";
     static final int PATTERN_0 = 0;
