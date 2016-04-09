@@ -35,12 +35,11 @@ public class DateTimeParser {
     private static final String NATTY_DATE_FIELD = "date";
     
     private static DateTimeParser instance = new DateTimeParser();
+    private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
 
     public static DateTimeParser getInstance() {
         return instance;
     }
-
-    private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
 
     private DateTimeParser() {
     }
