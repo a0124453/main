@@ -304,7 +304,7 @@ public class ParserImpl implements Parser {
     }
 
     private int getIDFromList(List<String> stringList) {
-        String idString = stringList.get(0);
+        String idString = stringList.get(0).trim();
         int id;
 
         try {

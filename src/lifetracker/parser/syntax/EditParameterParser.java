@@ -54,7 +54,7 @@ public class EditParameterParser extends AddParameterParser {
             resolveAndProcessRecurringCommandType(commandMap, result);
         } else {
             result.commandClass = GENERIC;
-            if (commandMap.containsKey(NODUE)) {
+            if (isRemoveDateMap(commandMap)) {
                 result.isForcedOverwrite = true;
             } else {
                 resolveAndProcessRecurringCommandType(commandMap, result);
