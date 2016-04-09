@@ -24,20 +24,27 @@ import java.util.Stack;
 
 public class LogicImpl implements Logic {
 
-    private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";
-    private static final String SAVE_FILE_PROPERTY = "savefile";
+    //configure file
     private static final String CONFIG_FILE_NAME = "config.properties";
-    private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
+    private static final String SAVE_FILE_PROPERTY = "savefile";
+    private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";
+    
+    //Error message
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
+    private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
     private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
+    
+    //save comment
     private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
     private Storage calendarStorage;
     private CalendarList calendar;
+    
     private Stack<CommandObject> commandStack;
     private Stack<CommandObject> redoStack;
+    
     private Properties property;
     private File propertyFile;
 
