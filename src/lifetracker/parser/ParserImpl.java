@@ -138,8 +138,9 @@ public class ParserImpl implements Parser {
         Map<String, String> editSectionMap = cmdParser
                 .parseCommandBody(editCommandSection, EDITONE_KEYWORDS_WITH_VERIFICATIONS);
 
-        //TODO add parameter parser
-        return null;
+        Parameters params = EditOneParametersParser.getInstance().parseCommandMap(editSectionMap);
+
+        return processParametersForEditOne(id, params);
     }
 
     private CommandObject processFind(List<String> commandBody) {
@@ -264,7 +265,20 @@ public class ParserImpl implements Parser {
                 assert false;
                 return null;
         }
+    }
 
+    private CommandObject processParametersForEditOne(int id, Parameters params) {
+        switch (params.commandClass) {
+            case GENERIC:
+                return commandObjectFactory.editOne(id, params.name);
+            case DEADLINE:
+                return commandObjectFactory.editOneToDeadline(id, params.name, params.endDateTime);
+            case EVENT:
+                return commandObjectFactory.editOneToEvent(id, params.name, params.startDateTime, params.endDateTime);
+            default:
+                assert false;
+                return null;
+        }
     }
 
     private int getIDFromList(List<String> stringList) {
