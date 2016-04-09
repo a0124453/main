@@ -46,19 +46,7 @@ public class LogicImplTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
-        File origFile = new File(DEFAULT_CONFIG_FILENAME);
-
-        if (origFile.exists()) {
-            origFile.renameTo(new File(ALT_CONFIG_FILENAME));
-        }
-
-        origFile = new File(DEFAULT_TEST_STORE);
-
-        if (origFile.exists()) {
-            origFile.renameTo(new File(ALT_TEST_STORE));
-        }
-
-        when(storage.load()).thenReturn("");
+        setUpStore();
 
         logicTest = new LogicImpl(parser, storage);
 
@@ -79,6 +67,22 @@ public class LogicImplTest {
 
         error.setComment(ERROR_INVALID_COMMAND);
         error.setType(CommandType.ERROR);
+    }
+
+    private static void setUpStore() throws IOException {
+        File origFile = new File(DEFAULT_CONFIG_FILENAME);
+
+        if (origFile.exists()) {
+            origFile.renameTo(new File(ALT_CONFIG_FILENAME));
+        }
+
+        origFile = new File(DEFAULT_TEST_STORE);
+
+        if (origFile.exists()) {
+            origFile.renameTo(new File(ALT_TEST_STORE));
+        }
+
+        when(storage.load()).thenReturn("");
     }
 
     @AfterClass
