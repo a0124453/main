@@ -198,30 +198,17 @@ public class UIController implements Initializable {
         initColumnEventStartTime();
         initColumnEventEndTime();
         initColumnEventRecurring();
+        setTableEventRowStyle();
+        tableEvent.setItems(eventList);
+    }
 
+    private void setTableEventRowStyle() {
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
             @Override
             public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
-                return new TableRow<LogicEvent>() {
-                    @Override
-                    protected void updateItem(LogicEvent event, boolean b) {
-                        super.updateItem(event, b);
-                        boolean overdue = event != null && event.getOverdue();
-                        boolean done = event != null && !event.isDone();
-
-                        if (!done) {
-                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
-                        }
-
-                        super.updateItem(event, b);
-                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
-                    }
-
-                };
+                return new TableEventRowOverdueAndDone();
             }
         });
-
-        tableEvent.setItems(eventList);
     }
 
     private void initColumnEventRecurring() {
@@ -230,18 +217,17 @@ public class UIController implements Initializable {
 
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
-                        String periodString = parsePeriodFromLogicEvent(param);
-                        return new ReadOnlyStringWrapper(periodString);
+                        return parsePeriodFromLogicEvent(param);
                     }
                 });
     }
 
-    private String parsePeriodFromLogicEvent(CellDataFeatures<LogicEvent, String> param) {
+    private ObservableValue<String> parsePeriodFromLogicEvent(CellDataFeatures<LogicEvent, String> param) {
         LocalDate limitDate = param.getValue().getLimitDate();
         int limitOccur = param.getValue().getLimitOccur();
         String periodString = convertTemporalToString(param.getValue().getPeriod());
         periodString += parseLimit(limitDate, limitOccur);
-        return periodString;
+        return new ReadOnlyStringWrapper(periodString);
     }
 
     private void initColumnEventEndTime() {
@@ -268,11 +254,11 @@ public class UIController implements Initializable {
         initColumnTaskName();
         initColumnTaskTime();
         initColumnTaskRecurring();
-        setTableRowStyle();
+        setTableTaskRowStyle();
         tableTask.setItems(taskList);
     }
 
-    private void setTableRowStyle() {
+    private void setTableTaskRowStyle() {
         tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
             @Override
             public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
@@ -437,18 +423,48 @@ public class UIController implements Initializable {
             taskList.add(task);
         }
     }
+    
+    private class TableEventRowOverdueAndDone extends TableRow<LogicEvent> {
+        @Override
+        protected void updateItem(LogicEvent event, boolean b) {
+            super.updateItem(event, b);
+            boolean overdue = (event != null) && (event.getOverdue());
+            boolean done = (event != null) && (!event.isDone());
+            setOverdueStyle(overdue, done);
+            setDoneStyle(event, b, done);
+        }
+
+        private void setDoneStyle(LogicEvent event, boolean b, boolean done) {
+            super.updateItem(event, b);
+            pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
+        }
+        
+        private void setOverdueStyle(boolean overdue, boolean done) {
+            if (!done) {
+                pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
+            }
+        }
+    }
 
     private class TableTaskRowOverdueAndDone extends TableRow<LogicTask> {
         @Override
         protected void updateItem(LogicTask task, boolean b) {
             super.updateItem(task, b);
-            boolean overdue = task != null && task.getOverdue();
-            boolean done = task != null && !task.isDone();
+            boolean overdue = (task != null) && (task.getOverdue());
+            boolean done = (task != null) && (!task.isDone());
+            setOverdueStyle(overdue, done);
+            setDoneStyle(task, b, done);
+        }
+
+        private void setDoneStyle(LogicTask task, boolean b, boolean done) {
+            super.updateItem(task, b);
+            pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
+        }
+
+        private void setOverdueStyle(boolean overdue, boolean done) {
             if (!done) {
                 pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
             }
-            super.updateItem(task, b);
-            pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
         }
     }
 
