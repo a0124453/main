@@ -47,7 +47,7 @@ public class CalendarListTest {
 
     private static CalendarList testCalendar = new CalendarListImpl();
 
-    private String getTestEntryName(String name, int num) {
+    private static String getTestEntryName(String name, int num) {
         return String.format(name, num);
     }
 
@@ -56,7 +56,7 @@ public class CalendarListTest {
         return count;
     }
 
-    private void resetAllCounts() {
+    private static void resetAllCounts() {
         floatingTaskCount = 0;
         deadlineTaskCount = 0;
         eventCount = 0;
@@ -64,19 +64,17 @@ public class CalendarListTest {
         recurringEntryCount = 0;
     }
 
-    private void resetTestCalendar() {
+    private static void resetTestCalendar() {
         testCalendar = new CalendarListImpl();
         resetAllCounts();
         testCalendar.add(getTestEntryName(NAME_FLOATING_TASK, floatingTaskCount++));
         testCalendar.add(getTestEntryName(NAME_DEADLINE_TASK, deadlineTaskCount++), TWO_HOURS_FROM_NOW);
         testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY);
-        
-        
     }
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-
+        resetTestCalendar();
     }
 
     @AfterClass
