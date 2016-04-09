@@ -47,6 +47,9 @@ public class UIController implements Initializable {
     private static final String FIELD_YEAR = "year(s)";
     private static final String FIELD_MINUTE = "minute(s)";
     private static final String FIELD_HOUR = "hour(s)";
+    private static final String FIELD_LIMIT_OCCUR_SUFFIX = " time(s)";
+    private static final String FIELD_LIMIT_OCCUR_PREFIX = " for ";
+    private static final String FIELD_LIMIT_DATE = " until ";
     private static final PseudoClass PSEUDO_CLASS_OVERDUE = PseudoClass.getPseudoClass("overdue");
     private static final PseudoClass PSEUDO_CLASS_DONE = PseudoClass.getPseudoClass("done");
     
@@ -221,29 +224,17 @@ public class UIController implements Initializable {
         initColumnTaskName();
         initColumnTaskTime();
         initColumnTaskRecurring();
-        
+        setTableRowStyle();
+        tableTask.setItems(taskList);
+    }
+
+    private void setTableRowStyle() {
         tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
             @Override
             public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
-                return new TableRow<LogicTask>() {
-                    @Override
-                    protected void updateItem(LogicTask task, boolean b) {
-                        super.updateItem(task, b);
-                        boolean overdue = task != null && task.getOverdue();
-                        boolean done = task != null && !task.isDone();
-                        if (!done) {
-                            pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
-                        }
-
-                        super.updateItem(task, b);
-                        pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
-                    }
-
-                };
+                return new TableTaskRowOverdueAndDone();
             }
         });
-
-        tableTask.setItems(taskList);
     }
 
     private void initColumnTaskRecurring() {
@@ -264,12 +255,21 @@ public class UIController implements Initializable {
             int limitOccur) {
         String periodString = convertTemporalToString(param.getValue().getPeriod());
         if (limitOccur > 0) {
-            periodString += " for " + limitOccur + " time(s)";
+            periodString += parseLimitOccur(limitOccur);
         } else if (limitDate != null) {
-            periodString += " until "
-                    + convertDateToString(limitDate);
+            periodString += parseLimitDate(limitDate);
         }
         return periodString;
+    }
+
+    private String parseLimitDate(LocalDate limitDate) {
+        String parse = FIELD_LIMIT_DATE + convertDateToString(limitDate);
+        return parse;
+    }
+
+    private String parseLimitOccur(int limitOccur) {
+        String parse = FIELD_LIMIT_OCCUR_PREFIX + limitOccur + FIELD_LIMIT_OCCUR_SUFFIX;
+        return parse;
     }
 
     private String convertDateToString(LocalDate limitDate) {
@@ -378,6 +378,20 @@ public class UIController implements Initializable {
         eventList.clear();
         for (LogicEvent event : result.getEventList()) {
             eventList.add(event);
+        }
+    }
+    
+    private class TableTaskRowOverdueAndDone extends TableRow<LogicTask> {
+        @Override
+        protected void updateItem(LogicTask task, boolean b) {
+            super.updateItem(task, b);
+            boolean overdue = task != null && task.getOverdue();
+            boolean done = task != null && !task.isDone();
+            if (!done) {
+                pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
+            }
+            super.updateItem(task, b);
+            pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
         }
     }
 
