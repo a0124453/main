@@ -13,11 +13,6 @@ public class CommandSectionsParserTest {
 
     private Set<String> commands = new HashSet<>();
 
-    {
-        commands.add("add");
-        commands.add("testcommand");
-    }
-
     private String defaultCommand = "add";
 
     private String fullCommandSeparator = "| ";
@@ -26,7 +21,8 @@ public class CommandSectionsParserTest {
 
     @Test
     public void testParseFullCommand() throws Exception {
-
+        commands.add("add");
+        commands.add("testcommand");
         //Partition: Default (no) command with spaces
         String command = "abc testcommand";
 

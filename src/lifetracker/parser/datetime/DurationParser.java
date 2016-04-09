@@ -11,21 +11,17 @@ public class DurationParser {
     private static final String FORMAT_ERROR = "Invalid duration format!";
     private final String DURATION_PATTERN = "(\\d+\\s+)?\\w+";
     private final String TERM_SEPARATOR_PATTERN = "\\s+";
+    private Map<String, Function<Integer, Period>> parserMap = new HashMap<>();
     
     public static DurationParser getInstance() {
         return ourInstance;
     }
 
-    private Map<String, Function<Integer, Period>> parserMap = new HashMap<>();
-
-    {
+    private DurationParser() {
         parserMap.put("year", Period::ofYears);
         parserMap.put("month", Period::ofMonths);
         parserMap.put("week", Period::ofWeeks);
         parserMap.put("day", Period::ofDays);
-    }
-
-    private DurationParser() {
     }
 
     public boolean isDurationString(String durationString) {

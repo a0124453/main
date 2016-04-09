@@ -17,26 +17,21 @@ public class CommandBodyParserTest {
 
     private Map<String, Options> keywordToEnumMap =  new HashMap<>();
 
-    {
-        keywordToEnumMap.put("three", Options.THREE);
-        keywordToEnumMap.put("empty", Options.EMPTY);
-        keywordToEnumMap.put("empty2", Options.EMPTY2);
-        keywordToEnumMap.put("anything", Options.ANYTHING);
-    }
-
     private Map<Options, Predicate<String>> keyWordVerification = new HashMap<>();
-
-    {
-        keyWordVerification.put(Options.THREE, s -> s.length() == 3);
-        keyWordVerification.put(Options.EMPTY, String::isEmpty);
-        keyWordVerification.put(Options.EMPTY2, String::isEmpty);
-        keyWordVerification.put(Options.ANYTHING, s -> true);
-    }
 
     private CommandBodyParser<Options> cmdParser = new CommandBodyParser<>(keywordToEnumMap, keyWordVerification, Options.NAME);
 
     @Test
     public void testParseCommandBody() throws Exception {
+        keywordToEnumMap.put("three", Options.THREE);
+        keywordToEnumMap.put("empty", Options.EMPTY);
+        keywordToEnumMap.put("empty2", Options.EMPTY2);
+        keywordToEnumMap.put("anything", Options.ANYTHING);
+        
+        keyWordVerification.put(Options.THREE, s -> s.length() == 3);
+        keyWordVerification.put(Options.EMPTY, String::isEmpty);
+        keyWordVerification.put(Options.EMPTY2, String::isEmpty);
+        keyWordVerification.put(Options.ANYTHING, s -> true);
 
         //Partition: All keyword arguments valid
         String commandBody = "name empty three abc";

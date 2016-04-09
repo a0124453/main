@@ -33,14 +33,13 @@ public class DateTimeParser {
     private static final String EMPTY_DATE_DEFAULT_STRING = "today";
     private static final String NATTY_TIME_FIELD = "explicit_time";
     private static final String NATTY_DATE_FIELD = "date";
-    
+
     private static DateTimeParser instance = new DateTimeParser();
+    private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
 
     public static DateTimeParser getInstance() {
         return instance;
     }
-
-    private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
 
     private DateTimeParser() {
     }
@@ -182,10 +181,9 @@ public class DateTimeParser {
 
     private LocalDateTime adjustTimeToAfterReference(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
-        if (!parseElements.contains(NATTY_TIME_FIELD)) {
-            if (dateTime.isBefore(reference) || dateTime.isEqual(reference)) {
-                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
-            }
+        if (!parseElements.contains(NATTY_TIME_FIELD)
+                && (dateTime.isBefore(reference) || dateTime.isEqual(reference))) {
+            dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
         }
 
         return dateTime;
