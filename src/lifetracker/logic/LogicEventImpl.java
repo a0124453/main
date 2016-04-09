@@ -21,6 +21,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setName(String name) {
+        assert name != null;
+        
         this.name = name;
     }
     
@@ -31,6 +33,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setId(int id) {
+        assert id > 0;
+        
         this.id = id;
     }
     
@@ -41,6 +45,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setStart(LocalDateTime start) {
+        assert start != null;
+        
         this.start = start;
     }
     
@@ -51,6 +57,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setEnd(LocalDateTime end) {
+        assert end != null;
+        
         this.end = end;
     }
     
@@ -80,8 +88,8 @@ public class LogicEventImpl implements LogicEvent {
     }
     
     @Override
-    public void setPeriod(Period period) {
-     this.period = period;   
+    public void setPeriod(Period period) {      
+        this.period = period;   
     }
     
     @Override
