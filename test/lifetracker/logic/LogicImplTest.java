@@ -40,6 +40,8 @@ public class LogicImplTest {
     private static ExecuteResult expected3 = new CommandLineResult();
 
     private static ExecuteResult saveat = new CommandLineResult();
+    private static ExecuteResult exit = new CommandLineResult();
+    private static ExecuteResult help = new CommandLineResult();
     private static ExecuteResult error = new CommandLineResult();
 
     @BeforeClass
@@ -60,6 +62,12 @@ public class LogicImplTest {
 
         logicTest = new LogicImpl(parser, storage);
 
+        saveat.setComment("Calendar is saved at " + TEST_SAVEAT_FILE);
+        saveat.setType(CommandType.SAVE);
+        
+        exit.setType(CommandType.EXIT);
+        help.setType(CommandType.HELP);
+        
         expected1.setComment("\"first meeting\" is added.");
         expected1.setType(CommandType.DISPLAY);
 
@@ -68,9 +76,6 @@ public class LogicImplTest {
 
         expected3.setComment("\"third meeting\" is added.");
         expected3.setType(CommandType.DISPLAY);
-
-        saveat.setComment("Calendar is saved at " + TEST_SAVEAT_FILE);
-        saveat.setType(CommandType.SAVE);
 
         error.setComment(ERROR_INVALID_COMMAND);
         error.setType(CommandType.ERROR);
@@ -114,6 +119,22 @@ public class LogicImplTest {
         assertEquals(saveat.getEventList(), logicTest.executeCommand("saveat " + TEST_SAVEAT_FILE).getEventList());
         assertEquals(saveat.getTaskList(), logicTest.executeCommand("saveat " + TEST_SAVEAT_FILE).getTaskList());
         assertEquals(saveat.getType(), logicTest.executeCommand("saveat " + TEST_SAVEAT_FILE).getType());
+    }
+    
+    @Test
+    public void testExit() {
+        assertEquals(exit.getComment(), logicTest.executeCommand("exit").getComment());
+        assertEquals(exit.getEventList(), logicTest.executeCommand("exit").getEventList());
+        assertEquals(exit.getTaskList(), logicTest.executeCommand("exit").getTaskList());
+        assertEquals(exit.getType(), logicTest.executeCommand("exit").getType());
+    }
+    
+    @Test
+    public void testHelp() {
+        assertEquals(help.getComment(), logicTest.executeCommand("help").getComment());
+        assertEquals(help.getEventList(), logicTest.executeCommand("help").getEventList());
+        assertEquals(help.getTaskList(), logicTest.executeCommand("help").getTaskList());
+        assertEquals(help.getType(), logicTest.executeCommand("help").getType());
     }
 
     @Test
