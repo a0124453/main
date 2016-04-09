@@ -97,7 +97,7 @@ public class EditOneCommand extends CommandObject {
 
         if(pair.newEntry == null){
             calendar.mark(id);
-            throw new IllegalArgumentException(ERORR_NON_RECURRING);
+            throw new IllegalArgumentException(ERROR_NON_RECURRING);
         }
 
         newEntryId = pair.newEntry.getId();
