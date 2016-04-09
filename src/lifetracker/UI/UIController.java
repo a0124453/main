@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
 public class UIController implements Initializable {
     private static final String PATH_README_CSS = "/lifetracker/UI/README.css";
     private static final String PATH_README_HTML = "/lifetracker/UI/README.html";
-    private static final String TEXT_EMPTY = "";
+    private static final String FIELD_EMPTY = "";
     private static final String FIELD_DAY = "day(s)";
     private static final String FIELD_MONTH = "month(s)";
     private static final String FIELD_YEAR = "year(s)";
@@ -91,12 +91,39 @@ public class UIController implements Initializable {
     @FXML
     WebView webView;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initTabBehaviour();
+        initWebView();
+        initInputHistory();
+        initTableTask();
+        initTableEvent();
+        initTextInputKeyDetection();
+
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                textInput.requestFocus();
+            }
+        });
+    }
+    
+    private void initTabBehaviour() {
+        textInput.setFocusTraversable(true);
+        tableEvent.setFocusTraversable(true);
+        tableEvent.setFocusTraversable(true);
+        webView.setFocusTraversable(true);
+        labelFeedback.setFocusTraversable(false);
+        labelTitle.setFocusTraversable(false);
+    }
+
     @FXML
     public void getInput() {
         String userInput = textInput.getText();
         addInputToHistory(userInput);
         process(userInput);
-        textInput.setText(TEXT_EMPTY);
+        textInput.setText(FIELD_EMPTY);
 
     }
 
@@ -109,7 +136,10 @@ public class UIController implements Initializable {
         ExecuteResult result = l.executeCommand(userInput);
         ExecuteResult.CommandType commnadType = result.getType();
         String comment = result.getComment();
+        processCommandType(result, commnadType, comment);
+    }
 
+    private void processCommandType(ExecuteResult result, ExecuteResult.CommandType commnadType, String comment) {
         switch (commnadType) {
         case HELP :
             showWebView();
@@ -127,7 +157,6 @@ public class UIController implements Initializable {
             labelFeedback.setText(comment);
             break;
         }
-
     }
 
     private void hideWebView() {
@@ -151,57 +180,55 @@ public class UIController implements Initializable {
         UIController.l = l;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        initTabBehaviour();
-        initWebView();
-        initInputHistory();
-        initTableTask();
-        initTableEvent();
-        initTextInputKeyDetection();
-
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                textInput.requestFocus();
-            }
-        });
-    }
-
     private void initTextInputKeyDetection() {
         textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.UP) {
-
-                    processUpKey();
-                }
-                if (event.getCode() == KeyCode.DOWN) {
-                    processDownKey();
-                }
+                processKeyCode(event);
             }
         });
     }
-    
+
+    private void processKeyCode(KeyEvent event) {
+        KeyCode keyCode = event.getCode();
+        switch (keyCode) {
+        case UP :
+            processUpKey();
+            break;
+        case DOWN :
+            processDownKey();
+            break;
+        default :
+            break;
+        }
+    }
+
     private void processUpKey() {
         if (inputHistoryIndex > 0) {
             inputHistoryIndex--;
-            textInput.setText(inputHistory.get(inputHistoryIndex));
-            textInput.positionCaret(textInput.getText().length());
+            setTextInputHistory();
+            setEndCaretPosition();
         }
     }
 
     private void processDownKey() {
         if (inputHistoryIndex < inputHistory.size() - 1) {
             inputHistoryIndex++;
-            textInput.setText(inputHistory.get(inputHistoryIndex));
-            textInput.positionCaret(textInput.getText().length());
+            setTextInputHistory();
+            setEndCaretPosition();
         } else {
-            textInput.setText(TEXT_EMPTY);
+            textInput.setText(FIELD_EMPTY);
         }
     }
-    
+
+    private void setEndCaretPosition() {
+        textInput.positionCaret(textInput.getText().length());
+    }
+
+    private void setTextInputHistory() {
+        textInput.setText(inputHistory.get(inputHistoryIndex));
+    }
+
     private void initTableEvent() {
         initColumnEventId();
         initColumnEventName();
@@ -224,7 +251,6 @@ public class UIController implements Initializable {
     private void initColumnEventRecurring() {
         columnEventRecurring.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
-
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicEvent, String> param) {
                         return parsePeriodFromLogicEvent(param);
@@ -237,6 +263,7 @@ public class UIController implements Initializable {
         int limitOccur = param.getValue().getLimitOccur();
         String periodString = convertTemporalToString(param.getValue().getPeriod());
         periodString += parseLimit(limitDate, limitOccur);
+        
         return new ReadOnlyStringWrapper(periodString);
     }
 
@@ -272,6 +299,7 @@ public class UIController implements Initializable {
         tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
             @Override
             public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
+                
                 return new TableTaskRowOverdueAndDone();
             }
         });
@@ -280,7 +308,6 @@ public class UIController implements Initializable {
     private void initColumnTaskRecurring() {
         columnTaskRecurring.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
                         return parsePeriodFromLogicTask(param);
@@ -293,6 +320,7 @@ public class UIController implements Initializable {
         int limitOccur = param.getValue().getLimitOccur();
         String periodString = convertTemporalToString(param.getValue().getPeriod());
         periodString += parseLimit(limitDate, limitOccur);
+        
         return new ReadOnlyStringWrapper(periodString);
     }
 
@@ -303,36 +331,43 @@ public class UIController implements Initializable {
         } else if (limitDate != null) {
             limit = parseLimitDate(limitDate);
         }
+        
         return limit;
     }
 
     private String parseLimitDate(LocalDate limitDate) {
         String parse = FIELD_LIMIT_DATE + convertDateToString(limitDate);
+        
         return parse;
     }
 
     private String parseLimitOccur(int limitOccur) {
         String parse = FIELD_LIMIT_OCCUR_PREFIX + limitOccur + FIELD_LIMIT_OCCUR_SUFFIX;
+        
         return parse;
     }
 
     private String convertDateToString(LocalDate limitDate) {
         String dateString = limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        
         return dateString;
     }
 
     private void initColumnTaskTime() {
         columnTaskTime.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
-
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<LogicTask, String> param) {
-                        LocalDateTime deadline = param.getValue().getDeadline();
-                        String deadlineString = convertDeadlineToString(deadline);
-                        return new ReadOnlyStringWrapper(deadlineString);
+                        return parseDeadlineFromLogicTask(param);
                     }
-
                 });
+    }
+
+    private ObservableValue<String> parseDeadlineFromLogicTask(CellDataFeatures<LogicTask, String> param) {
+        LocalDateTime deadline = param.getValue().getDeadline();
+        String deadlineString = convertDeadlineToString(deadline);
+        
+        return new ReadOnlyStringWrapper(deadlineString);
     }
 
     private String convertDeadlineToString(LocalDateTime deadline) {
@@ -340,13 +375,15 @@ public class UIController implements Initializable {
         if (deadline != null) {
             deadlineString = convertDateTimeToString(deadline);
         } else {
-            deadlineString = TEXT_EMPTY;
+            deadlineString = FIELD_EMPTY;
         }
+        
         return deadlineString;
     }
 
     private String convertDateTimeToString(LocalDateTime deadline) {
         String dateTimeString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+        
         return dateTimeString;
     }
 
@@ -367,30 +404,22 @@ public class UIController implements Initializable {
     private void initWebView() {
         String htmlURL = LifeTracker.class.getResource(PATH_README_HTML).toExternalForm();
         String cssURL = LifeTracker.class.getResource(PATH_README_CSS).toString();
-        webView.setVisible(false);
         webEngine = webView.getEngine();
         webEngine.setUserStyleSheetLocation(cssURL);
         webEngine.load(htmlURL);
-    }
-
-    private void initTabBehaviour() {
-        textInput.setFocusTraversable(true);
-        tableEvent.setFocusTraversable(true);
-        tableEvent.setFocusTraversable(true);
-        webView.setFocusTraversable(true);
-        labelFeedback.setFocusTraversable(false);
-        labelTitle.setFocusTraversable(false);
+        webView.setVisible(false);
     }
 
     private String convertTemporalToString(TemporalAmount period) {
         String periodString;
         if (period == null) {
-            periodString = TEXT_EMPTY;
+            periodString = FIELD_EMPTY;
         } else if (period instanceof Period) {
             periodString = convertPeriodToString(((Period) period).normalized());
         } else {
             periodString = convertDurationToString((Duration) period);
         }
+        
         return periodString;
     }
 
@@ -408,11 +437,12 @@ public class UIController implements Initializable {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
         String durationString = formatDuration(hours, FIELD_HOUR) + formatDuration(minutes, FIELD_MINUTE);
+        
         return durationString;
     }
 
     private String formatDuration(long duration, String label) {
-        return duration == 0 ? TEXT_EMPTY : duration + " " + label + " ";
+        return duration == 0 ? FIELD_EMPTY : duration + " " + label + " ";
     }
 
     public static void populateList(ExecuteResult result) {
@@ -433,7 +463,7 @@ public class UIController implements Initializable {
             taskList.add(task);
         }
     }
-    
+
     private class TableEventRowOverdueAndDone extends TableRow<LogicEvent> {
         @Override
         protected void updateItem(LogicEvent event, boolean b) {
@@ -448,7 +478,7 @@ public class UIController implements Initializable {
             super.updateItem(event, b);
             pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
         }
-        
+
         private void setOverdueStyle(boolean overdue, boolean done) {
             if (!done) {
                 pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
