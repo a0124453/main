@@ -8,14 +8,19 @@ import java.util.List;
 
 //@@author A0149467N
 
-public class CommandLineResult implements ExecuteResult {
+public class ExecuteResultImpl implements ExecuteResult {
 
+    //Comment received after the execution of command
     private String comment;
+    
+    //List of events and tasks displayed in UI
     private List<LogicEvent> eventList;
     private List<LogicTask> taskList;
+    
+    //Type of the command
     private CommandType commandType;
 
-    public CommandLineResult() {
+    public ExecuteResultImpl() {
         this.eventList = new ArrayList<>();
         this.taskList = new ArrayList<>();
     }

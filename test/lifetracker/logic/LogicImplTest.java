@@ -60,14 +60,14 @@ public class LogicImplTest {
     private static Storage storage = mock(Storage.class);
     private static LogicImpl logicTest;
 
-    private static ExecuteResult expected1 = new CommandLineResult();
-    private static ExecuteResult expected2 = new CommandLineResult();
-    private static ExecuteResult expected3 = new CommandLineResult();
+    private static ExecuteResult expected1 = new ExecuteResultImpl();
+    private static ExecuteResult expected2 = new ExecuteResultImpl();
+    private static ExecuteResult expected3 = new ExecuteResultImpl();
 
-    private static ExecuteResult saveat = new CommandLineResult();
-    private static ExecuteResult exit = new CommandLineResult();
-    private static ExecuteResult help = new CommandLineResult();
-    private static ExecuteResult error = new CommandLineResult();
+    private static ExecuteResult saveat = new ExecuteResultImpl();
+    private static ExecuteResult exit = new ExecuteResultImpl();
+    private static ExecuteResult help = new ExecuteResultImpl();
+    private static ExecuteResult error = new ExecuteResultImpl();
 
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {

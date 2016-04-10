@@ -8,6 +8,7 @@ import java.time.Period;
 
 public interface LogicTask {
 
+    //setter and getter for each variable
     void setName(String name);
     
     String getName();
