@@ -1,6 +1,5 @@
 package lifetracker.parser.datetime;
 
-import lifetracker.parser.datetime.DateTimeParser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -164,7 +163,7 @@ public class DateTimeParserTest {
 
         //Partition: When start date is missing
         actualDateTimeList = parser.parseDoubleDateTime("12am", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0));
+        expectedStart = LocalDateTime.of(2016, 3, 24, 0, 0);
         expectedEnd = LocalDateTime.of(2016, 3, 24, 23, 40);
         expectedDateTimeList.add(expectedStart);
         expectedDateTimeList.add(expectedEnd);
@@ -173,15 +172,24 @@ public class DateTimeParserTest {
 
         //Partition: When start time is missing
         actualDateTimeList = parser.parseDoubleDateTime("24/3/16", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.of(LocalDate.of(2016, 3, 24), LocalTime.now().withNano(0));
+        expectedStart = LocalDateTime.of(2016, 3, 24, 22, 40);
         expectedDateTimeList.set(0, expectedStart);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
 
         //Partition: Both start date and time are missing
         actualDateTimeList = parser.parseDoubleDateTime("", "24/3/16 11.40pm");
-        expectedStart = LocalDateTime.now().withNano(0);
+        expectedStart = LocalDateTime.of(2016, 3,24,22,40);
         expectedDateTimeList.set(0, expectedStart);
+
+        Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
+
+        //Boundary: Days crossover
+        actualDateTimeList = parser.parseDoubleDateTime("", "24/3/16 12.40am");
+        expectedStart = LocalDateTime.of(2016, 3,23,23,40);
+        expectedDateTimeList.set(0, expectedStart);
+        expectedEnd = LocalDateTime.of(2016,3,24,0,40);
+        expectedDateTimeList.set(1, expectedEnd);
 
         Assert.assertEquals(expectedDateTimeList, actualDateTimeList);
     }
@@ -217,7 +225,7 @@ public class DateTimeParserTest {
 
         //Partition: When both are blanks
         actualDateTimeList = parser.parseDoubleDateTime("", "");
-        expectedStart = LocalDateTime.now().withNano(0);
+        expectedStart = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1);
         expectedEnd = expectedStart.plusHours(1);
 
         expectedDateTimeList.set(0, expectedStart);
@@ -227,8 +235,8 @@ public class DateTimeParserTest {
 
         //Partition: Start time and end date missing
         actualDateTimeList = parser.parseDoubleDateTime("today", "11:59pm");
-        expectedStart = LocalDateTime.now().withNano(0);
         expectedEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
+        expectedStart = expectedEnd.minusHours(1);
 
         expectedDateTimeList.set(0, expectedStart);
         expectedDateTimeList.set(1, expectedEnd);
@@ -237,8 +245,8 @@ public class DateTimeParserTest {
 
         //Boundary: When end time is before now
         actualDateTimeList = parser.parseDoubleDateTime("today", "12am");
-        expectedStart = LocalDateTime.now().withNano(0);
         expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
+        expectedStart = expectedEnd.minusHours(1);
 
         expectedDateTimeList.set(0, expectedStart);
         expectedDateTimeList.set(1, expectedEnd);
@@ -247,8 +255,8 @@ public class DateTimeParserTest {
 
         //Partition: Start date and end time missing
         actualDateTimeList = parser.parseDoubleDateTime("2pm", "tomorrow");
-        expectedStart = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
-        expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
+        expectedStart = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
+        expectedEnd = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
 
         expectedDateTimeList.set(0, expectedStart);
         expectedDateTimeList.set(1, expectedEnd);

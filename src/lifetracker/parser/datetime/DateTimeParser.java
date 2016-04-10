@@ -1,6 +1,7 @@
 package lifetracker.parser.datetime;
 
 import com.joestelmach.natty.DateGroup;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,7 +69,8 @@ public class DateTimeParser {
 
         List<LocalDateTime> dateTimeResults = new ArrayList<>(2);
 
-        boolean isEndEmpty = endString == null || endString.isEmpty();
+        boolean isEndEmpty = StringUtils.isBlank(endString);
+        boolean isStartEmpty = StringUtils.isBlank(startString);
 
         startString = fillEmpty(startString);
         endString = fillEmpty(endString);
@@ -79,7 +81,9 @@ public class DateTimeParser {
         LocalDateTime startDateTime = convertDateGroupToLocalDateTime(startDateGroup);
         LocalDateTime endDateTime = convertDateGroupToLocalDateTime(endDateGroup);
 
-        Set<String> startParseElements = startDateGroup.getParseLocations().keySet();
+        Set<String> startParseElements = isStartEmpty ?
+                Collections.emptySet() :
+                startDateGroup.getParseLocations().keySet();
         // If end datetime was empty to begin with, we have to pretend nothing
         // was parsed.
         Set<String> endParseElements = isEndEmpty ? Collections.emptySet() : endDateGroup.getParseLocations().keySet();
@@ -121,7 +125,7 @@ public class DateTimeParser {
         dateTime = fillDefaultDateTime(dateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1)),
                 parseElements);
 
-        dateTime = adjustDateToAfterReference(dateTime, LocalDateTime.now().withNano(0), parseElements);
+        dateTime = adjustDateAfterReferenceByDays(dateTime, LocalDateTime.now().withNano(0), parseElements);
 
         return dateTime;
     }
@@ -129,28 +133,33 @@ public class DateTimeParser {
     private LocalDateTime[] adjustDoubleDateToDefault(LocalDateTime startDateTime, LocalDateTime endDateTime,
             Set<String> startParseElements, Set<String> endParseElements) {
 
-        LocalDateTime[] adjustedDateTimes = new LocalDateTime[2];
+        LocalDateTime adjustedStart, adjustedEnd;
+        LocalDateTime defaultDateTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
-        adjustedDateTimes[0] = fillDefaultDateTime(startDateTime, LocalDateTime.now().withNano(0), startParseElements);
+        //Fill in proper default dates
+        adjustedStart = fillDefaultDateTime(startDateTime, defaultDateTime, startParseElements);
+        adjustedEnd = fillDefaultDateTime(endDateTime, adjustedStart, endParseElements);
+        adjustedEnd = adjustTimeAfterReferenceOneHour(adjustedEnd, adjustedStart, endParseElements);
 
-        adjustedDateTimes[1] = fillDefaultDateTime(endDateTime, adjustedDateTimes[0], endParseElements);
+        //To adjust the start time properly
+        adjustedStart = fillDefaultDateTime(adjustedStart, adjustedEnd, startParseElements);
+        adjustedStart = adjustTimeBeforeReferenceOneHour(adjustedStart, adjustedEnd, startParseElements);
 
-        adjustedDateTimes[1] = adjustTimeToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
+        adjustedEnd = adjustTimeAfterReferenceOneHour(adjustedEnd, adjustedStart, endParseElements);
+        adjustedEnd = adjustDateAfterReferenceByDays(adjustedEnd, adjustedStart, endParseElements);
 
-        adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], adjustedDateTimes[0], endParseElements);
-
-        if (adjustedDateTimes[1].isBefore(LocalDateTime.now())) {
+        if (adjustedEnd.isBefore(LocalDateTime.now())) {
             // jointParse will detect if both dates can be adjusted
             Set<String> jointParse = new HashSet<>(startParseElements);
             jointParse.addAll(endParseElements);
 
-            adjustedDateTimes[0] = adjustDateToAfterReference(adjustedDateTimes[0], LocalDateTime.now().withNano(0),
+            adjustedStart = adjustDateAfterReferenceByDays(adjustedStart, defaultDateTime,
                     jointParse);
-            adjustedDateTimes[1] = adjustDateToAfterReference(adjustedDateTimes[1], LocalDateTime.now().withNano(0),
+            adjustedEnd = adjustDateAfterReferenceByDays(adjustedEnd, defaultDateTime,
                     jointParse);
         }
 
-        return adjustedDateTimes;
+        return new LocalDateTime[] {adjustedStart, adjustedEnd};
     }
 
     private LocalDateTime fillDefaultDateTime(LocalDateTime dateTime, LocalDateTime defaultDateTime,
@@ -168,7 +177,7 @@ public class DateTimeParser {
         return adjustedDateTime;
     }
 
-    private LocalDateTime adjustDateToAfterReference(LocalDateTime dateTime, LocalDateTime reference,
+    private LocalDateTime adjustDateAfterReferenceByDays(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
         if (!parseElements.contains(NATTY_DATE_FIELD)) {
             while (dateTime.isBefore(reference)) {
@@ -179,11 +188,33 @@ public class DateTimeParser {
         return dateTime;
     }
 
-    private LocalDateTime adjustTimeToAfterReference(LocalDateTime dateTime, LocalDateTime reference,
+    private LocalDateTime adjustTimeAfterReferenceOneHour(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
         if (!parseElements.contains(NATTY_TIME_FIELD)
                 && (dateTime.isBefore(reference) || dateTime.isEqual(reference))) {
-            dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
+
+            if (parseElements.contains(NATTY_DATE_FIELD)) {
+                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
+            } else{
+                dateTime = reference.plusHours(1);
+            }
+
+        }
+
+        return dateTime;
+    }
+
+    private LocalDateTime adjustTimeBeforeReferenceOneHour(LocalDateTime dateTime, LocalDateTime reference,
+            Set<String> parseElements) {
+
+        if (!parseElements.contains(NATTY_TIME_FIELD)
+                && (dateTime.isAfter(reference) || dateTime.isEqual(reference))) {
+
+            if (parseElements.contains(NATTY_DATE_FIELD)) {
+                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
+            } else{
+                dateTime = reference.minusHours(1);
+            }
         }
 
         return dateTime;
