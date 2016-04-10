@@ -47,9 +47,20 @@ public class LogicImpl implements Logic {
     private Stack<CommandObject> commandStack;
     private Stack<CommandObject> redoStack;
 
+    //This is used to load and store the configuration files
     private Properties property;
+    //This is the configuration file
     private File propertyFile;
 
+    /**
+    * Constructor of Logic. Initialize parser, storage and two stacks,
+    *   configure the configuration file and load the calendar from storage
+    * 
+    * @param parser
+    * @param storage
+    * @throws IOException
+    *       If an I/O error occurs when configuring the file or load the calendar
+    */
     public LogicImpl(Parser parser, Storage storage) throws IOException {
         assert parser != null;
         assert storage != null;
@@ -65,6 +76,12 @@ public class LogicImpl implements Logic {
         calendar = storageAdapter.load();
     }
 
+    /**
+    * Configure the configuration file
+    * 
+    * @throws IOException
+    *       If an I/O error occurs when createNewFile or load the fileInputStream or store the calendar
+    */
     private void configureFile() throws IOException {
         property = new Properties();
         propertyFile = new File(CONFIG_FILE_NAME);
@@ -80,6 +97,13 @@ public class LogicImpl implements Logic {
         calendarStorage.setStoreAndStart(location);
     }
 
+    /**
+    * Decide what kind of command it is and set the CommandType for them,
+    *   pass the command string to respective handlers
+    * 
+    * @param commandString
+    * @return The result after execution
+    */
     @Override
     public ExecuteResult executeCommand(String commandString) {
         assert commandString != null;
@@ -89,7 +113,7 @@ public class LogicImpl implements Logic {
 
         if (commandContent[0].equals("saveat")) {
             runResult.setType(CommandType.SAVE);
-            return saveat(commandString, runResult);
+            return processSaveat(commandString, runResult);
         }
 
         switch (commandString) {
@@ -112,7 +136,15 @@ public class LogicImpl implements Logic {
         }
     }
 
-    private ExecuteResult saveat(String commandString, ExecuteResult runResult) {
+    /**
+    * Save the calendar at the specified location according to the user input and set the comment.
+    * 
+    * @param commandString
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @return The ExecuteResult object to be returned to UI
+    */
+    private ExecuteResult processSaveat(String commandString, ExecuteResult runResult) {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
 
@@ -122,6 +154,11 @@ public class LogicImpl implements Logic {
         return runResult;
     }
 
+    /**
+    * Save the calendar at the specified location and change the configuration file
+    * 
+    * @param location
+    */
     private void saveat(String location) {
         try {
             calendarStorage.setStoreAndStart(location);
@@ -133,6 +170,15 @@ public class LogicImpl implements Logic {
         }
     }
 
+    /**
+    * Pop the command stack, push the command to the redo stack and undo the command.
+    *   Store the changes and pass the result from parser to be processed
+    *   If the command stack is empty, return an error result.
+    * 
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @return The ExecuteResult object to be returned to UI
+    */
     private ExecuteResult undo(ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
@@ -152,6 +198,15 @@ public class LogicImpl implements Logic {
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
 
+    /**
+    * Pop the redo stack, push the command to the command stack and redo the command.
+    *   Store the changes and pass the result from parser to be processed
+    *   If the redo stack is empty, return an error result.
+    * 
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @return The ExecuteResult object to be returned to UI
+    */
     private ExecuteResult redo(ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
@@ -171,6 +226,17 @@ public class LogicImpl implements Logic {
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
 
+    /**
+    * Pass the commandString to parser and execute the command.
+    *   Push the command to the command stack and clear the redo stack.
+    *   Store the changes and pass the result from parser to be processed.
+    *   If the command is invalid, return an error result.
+    * 
+    * @param commandString
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @return The ExecuteResult object to be returned to UI
+    */
     private ExecuteResult otherCommand(String commandString, ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
@@ -192,6 +258,9 @@ public class LogicImpl implements Logic {
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
 
+    /**
+    * Store the calendar to the storage
+    */
     private void store() {
         try {
             StorageAdapter storageAdapter = new StorageAdapter(calendarStorage);
@@ -201,6 +270,17 @@ public class LogicImpl implements Logic {
         }
     }
 
+    /**
+    * Set the comment and for each task/event in the calendar, add task/event to the runResult
+    * 
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @param commandExecuted
+    *       The parser parsed the command string to a command object: commandExecuted
+    * @param executedState
+    *       The CalendarList to be manipulated so that it can be displayed in UI
+    * @return The ExecuteResult object to be returned to UI
+    */
     private ExecuteResult processExecutionResults(ExecuteResult runResult, CommandObject commandExecuted,
             CalendarList executedState) {
         assert commandExecuted != null;
@@ -223,6 +303,16 @@ public class LogicImpl implements Logic {
         return runResult;
     }
 
+    /**
+    * Add the task to the runResult
+    * 
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @param task
+    *       The task to be added to runResult
+    * @param isHighlighted
+    *       Whether the task will be highlighted in UI
+    */
     private void addTask(ExecuteResult runResult, CalendarEntry task, boolean isHighlighted) {
         LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
         runResult.addTaskLine(
@@ -237,6 +327,16 @@ public class LogicImpl implements Logic {
                 isHighlighted);
     }
 
+    /**
+    * Add the event to the runResult
+    * 
+    * @param runResult
+    *       The ExecutedResult object to be modified so that it can be returned to UI
+    * @param event
+    *       The event to be added to runResult
+    * @param isHighlighted
+    *       Whether the event will be highlighted in UI
+    */
     private void addEvent(ExecuteResult runResult, CalendarEntry event, boolean isHighlighted) {
         LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
         runResult.addEventLine(
