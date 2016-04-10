@@ -226,7 +226,7 @@ public class UIController implements Initializable {
             @Override
             public TableRow<LogicTask> call(TableView<LogicTask> tableEventView) {
                 
-                return new TableTaskRowOverdueAndDone();
+                return new TableTaskRowWithStyles();
             }
         });
     }
@@ -264,7 +264,7 @@ public class UIController implements Initializable {
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
             @Override
             public TableRow<LogicEvent> call(TableView<LogicEvent> tableEventView) {
-                return new TableEventRowOverdueAndDone();
+                return new TableEventRowWithStyles();
             }
         });
     }
@@ -484,7 +484,7 @@ public class UIController implements Initializable {
         }
     }
 
-    private class TableEventRowOverdueAndDone extends TableRow<LogicEvent> {
+    private class TableEventRowWithStyles extends TableRow<LogicEvent> {
         @Override
         protected void updateItem(LogicEvent event, boolean b) {
             super.updateItem(event, b);
@@ -513,7 +513,7 @@ public class UIController implements Initializable {
         }
     }
 
-    private class TableTaskRowOverdueAndDone extends TableRow<LogicTask> {
+    private class TableTaskRowWithStyles extends TableRow<LogicTask> {
         @Override
         protected void updateItem(LogicTask task, boolean b) {
             super.updateItem(task, b);
