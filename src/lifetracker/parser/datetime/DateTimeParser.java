@@ -191,7 +191,7 @@ public class DateTimeParser {
 
         LocalDateTime adjustedDateTime = dateTime.withNano(0);
 
-        if (!parseElements.contains(NATTY_MERIDIAN_INDICATOR)) {
+        if (!parseElements.contains(NATTY_MERIDIAN_INDICATOR) && parseElements.contains(NATTY_TIME_FIELD)) {
             LocalTime time = dateTime.toLocalTime();
 
             if (time.isAfter(UNGODLY_HOUR_START) && time.isBefore(UNGODLY_HOUR_END)) {
