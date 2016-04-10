@@ -8,15 +8,15 @@ import java.time.Period;
 
 public class LogicTaskImpl implements LogicTask {
     
-    private String name;
-    private int id;
-    private LocalDateTime deadline;
-    private boolean isOverdue;
-    private boolean isDone;
-    private Period period;
-    private int limitOccur;
-    private LocalDate limitDate;
-    private boolean isNew;
+    private String name; //Name of the task
+    private int id; //Id of the task
+    private LocalDateTime deadline; //Deadline of the task
+    private boolean isOverdue; //Whether the task is overdue
+    private boolean isDone; //Whether the task is done
+    private Period period; //Period of the task
+    private int limitOccur; //The occurrence limit for the recurring task
+    private LocalDate limitDate; //The limit date for the recurring task
+    private boolean isNew; //Whether the task is highlighted
     
     @Override
     public void setName(String name) {

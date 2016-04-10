@@ -17,7 +17,7 @@ public class LogicEventImpl implements LogicEvent {
     private Period period; //Period of the event
     private int limitOccur; //The occurrence limit for the recurring event
     private LocalDate limitDate; //The limit date for the recurring event
-    private boolean isNew; //Whether the task is highlighted
+    private boolean isNew; //Whether the event is highlighted
     
     @Override
     public void setName(String name) {
