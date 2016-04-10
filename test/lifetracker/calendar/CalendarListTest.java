@@ -58,11 +58,6 @@ public class CalendarListTest {
         return String.format(name, num);
     }
 
-    private int incrementCount(int count) {
-        count += 1;
-        return count;
-    }
-
     private static void resetAllCounts() {
         floatingTaskCount = 0;
         deadlineTaskCount = 0;
@@ -75,13 +70,16 @@ public class CalendarListTest {
         testCalendar = new CalendarListImpl();
         resetAllCounts();
         testCalendar.add(getTestEntryName(NAME_FLOATING_TASK, floatingTaskCount++));
+        testCalendar.add(getTestEntryName(NAME_FLOATING_TASK, floatingTaskCount++));
         testCalendar.add(getTestEntryName(NAME_DEADLINE_TASK, deadlineTaskCount++), TWO_HOURS_FROM_NOW);
+        testCalendar.add(getTestEntryName(NAME_DEADLINE_TASK, deadlineTaskCount++), THIS_TIME_TWO_DAYS_AGO);
         testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY);
         testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY,
                 TWO_OCCURRENCES);
         testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY,
                 ONE_WEEK_FROM_TODAY);
         testCalendar.add(getTestEntryName(NAME_EVENT, eventCount++), THIS_TIME_TOMORROW, TWO_HOURS_FROM_NOW_TOMORROW);
+        testCalendar.add(getTestEntryName(NAME_EVENT, eventCount++), TWO_HOURS_AGO, TWO_HOURS_FROM_NOW_TOMORROW);
         testCalendar.add(getTestEntryName(NAME_RECURRING_EVENT, eventCount++), THIS_TIME_TOMORROW,
                 TWO_HOURS_FROM_NOW_TOMORROW, EVERY_WEEK);
         testCalendar.add(getTestEntryName(NAME_RECURRING_EVENT, eventCount++), TWO_HOURS_AGO, TWO_HOURS_FROM_NOW,
@@ -101,6 +99,7 @@ public class CalendarListTest {
 
     @Before
     public void setUp() throws Exception {
+        resetTestCalendar();
     }
 
     @After
