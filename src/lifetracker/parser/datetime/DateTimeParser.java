@@ -207,17 +207,17 @@ public class DateTimeParser {
 
     private LocalDateTime adjustTimeBeforeReferenceOneHour(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
-
+        LocalDateTime tempDateTime = dateTime;
         if (!parseElements.contains(NATTY_TIME_FIELD)
-                && (dateTime.isAfter(reference) || dateTime.isEqual(reference))) {
+                && (tempDateTime.isAfter(reference) || tempDateTime.isEqual(reference))) {
 
             if (parseElements.contains(NATTY_DATE_FIELD)) {
-                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
+                tempDateTime = LocalDateTime.of(tempDateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
             } else{
-                dateTime = reference.minusHours(1);
+                tempDateTime = reference.minusHours(1);
             }
         }
 
-        return dateTime;
+        return tempDateTime;
     }
 }
