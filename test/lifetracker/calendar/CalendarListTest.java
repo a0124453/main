@@ -2,6 +2,7 @@ package lifetracker.calendar;
 
 import static org.junit.Assert.fail;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
@@ -22,17 +23,23 @@ public class CalendarListTest {
     private static final String NAME_RECURRING_EVENT = "recurringEvent%d";
 
     private static final LocalDateTime NOW = LocalDateTime.now();
-    private static final LocalDateTime TWO_HOURS_FROM_NOW = LocalDateTime.now().plusHours(2);
-    private static final LocalDateTime TWO_HOURS_AGO = LocalDateTime.now().minusHours(2);
-    private static final LocalDateTime THIS_TIME_TOMORROW = LocalDateTime.now().plusDays(1);
+    private static final LocalDateTime TWO_HOURS_FROM_NOW = NOW.plusHours(2);
+    private static final LocalDateTime TWO_HOURS_AGO = NOW.minusHours(2);
+    private static final LocalDateTime THIS_TIME_TOMORROW = NOW.plusDays(1);
     private static final LocalDateTime TWO_HOURS_FROM_NOW_TOMORROW = THIS_TIME_TOMORROW.plusHours(2);
-    private static final LocalDateTime THIS_TIME_YESTERDAY = LocalDateTime.now().minusDays(1);
-    private static final LocalDateTime THIS_TIME_TWO_DAYS_AGO = LocalDateTime.now().minusDays(2);
+    private static final LocalDateTime THIS_TIME_YESTERDAY = NOW.minusDays(1);
+    private static final LocalDateTime THIS_TIME_TWO_DAYS_AGO = NOW.minusDays(2);
+
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate ONE_WEEK_FROM_TODAY = TODAY.plusWeeks(1);
 
     private static final Period EVERY_DAY = Period.ofDays(1);
     private static final Period EVERY_TWO_DAYS = Period.ofDays(2);
     private static final Period EVERY_WEEK = Period.ofWeeks(1);
     private static final Period EVERY_MONTH = Period.ofMonths(1);
+
+    private static final int TWO_OCCURRENCES = 2;
+    private static final int THREE_OCCURRENCES = 3;
 
     private static int floatingTaskCount = 0;
     private static int deadlineTaskCount = 0;
@@ -70,6 +77,17 @@ public class CalendarListTest {
         testCalendar.add(getTestEntryName(NAME_FLOATING_TASK, floatingTaskCount++));
         testCalendar.add(getTestEntryName(NAME_DEADLINE_TASK, deadlineTaskCount++), TWO_HOURS_FROM_NOW);
         testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY,
+                TWO_OCCURRENCES);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_TASK, recurringTaskCount++), TWO_HOURS_FROM_NOW, EVERY_DAY,
+                ONE_WEEK_FROM_TODAY);
+        testCalendar.add(getTestEntryName(NAME_EVENT, eventCount++), THIS_TIME_TOMORROW, TWO_HOURS_FROM_NOW_TOMORROW);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_EVENT, eventCount++), THIS_TIME_TOMORROW,
+                TWO_HOURS_FROM_NOW_TOMORROW, EVERY_WEEK);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_EVENT, eventCount++), TWO_HOURS_AGO, TWO_HOURS_FROM_NOW,
+                EVERY_WEEK, THREE_OCCURRENCES);
+        testCalendar.add(getTestEntryName(NAME_RECURRING_EVENT, eventCount++), TWO_HOURS_AGO, TWO_HOURS_FROM_NOW,
+                EVERY_TWO_DAYS, ONE_WEEK_FROM_TODAY);
     }
 
     @BeforeClass
