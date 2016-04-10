@@ -12,78 +12,82 @@
       "id": 2,
       "isActive": true
     },
-    "3": {
-      "SERIAL_TYPE_IDENTIFIER": "GenericEntry",
-      "name": "31853",
-      "id": 3,
+    "10": {
+      "period": {
+        "years": 0,
+        "months": 0,
+        "days": 7
+      },
+      "occurrenceLimit": -2,
+      "dateLimit": {
+        "year": 2016,
+        "month": 4,
+        "day": 13
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 23,
+          "minute": 59,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "DeadlineTask",
+      "name": "132315f",
+      "id": 10,
+      "isActive": true
+    },
+    "12": {
+      "period": {
+        "years": 0,
+        "months": 1,
+        "days": 0
+      },
+      "occurrenceLimit": 5,
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 23,
+          "minute": 59,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "DeadlineTask",
+      "name": "132315f",
+      "id": 12,
+      "isActive": true
+    },
+    "13": {
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 23,
+          "minute": 59,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "DeadlineTask",
+      "name": "task",
+      "id": 13,
       "isActive": true
     }
   },
   "eventList": {
-    "5": {
-      "startDateTime": {
-        "date": {
-          "year": 2016,
-          "month": 4,
-          "day": 11
-        },
-        "time": {
-          "hour": 6,
-          "minute": 0,
-          "second": 0,
-          "nano": 0
-        }
-      },
-      "deadline": {
-        "date": {
-          "year": 2016,
-          "month": 4,
-          "day": 11
-        },
-        "time": {
-          "hour": 7,
-          "minute": 0,
-          "second": 0,
-          "nano": 0
-        }
-      },
-      "SERIAL_TYPE_IDENTIFIER": "Event",
-      "name": "234234",
-      "id": 5,
-      "isActive": true
-    },
-    "6": {
-      "startDateTime": {
-        "date": {
-          "year": 2016,
-          "month": 4,
-          "day": 11
-        },
-        "time": {
-          "hour": 6,
-          "minute": 0,
-          "second": 0,
-          "nano": 0
-        }
-      },
-      "deadline": {
-        "date": {
-          "year": 2016,
-          "month": 4,
-          "day": 11
-        },
-        "time": {
-          "hour": 7,
-          "minute": 0,
-          "second": 0,
-          "nano": 0
-        }
-      },
-      "SERIAL_TYPE_IDENTIFIER": "Event",
-      "name": "dfszfsdf",
-      "id": 6,
-      "isActive": true
-    },
     "7": {
       "startDateTime": {
         "date": {
@@ -114,6 +118,87 @@
       "SERIAL_TYPE_IDENTIFIER": "Event",
       "name": "saldz;ckz",
       "id": 7,
+      "isActive": true
+    },
+    "8": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "period": {
+        "years": 0,
+        "months": 0,
+        "days": 7
+      },
+      "occurrenceLimit": 7,
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "DeadlineTask",
+      "name": "123",
+      "id": 8,
+      "isActive": true
+    },
+    "9": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "period": {
+        "years": 0,
+        "months": 0,
+        "days": 7
+      },
+      "occurrenceLimit": -2,
+      "dateLimit": {
+        "year": 2016,
+        "month": 4,
+        "day": 12
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "DeadlineTask",
+      "name": "123",
+      "id": 9,
       "isActive": true
     }
   },
