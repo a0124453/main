@@ -66,8 +66,6 @@ public class UIController implements Initializable {
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
-    private static boolean hasNewEvent;
-    private static int newEventIndex;
 
     @FXML
     Label labelTitle;
@@ -121,7 +119,7 @@ public class UIController implements Initializable {
         String userInput = textInput.getText();
         addInputToHistory(userInput);
         process(userInput);
-        textInput.setText(FIELD_EMPTY);
+        textInput.setText(FIELD_EMPTY);      
     }
     
     public static Logic getLogic() {
@@ -491,16 +489,15 @@ public class UIController implements Initializable {
         protected void updateItem(LogicEvent event, boolean b) {
             super.updateItem(event, b);
             boolean overdue = (event != null) && (event.getOverdue());
-            boolean done = (event != null) && (!event.isDone());
-            setOverdueStyle(overdue, done);
-            setDoneStyle(event, b, done);
-            super.updateItem(event, b);
             boolean newEvent = (event != null) && (event.isNew());
-            /*
-            hasNewEvent = newEvent;
-            if (newEvent) {
-                newEventIndex = super.getIndex();
-            }*/
+            boolean done = (event != null) && (!event.isDone());
+            setOverdueStyle(overdue, newEvent, done);
+            setDoneStyle(event, b, done);
+            setNewStyle(event, b, newEvent);
+        }
+
+        private void setNewStyle(LogicEvent event, boolean b, boolean newEvent) {
+            super.updateItem(event, b);
             pseudoClassStateChanged(PSEUDO_CLASS_NEW, newEvent);
         }
 
@@ -509,8 +506,8 @@ public class UIController implements Initializable {
             pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
         }
 
-        private void setOverdueStyle(boolean overdue, boolean done) {
-            if (!done) {
+        private void setOverdueStyle(boolean overdue, boolean newEvent, boolean done) {
+            if (!done && !newEvent) {
                 pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
             }
         }
@@ -521,9 +518,16 @@ public class UIController implements Initializable {
         protected void updateItem(LogicTask task, boolean b) {
             super.updateItem(task, b);
             boolean overdue = (task != null) && (task.getOverdue());
+            boolean newTask = (task != null) && (task.isNew());
             boolean done = (task != null) && (!task.isDone());
-            setOverdueStyle(overdue, done);
+            setOverdueStyle(overdue, newTask, done);
             setDoneStyle(task, b, done);
+            setNewStyle(task, b, newTask);
+        }
+        
+        private void setNewStyle(LogicTask event, boolean b, boolean newEvent) {
+            super.updateItem(event, b);
+            pseudoClassStateChanged(PSEUDO_CLASS_NEW, newEvent);
         }
 
         private void setDoneStyle(LogicTask task, boolean b, boolean done) {
@@ -531,8 +535,8 @@ public class UIController implements Initializable {
             pseudoClassStateChanged(PSEUDO_CLASS_DONE, done);
         }
 
-        private void setOverdueStyle(boolean overdue, boolean done) {
-            if (!done) {
+        private void setOverdueStyle(boolean overdue, boolean newTask, boolean done) {
+            if (!done && !newTask) {
                 pseudoClassStateChanged(PSEUDO_CLASS_OVERDUE, overdue);
             }
         }
