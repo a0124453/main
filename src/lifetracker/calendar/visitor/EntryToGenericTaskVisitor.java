@@ -53,14 +53,15 @@ public class EntryToGenericTaskVisitor implements EntryVisitor<OldNewEntryPair> 
     }
 
     private OldNewEntryPair edit(CalendarEntry clone, GenericEntry newEntry) {
+        GenericEntry convertedEntry = newEntry;
         if (isConvertForced){
-            newEntry = new GenericEntry(newEntry);
+            convertedEntry = new GenericEntry(convertedEntry);
         }
 
         if (name != null && !name.isEmpty()) {
-            newEntry.setName(name);
+            convertedEntry.setName(name);
         }
 
-        return new OldNewEntryPair(clone, newEntry);
+        return new OldNewEntryPair(clone, convertedEntry);
     }
 }
