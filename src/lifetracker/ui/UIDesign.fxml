@@ -34,6 +34,9 @@
                         <VBox alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: transparent;" StackPane.alignment="TOP_CENTER">
                            <children>
                               <TableView fx:id="tableEvent" prefHeight="225.0" VBox.vgrow="ALWAYS">
+                                <placeholder>
+        					    	<Label text="No event taking place today:)"/>
+    							</placeholder>
                                 <columns>
                                     <TableColumn fx:id="columnEventStartTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="START TIME" />
                                     <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="END TIME" />
@@ -43,6 +46,9 @@
                                 </columns>
                               </TableView>
                               <TableView fx:id="tableTask" prefHeight="225.0" VBox.vgrow="ALWAYS">
+                                 <placeholder>
+        					     	<Label text="No task due today:)"/>
+    							 </placeholder>
                                  <columns>
                                     <TableColumn fx:id="columnTaskTime" editable="false" maxWidth="400.0" minWidth="2.0" prefWidth="400.0" resizable="false" sortable="false" text="TIME" />
                                     <TableColumn fx:id="columnTaskName" editable="false" maxWidth="340.0" prefWidth="340.0" resizable="false" sortable="false" text="TASK" />

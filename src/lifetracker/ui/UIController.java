@@ -317,12 +317,14 @@ public class UIController implements Initializable {
 
     private void hideWebView() {
         webView.setVisible(false);
+        webView.toBack();
         tableEvent.setVisible(true);
         tableTask.setVisible(true);
     }
 
     private void showWebView() {
         webView.setVisible(true);
+        webView.toFront();
         tableEvent.setVisible(false);
         tableTask.setVisible(false);
     }
