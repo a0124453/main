@@ -20,12 +20,22 @@ public class StorageAdapter {
         this.calendarStorage = storage;
     }
 
+    /**
+     * Convert the calendar to Json and let the storage store it
+     *
+     * @param calendar Calendar to be stored
+     */
     public void store(CalendarList calendar) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String s = gson.toJson(calendar);
         calendarStorage.store(s);
     }
 
+    /**
+     * Load the Json string for calendar from storage and convert it to CalendarList
+     *
+     * @return The calendar stored in the storage
+     */
     public CalendarList load() throws IOException {
         String l = calendarStorage.load();
 
