@@ -33,11 +33,20 @@ public interface CalendarList {
     List<CalendarEntry> getEventList();
 
     /**
-     * @return A {@code List} of archived task objects sorted in descending
-     *         order of end date and time, followed by start date and time.
+     * Sorts and returns only the archived tasks in the {@code CalendarList}, in
+     * descending order.
+     * 
+     * @return A sorted {@code List} of archived task objects.
      */
     List<CalendarEntry> getArchivedTaskList();
 
+    /**
+     * Sorts and returns only the archived events in the {@code CalendarList},
+     * in descending order of end date and time, followed by start date and
+     * time.
+     * 
+     * @return A sorted {@code List} of archived event objects.
+     */
     List<CalendarEntry> getArchivedEventList();
 
     /**
