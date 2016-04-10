@@ -37,6 +37,8 @@ public class DeleteCommand extends CommandObject {
     public CalendarList undo(CalendarList calendar) {
         calendar.add(entryDeleted);
 
+        addHighlightEntry(entryDeleted.getId());
+
         setComment(String.format(MESSAGE_UNDO, entryDeleted.getName()));
 
         return super.undo(calendar);
