@@ -52,13 +52,13 @@ public class EditOneParametersParser implements CommandParametersParser {
         return commandMap.containsKey(BY);
     }
 
-    boolean isEventMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isEventMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, FROM, BY);
 
         return commandMap.containsKey(FROM);
     }
 
-    void populateEventParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void populateEventParameters(Map<CommandOptions, String> commandMap, Parameters result) {
         List<LocalDateTime> startEndDateTime = dateTimeParser
                 .parseDoubleDateTime(commandMap.get(FROM), commandMap.get(TO));
 
