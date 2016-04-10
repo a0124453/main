@@ -66,7 +66,6 @@ public class UIController implements Initializable {
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
-    private static int newTaskIndex;
 
     @FXML
     Label labelTitle;
@@ -271,8 +270,17 @@ public class UIController implements Initializable {
     }
     
     private void addInputToHistory(String userInput) {
-        inputHistory.add(userInput);
-        inputHistoryIndex = inputHistory.size();
+        if(!inputHistory.isEmpty()){
+            String prevInput = inputHistory.get(inputHistory.size() - 1);  
+            if (!prevInput.equals(userInput)) {
+                inputHistory.add(userInput);
+                inputHistoryIndex = inputHistory.size();
+            }
+        } else {
+            inputHistory.add(userInput);
+            inputHistoryIndex = inputHistory.size();
+        }
+
     }
 
     private void process(String userInput) {
