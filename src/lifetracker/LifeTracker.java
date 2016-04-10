@@ -13,7 +13,7 @@ import lifetracker.parser.Parser;
 import lifetracker.parser.ParserImpl;
 import lifetracker.storage.Storage;
 import lifetracker.storage.ThreadedFileStorage;
-import lifetracker.ui.UIController;
+import lifetracker.ui.UiController;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,14 +51,14 @@ public class LifeTracker extends Application {
     public void start(Stage primaryStage) throws Exception {
         fileStorage = new ThreadedFileStorage();
         FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent root = fxmlLoader.load(getClass().getResource("/lifetracker/ui/UIDesign.fxml").openStream());
+        Parent root = fxmlLoader.load(getClass().getResource("/lifetracker/ui/UiDesign.fxml").openStream());
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/lifetracker/ui/application.css").toExternalForm());   
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
         Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
-        UIController uiController = (UIController) fxmlLoader.getController();
+        UiController uiController = (UiController) fxmlLoader.getController();
         uiController.setLogic(programLogic);
         uiController.populateList(programLogic.executeCommand("today"));
         primaryStage.getIcons().add(new Image("/lifetracker/icon.png"));

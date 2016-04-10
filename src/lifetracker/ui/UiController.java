@@ -43,10 +43,10 @@ import java.util.logging.Logger;
 /**
  * This class is the main controller for the User Interface (UI) of LifeTracker.
  * The user interface design that this class is controlling can be found
- * inside the file /lifetracker/ui/UIDesign.fxml. All functions that relate
+ * inside the file /lifetracker/ui/UiDesign.fxml. All functions that relate
  * user action to the Logic Class can be found here.
  */
-public class UIController implements Initializable {
+public class UiController implements Initializable {
     /** Variables used for logging */
     private static final Logger STORE_LOG = Logger.getGlobal();
     private static final String LOG_STARTUP = "UI: Starting";
@@ -75,7 +75,7 @@ public class UIController implements Initializable {
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
 
-    /** Variables linked to UIDesign.fxml */
+    /** Variables linked to UiDesign.fxml */
     @FXML
     Label labelTitle;
     @FXML
@@ -132,7 +132,7 @@ public class UIController implements Initializable {
 
     /**
      * Get the input from <TextField> textInput when user press enter.
-     * This method is linked to textInput component in the UI via UIDesign.fxml.
+     * This method is linked to textInput component in the UI via UiDesign.fxml.
      */
     @FXML
     public void getInput() {
@@ -161,7 +161,7 @@ public class UIController implements Initializable {
      */
     public void setLogic(Logic l) {
         assert l != null;
-        UIController.l = l;
+        UiController.l = l;
     }
     
     /**
