@@ -372,7 +372,13 @@ public class UiController implements Initializable {
             }
         });
     }
-    
+    /**
+     * Add the new user input into inputHistory array.
+     * If the new input is the same as the previous input, the new input will not
+     * be added to the inputHistory array.
+     * 
+     * @param userInput User input from textInput.
+     */
     private void addInputToHistory(String userInput) {
         if(!inputHistory.isEmpty()){ 
             if (!isRepeatedInput(userInput)) {
@@ -384,17 +390,33 @@ public class UiController implements Initializable {
 
     }
     
+    /**
+     * Check if the new userInput is the same as the last input from inputHistory array.
+     * 
+     * @param userInput User input from textInput.
+     * @return          true if the user input is same as the last input.
+     */
     private boolean isRepeatedInput(String userInput) {
         String prevInput = inputHistory.get(inputHistory.size() - 1); 
         boolean isRepeated = prevInput.equals(userInput);
         return isRepeated;
     }
-
+    
+    /**
+     * Store the new user input inside inputHistory and update inputHistory index.
+     * 
+     * @param userInput User input from textInput.
+     */
     private void storeInputToHistory(String userInput) {
         inputHistory.add(userInput);
         inputHistoryIndex = inputHistory.size();
     }
 
+    /**
+     * Execute the user input using the Logic object.
+     * 
+     * @param userInput User input from textInput.
+     */
     private void process(String userInput) {
         ExecuteResult result = l.executeCommand(userInput);
         ExecuteResult.CommandType commnadType = result.getType();
@@ -402,6 +424,13 @@ public class UiController implements Initializable {
         processCommandType(result, commnadType, comment);
     }
 
+    /**
+     * Process how the UI should react to the user input depending on the command given.
+     * 
+     * @param result            The result after execution.
+     * @param commnadType       The type of the command of the result.
+     * @param comment           The comment of the result.
+     */
     private void processCommandType(ExecuteResult result, ExecuteResult.CommandType commnadType, String comment) {
         switch (commnadType) {
         case HELP :
@@ -422,11 +451,18 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * Exit the program when exit command is called.
+     * A log is created before the platform exits.
+     */
     private void processExit() {
         STORE_LOG.log(Level.INFO, LOG_SHUTDOWN);
         Platform.exit();
     }
 
+    /**
+     * Hide the webView.
+     */
     private void hideWebView() {
         webView.setVisible(false);
         webView.toBack();
@@ -434,6 +470,9 @@ public class UiController implements Initializable {
         tableTask.setVisible(true);
     }
 
+    /**
+     * Make the webView visible to the user when help command is called.
+     */
     private void showWebView() {
         webView.setVisible(true);
         webView.toFront();
@@ -441,6 +480,11 @@ public class UiController implements Initializable {
         tableTask.setVisible(false);
     }
 
+    /**
+     * Process when UP key and DOWN key is released when user is typing in the textInput.
+     * 
+     * @param event KeyEvent when Key is released.
+     */
     private void processKeyCode(KeyEvent event) {
         KeyCode keyCode = event.getCode();
         switch (keyCode) {
@@ -455,6 +499,10 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * Cycle through the previous element of inputHistory array when UP key is released.
+     * The element will be shown on the inputText field.
+     */
     private void processUpKey() {
         if (inputHistoryIndex > 0) {
             inputHistoryIndex--;
@@ -463,6 +511,10 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * Cycle through the subsequent element of inputHistory array when DOWN key is released.
+     * The element will be shown on the inputText field.
+     */
     private void processDownKey() {
         if (inputHistoryIndex < inputHistory.size() - 1) {
             inputHistoryIndex++;
@@ -474,14 +526,28 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * Set the position of the caret to be at the end of the input text.
+     */
     private void setEndCaretPosition() {
         textInput.positionCaret(textInput.getText().length());
     }
 
+    /**
+     * Set the text of the inputText with a string from inputHistory.
+     */
     private void setTextInputHistory() {
         textInput.setText(inputHistory.get(inputHistoryIndex));
     }
 
+    /**
+     * Return the recurring period of an event in a String format.
+     * The recurring period can have no limit, limit with a specific date, and limit with
+     * number of times to be repeated. The period can be in day(s) or month(s).
+     * 
+     * @param param     Cell of the columnEventRecurring from tableEvent.
+     * @return          Period in String format.       
+     */
     private ObservableValue<String> parsePeriodFromLogicEvent(CellDataFeatures<LogicEvent, String> param) {
         LocalDate limitDate = param.getValue().getLimitDate();
         int limitOccur = param.getValue().getLimitOccur();
@@ -491,6 +557,14 @@ public class UiController implements Initializable {
         return new ReadOnlyStringWrapper(periodString);
     }
 
+    /**
+     * Return the recurring period of a task in a String format.
+     * The recurring period can have no limit, limit with a specific date, and limit with
+     * number of times to be repeated. The period can be in day(s) or month(s).
+     * 
+     * @param param     Cell of the columnTaskRecurring from tableTask.
+     * @return          Period in String format.       
+     */
     private ObservableValue<String> parsePeriodFromLogicTask(CellDataFeatures<LogicTask, String> param) {
         LocalDate limitDate = param.getValue().getLimitDate();
         int limitOccur = param.getValue().getLimitOccur();
@@ -500,6 +574,14 @@ public class UiController implements Initializable {
         return new ReadOnlyStringWrapper(periodString);
     }
 
+    /**
+     * Return the date limit or the number of times to be repeated for recurring task/event in String format.
+     * What to be returned depends on what is available.
+     * 
+     * @param limitDate         Limit date of a recurring task/event.
+     * @param limitOccur        Number of times to be repeated for a recurring task/event.
+     * @return                  Limit in String format.
+     */
     private String parseLimit(LocalDate limitDate, int limitOccur) {
         String limit = FIELD_EMPTY;
         if (limitOccur > 0) {
@@ -511,24 +593,49 @@ public class UiController implements Initializable {
         return limit;
     }
 
+    /**
+     * Return the date limit of a recurring task/event in String format.
+     * 
+     * @param limitDate Limit date of a recurring task/event.
+     * @return          Limit date in String format.
+     */
     private String parseLimitDate(LocalDate limitDate) {
         String parse = FIELD_LIMIT_DATE + convertDateToString(limitDate);
         
         return parse;
     }
 
+    /**
+     * Return the repeated limited (number of times) of a recurring task/event in String format.
+     * This will be parse in the form of "for 4 time(s)" where 4 is the value of limitOccur.
+     * 
+     * @param limitOccur        Number of times for a recurring task/event to be repeated.
+     * @return                  Limit in String format.
+     */
     private String parseLimitOccur(int limitOccur) {
         String parse = FIELD_LIMIT_OCCUR_PREFIX + limitOccur + FIELD_LIMIT_OCCUR_SUFFIX;
         
         return parse;
     }
 
+    /**
+     * Return a date in String format.
+     * 
+     * @param limitDate LocalDate object.
+     * @return          Date in String format.
+     */
     private String convertDateToString(LocalDate limitDate) {
         String dateString = limitDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
         
         return dateString;
     }
 
+    /**
+     * Return the deadline of a task in String format.
+     * 
+     * @param param     Cell of the columnTaskTime from tableTask.
+     * @return          Deadline of a task in String format.
+     */
     private ObservableValue<String> parseDeadlineFromLogicTask(CellDataFeatures<LogicTask, String> param) {
         LocalDateTime deadline = param.getValue().getDeadline();
         String deadlineString = convertDeadlineToString(deadline);
@@ -536,6 +643,13 @@ public class UiController implements Initializable {
         return new ReadOnlyStringWrapper(deadlineString);
     }
 
+    /**
+     * Return a deadline in String format.
+     * If there is no deadline, return an empty String.
+     * 
+     * @param deadline  Deadline of a task.
+     * @return          Deadline in String format.
+     */
     private String convertDeadlineToString(LocalDateTime deadline) {
         String deadlineString;
         if (deadline != null) {
@@ -547,12 +661,25 @@ public class UiController implements Initializable {
         return deadlineString;
     }
 
+    /**
+     * Return a LocalDateTime object in String format.
+     * 
+     * @param deadline  LocalDateTime object.
+     * @return          LocalDateTime in String format.
+     */
     private String convertDateTimeToString(LocalDateTime deadline) {
         String dateTimeString = deadline.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
         
         return dateTimeString;
     }
 
+    /**
+     * Return a TemporalAmoun object in String format.
+     * If the object is null, return empty String.
+     * 
+     * @param period    TemporalAmout object.
+     * @return          TemporalAmoun in String format.
+     */
     private String convertTemporalToString(TemporalAmount period) {
         String periodString;
         if (period == null) {
@@ -566,6 +693,13 @@ public class UiController implements Initializable {
         return periodString;
     }
 
+    /**
+     * Return a parsed Period object in String format.
+     * The period can be parsed with day(s), month(s), or year(s) depending on the type of period.
+     * 
+     * @param period    Period object.
+     * @return          Parsed Period in String format.
+     */
     private String convertPeriodToString(Period period) {
         int years = period.getYears();
         int months = period.getMonths();
@@ -576,6 +710,12 @@ public class UiController implements Initializable {
         return periodString;
     }
 
+    /**
+     * Return a parsed Duration object in String format.
+     * 
+     * @param duration  Duration object.        
+     * @return          Parsed Duration in String format.
+     */
     private String convertDurationToString(Duration duration) {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
@@ -584,15 +724,32 @@ public class UiController implements Initializable {
         return durationString;
     }
 
+    /**
+     * Return a parsed Duration object in String format with a specific label.
+     * The label can be hour(s) or minute(s).
+     * 
+     * @param duration  Duration object.        
+     * @return          Parsed Duration in String format.
+     */
     private String formatDuration(long duration, String label) {
         return duration == 0 ? FIELD_EMPTY : duration + " " + label + " ";
     }
 
+    /**
+     * Populate the tableTask and tableEvent with the result after the execution.
+     * 
+     * @param result    ExcuteResult object obtained after execution.
+     */
     public void populateList(ExecuteResult result) {
         populateTaskList(result);
         populateEventList(result);
     }
 
+    /**
+     * Populate the tableEvent with the eventList obtained from the result after execution.
+     * 
+     * @param result    ExcuteResult object obtained after execution.
+     */
     private void populateEventList(ExecuteResult result) {
         eventList.clear();
         for (LogicEvent event : result.getEventList()) {
@@ -600,6 +757,11 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * Populate the tableTask with the taskList obtained from the result after execution.
+     * 
+     * @param result    ExcuteResult object obtained after execution.
+     */
     private void populateTaskList(ExecuteResult result) {
         taskList.clear();
         for (LogicTask task : result.getTaskList()) {
@@ -607,6 +769,13 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * This class is used to create a TableRow<LogicEvent> with an additional specific styles for each row.
+     * There are three additional styles:
+     * 1. strike-through text for the row with a task that is done.
+     * 2. red background for the row with a task that is overdue (passed its deadline).
+     * 3. green background for the row with a task that is newly created.
+     */
     private class TableEventRowWithStyles extends TableRow<LogicEvent> {
         @Override
         protected void updateItem(LogicEvent event, boolean b) {
@@ -636,6 +805,13 @@ public class UiController implements Initializable {
         }
     }
 
+    /**
+     * This class is used to create a TableRow<LogicTask> with an additional specific styles for each row.
+     * There are three additional styles:
+     * 1. strike-through text for the row with a task that is done.
+     * 2. red background for the row with a task that is overdue (passed its deadline).
+     * 3. green background for the row with a task that is newly created.
+     */
     private class TableTaskRowWithStyles extends TableRow<LogicTask> {
         @Override
         protected void updateItem(LogicTask task, boolean b) {
