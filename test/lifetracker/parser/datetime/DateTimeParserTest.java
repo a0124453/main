@@ -81,7 +81,8 @@ public class DateTimeParserTest {
 
         DateTimeParser parser = DateTimeParser.getInstance();
 
-        LocalDateTime expectedStart, expectedEnd;
+        LocalDateTime expectedStart;
+        LocalDateTime expectedEnd;
 
         List<LocalDateTime> expectedDateTimeList = new ArrayList<>();
         List<LocalDateTime> actualDateTimeList;

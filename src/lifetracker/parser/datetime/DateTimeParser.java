@@ -133,7 +133,8 @@ public class DateTimeParser {
     private LocalDateTime[] adjustDoubleDateToDefault(LocalDateTime startDateTime, LocalDateTime endDateTime,
             Set<String> startParseElements, Set<String> endParseElements) {
 
-        LocalDateTime adjustedStart, adjustedEnd;
+        LocalDateTime adjustedStart;
+        LocalDateTime adjustedEnd;
         LocalDateTime defaultDateTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
         //Fill in proper default dates
