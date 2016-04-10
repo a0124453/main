@@ -10,9 +10,14 @@ import java.util.List;
 
 public class ExecuteResultImpl implements ExecuteResult {
 
+    //Comment received after the execution of command
     private String comment;
+    
+    //List of events and tasks displayed in UI
     private List<LogicEvent> eventList;
     private List<LogicTask> taskList;
+    
+    //Type of the command
     private CommandType commandType;
 
     public ExecuteResultImpl() {
