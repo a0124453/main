@@ -33,10 +33,8 @@ public class LogicImpl implements Logic {
     //Error message
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
-    private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "Not enough command to undo!";
-    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "Not enough command to redo!";
-    private static final String ERROR_UNDO_COMMAND = "Incorrect undo command";
-    private static final String ERROR_REDO_COMMAND = "Incorrect redo command";
+    private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
+    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
     
     //save comment
     private static final String COMMENT_SAVE = "Calendar is saved at ";
