@@ -13,17 +13,29 @@ public interface CalendarList {
     int BASE_ID = 0;
 
     /**
-     * @return A {@code List} of task objects sorted in ascending order of
-     *         deadline, with floating tasks at the tail end.
+     * Sorts all active task objects in ascending order of deadline, and all
+     * archived task objects in descending order of deadline, in two separate
+     * lists. Floating tasks are at the tail end of both lists. The lists are
+     * concatenated and returned as a single list.
+     * 
+     * @return A sorted {@code List} of task objects.
      */
     List<CalendarEntry> getTaskList();
 
     /**
-     * @return A {@code List} of event objects sorted in ascending order of end
-     *         date and time, followed by start date and time.
+     * Sorts all active event objects in ascending order, and all archived
+     * events in descending order, of end date and time followed by start date
+     * and time, in two separate lists. The lists are concatenated and returned
+     * as a single list.
+     * 
+     * @return A sorted {@code List} of event objects.
      */
     List<CalendarEntry> getEventList();
 
+    /**
+     * @return A {@code List} of archived task objects sorted in descending
+     *         order of end date and time, followed by start date and time.
+     */
     List<CalendarEntry> getArchivedTaskList();
 
     List<CalendarEntry> getArchivedEventList();
