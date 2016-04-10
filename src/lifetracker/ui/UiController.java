@@ -254,17 +254,23 @@ public class UiController implements Initializable {
     }
     
     /**
-     * Initialize the columnTaskId of the tableTask.
+     * Initialize the columnTaskId of the tableTask with the parameter from LogicTask object.
      */
     private void initColumnTaskId() {
         columnTaskId
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
     
+    /**
+     * Initialize the columnTaskName of the tableTask with the parameter from LogicTask object.
+     */
     private void initColumnTaskName() {
         columnTaskName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
     }
     
+    /**
+     * Initialize the columnTaskTime of the tableTask with the parameter from LogicTask object.
+     */
     private void initColumnTaskTime() {
         columnTaskTime.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
@@ -275,6 +281,9 @@ public class UiController implements Initializable {
                 });
     }
     
+    /**
+     * Initialize the columnTaskRecurring of the tableTask with the parameter from LogicTask object.
+     */
     private void initColumnTaskRecurring() {
         columnTaskRecurring.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicTask, String>, ObservableValue<String>>() {
@@ -285,6 +294,14 @@ public class UiController implements Initializable {
                 });
     }
     
+    /**
+     * Set the each individual row of the tableTask with an additional specific style.
+     * This is done through the creation of new private class called TableTaskRowWithStyles.
+     * There are three additional styles:
+     * 1. strike-through text for the row with a task that is done.
+     * 2. red background for the row with a task that is overdue (passed its deadline).
+     * 3. green background for the row with a task that is newly created.
+     */
     private void setTableTaskRowStyle() {
         tableTask.setRowFactory(new Callback<TableView<LogicTask>, TableRow<LogicTask>>() {
             @Override
@@ -295,25 +312,40 @@ public class UiController implements Initializable {
         });
     }
     
+    /**
+     * Initialize the columnEventId of the tableEvent with the parameter from LogicEvent object.
+     */
     private void initColumnEventId() {
         columnEventId
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
     }
 
+    /**
+     * Initialize the columnEventName of the tableEvent with the parameter from LogicEvent object.
+     */
     private void initColumnEventName() {
         columnEventName.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getName()));
     }
 
+    /**
+     * Initialize the columnEventStartTime of the tableEvent with the parameter from LogicEvent object.
+     */
     private void initColumnEventStartTime() {
         columnEventStartTime.setCellValueFactory(
                 param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getStart())));
     }
     
+    /**
+     * Initialize the columnEventEndTime of the tableEvent with the parameter from LogicEvent object.
+     */
     private void initColumnEventEndTime() {
         columnEventEndTime.setCellValueFactory(
                 param -> new ReadOnlyStringWrapper(convertDateTimeToString(param.getValue().getEnd())));
     }
     
+    /**
+     * Initialize the columnEventRecurring of the tableEvent with the parameter from LogicEvent object.
+     */
     private void initColumnEventRecurring() {
         columnEventRecurring.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<LogicEvent, String>, ObservableValue<String>>() {
@@ -324,6 +356,14 @@ public class UiController implements Initializable {
                 });
     }
 
+    /**
+     * Set the each individual row of the tableEvent with an additional specific style.
+     * This is done through the creation of new private class called TableEventRowWithStyles.
+     * There are three additional styles:
+     * 1. strike-through text for the row with a task that is done.
+     * 2. red background for the row with a task that is overdue (passed its deadline).
+     * 3. green background for the row with a task that is newly created.
+     */
     private void setTableEventRowStyle() {
         tableEvent.setRowFactory(new Callback<TableView<LogicEvent>, TableRow<LogicEvent>>() {
             @Override
@@ -334,17 +374,25 @@ public class UiController implements Initializable {
     }
     
     private void addInputToHistory(String userInput) {
-        if(!inputHistory.isEmpty()){
-            String prevInput = inputHistory.get(inputHistory.size() - 1);  
-            if (!prevInput.equals(userInput)) {
-                inputHistory.add(userInput);
-                inputHistoryIndex = inputHistory.size();
+        if(!inputHistory.isEmpty()){ 
+            if (!isRepeatedInput(userInput)) {
+                storeInputToHistory(userInput);
             }
         } else {
-            inputHistory.add(userInput);
-            inputHistoryIndex = inputHistory.size();
+            storeInputToHistory(userInput);
         }
 
+    }
+    
+    private boolean isRepeatedInput(String userInput) {
+        String prevInput = inputHistory.get(inputHistory.size() - 1); 
+        boolean isRepeated = prevInput.equals(userInput);
+        return isRepeated;
+    }
+
+    private void storeInputToHistory(String userInput) {
+        inputHistory.add(userInput);
+        inputHistoryIndex = inputHistory.size();
     }
 
     private void process(String userInput) {
