@@ -8,16 +8,16 @@ import java.time.Period;
 
 public class LogicEventImpl implements LogicEvent {
 
-    private String name;
-    private int id;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private boolean isOverdue;
-    private boolean isDone;
-    private Period period;
-    private int limitOccur;
-    private LocalDate limitDate;
-    private boolean isNew;
+    private String name; //Name of the event
+    private int id; //Id of the event
+    private LocalDateTime start; //Start date and time of the event
+    private LocalDateTime end; //End date and time of the event
+    private boolean isOverdue; //Whether the event is overdue
+    private boolean isDone; //Whether the event is done
+    private Period period; //Period of the event
+    private int limitOccur; //The occurrence limit for the recurring event
+    private LocalDate limitDate; //The limit date for the recurring event
+    private boolean isNew; //Whether the task is highlighted
     
     @Override
     public void setName(String name) {
