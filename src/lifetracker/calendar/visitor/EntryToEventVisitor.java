@@ -90,11 +90,12 @@ public class EntryToEventVisitor implements EntryVisitor<OldNewEntryPair> {
     }
 
     private OldNewEntryPair edit(CalendarEntry clone, Event newEvent) {
+        Event convertedEvent = newEvent;
         if (isForcedConvert) {
-            newEvent = new Event(newEvent);
+            convertedEvent = new Event(convertedEvent);
         }
 
-        return editCalendarEntry(clone, newEvent);
+        return editCalendarEntry(clone, convertedEvent);
     }
 
     private OldNewEntryPair editCalendarEntry(CalendarEntry clone, CalendarEntry newEvent) {
