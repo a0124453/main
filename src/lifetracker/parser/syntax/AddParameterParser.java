@@ -51,7 +51,7 @@ public class AddParameterParser extends EditOneParametersParser {
         return commandMap.containsKey(CommandOptions.EVERY);
     }
 
-    void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
 
         result.recurringPeriod = durationParser.parse(commandMap.get(CommandOptions.EVERY));
 

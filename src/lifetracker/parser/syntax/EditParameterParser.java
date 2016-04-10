@@ -90,7 +90,7 @@ public class EditParameterParser extends AddParameterParser {
     }
 
     @Override
-    void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
 
         if (commandMap.containsKey(EVERY)) {
             result.recurringPeriod = durationParser.parse(commandMap.get(EVERY));
