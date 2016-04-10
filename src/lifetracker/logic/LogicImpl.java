@@ -24,7 +24,7 @@ import java.util.Stack;
 //@@author A0149467N
 
 public class LogicImpl implements Logic {
-
+    
     //configure file constant
     private static final String CONFIG_FILE_NAME = "config.properties";
     private static final String SAVE_FILE_PROPERTY = "savefile";
@@ -33,8 +33,10 @@ public class LogicImpl implements Logic {
     //Error message
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
-    private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
-    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
+    private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "Not enough command to undo!";
+    private static final String ERROR_ERROR_REDO_STACK_EMPTY = "Not enough command to redo!";
+    private static final String ERROR_UNDO_COMMAND = "Incorrect undo command";
+    private static final String ERROR_REDO_COMMAND = "Incorrect redo command";
     
     //save comment
     private static final String COMMENT_SAVE = "Calendar is saved at ";
@@ -85,37 +87,38 @@ public class LogicImpl implements Logic {
 
         String[] commandContent = commandString.split(" ");
         ExecuteResult runResult = new CommandLineResult();
-        
-        if (commandContent[0].equals("saveat"))
-            return processSaveatResults(commandString, runResult);
 
         switch (commandString) {
-            case "exit":
-                runResult.setType(CommandType.EXIT);
-                return runResult;
-            case "help":
-                runResult.setType(CommandType.HELP);
-                return runResult;
+        case "exit":
+            runResult.setType(CommandType.EXIT);
+            return runResult;
+        case "help":
+            runResult.setType(CommandType.HELP);
+            return runResult;
+        default:
+            switch (commandContent[0]) {
+            case "saveat":
+                runResult.setType(CommandType.SAVE);
+                return saveat(commandString, runResult);
+            case "undo":
+                runResult.setType(CommandType.DISPLAY);
+                return undo(commandContent, runResult);
+            case "redo":
+                runResult.setType(CommandType.DISPLAY);
+                return redo(commandContent, runResult);
             default:
                 runResult.setType(CommandType.DISPLAY);
-                switch (commandString) {
-                case "undo":
-                    return undo(runResult);
-                case "redo":
-                    return redo(runResult);
-                default:
-                    return otherCommand(commandString, runResult);
-                }
+                return otherCommand(commandString, runResult);
+            }
         }
     }
     
-    private ExecuteResult processSaveatResults(String commandString, ExecuteResult runResult) {
+    private ExecuteResult saveat(String commandString, ExecuteResult runResult) {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
         
         saveat(location);
 
-        runResult.setType(CommandType.SAVE);
         runResult.setComment(COMMENT_SAVE + location);
         return runResult;
     }
@@ -131,14 +134,23 @@ public class LogicImpl implements Logic {
         }
     }
 
-    private ExecuteResult undo(ExecuteResult runResult) {
-        CommandObject commandToExecute;
-        CalendarList executedState;
+    private ExecuteResult undo(String[] commandContent, ExecuteResult runResult) {
+        CommandObject commandToExecute = null;
+        CalendarList executedState = null;
+        
+        if (commandContent.length != 2 || Integer.parseInt(commandContent[1]) < 1) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_UNDO_COMMAND));
+            errorResult.setType(CommandType.ERROR);
+            return errorResult;
+        }
         
         try {
-            commandToExecute = commandStack.pop();
-            redoStack.push(commandToExecute);
-            executedState = commandToExecute.undo(calendar);
+            for(int i = 0; i < Integer.parseInt(commandContent[1]); i++) {
+                commandToExecute = commandStack.pop();
+                redoStack.push(commandToExecute);
+                executedState = commandToExecute.undo(calendar);
+            }
         } catch (EmptyStackException ex) {
             ExecuteResult errorResult = new CommandLineResult();
             errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
@@ -150,14 +162,23 @@ public class LogicImpl implements Logic {
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
     
-    private ExecuteResult redo(ExecuteResult runResult) {
-        CommandObject commandToExecute;
-        CalendarList executedState;
+    private ExecuteResult redo(String[] commandContent, ExecuteResult runResult) {
+        CommandObject commandToExecute = null;
+        CalendarList executedState = null;
+        
+        if (commandContent.length != 2 || Integer.parseInt(commandContent[1]) < 1) {
+            ExecuteResult errorResult = new CommandLineResult();
+            errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_REDO_COMMAND));
+            errorResult.setType(CommandType.ERROR);
+            return errorResult;
+        }
         
         try {
-            commandToExecute = redoStack.pop();
-            commandStack.push(commandToExecute);
-            executedState = commandToExecute.execute(calendar);
+            for(int i = 0; i < Integer.parseInt(commandContent[1]); i++) {
+                commandToExecute = redoStack.pop();
+                commandStack.push(commandToExecute);
+                executedState = commandToExecute.execute(calendar);
+            }
         } catch (EmptyStackException ex) {
             ExecuteResult errorResult = new CommandLineResult();
             errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
