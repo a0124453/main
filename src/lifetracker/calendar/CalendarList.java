@@ -404,7 +404,7 @@ public interface CalendarList {
      * @param toSearch
      *            The desired text to search for.
      * 
-     * @return A {@code CalendarList} with filtered task and event lists.
+     * @return A {@code CalendarList} with customized task and event lists.
      */
     CalendarList findByName(String toSearch);
 
@@ -415,7 +415,8 @@ public interface CalendarList {
      * text. Allows room for minor typographical errors.
      * 
      * @param toSearch
-     * @return
+     *            The desired text to search for.
+     * @return A {@code CalendarList} with customized task and event lists.
      */
     CalendarList findArchivedByName(String toSearch);
 
