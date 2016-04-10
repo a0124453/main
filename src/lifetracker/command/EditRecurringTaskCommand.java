@@ -9,7 +9,7 @@ import java.time.Period;
 //@@author A0091173J
 public class EditRecurringTaskCommand extends EditRecurringEntryCommand {
 
-    protected final LocalDateTime endDateTime;
+    final LocalDateTime endDateTime;
 
     public EditRecurringTaskCommand(int id, String name, LocalDateTime endDateTime, Period recurringPeriod,
             boolean isForcedConvert) {
