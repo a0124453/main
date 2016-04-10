@@ -2,23 +2,32 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
-public class FindOldCommand extends FindCommand{
+public class FindOldCommand extends FindCommand {
 
-    public FindOldCommand() {
+    public FindOldCommand(boolean isOnlyToday) {
+        this("", isOnlyToday);
     }
 
-    public FindOldCommand(String searchTerm) {
-        super(searchTerm);
+    public FindOldCommand(String searchTerm, boolean isOnlyToday) {
+        super(searchTerm, isOnlyToday);
     }
 
     @Override
     public CalendarList execute(CalendarList calendar) {
         super.execute(calendar);
 
-        if (searchTerm.isEmpty()) {
-            return calendar.findArchivedByName("");
+        CalendarList searchCalendar;
+
+        if (getSearchTerm().isEmpty()) {
+            searchCalendar = calendar.findArchivedByName("");
         } else {
-            return calendar.findArchivedByName(searchTerm);
+            searchCalendar = calendar.findArchivedByName(getSearchTerm());
         }
+
+        if (isOnlyToday()) {
+            searchCalendar = searchCalendar.findToday();
+        }
+
+        return searchCalendar;
     }
 }

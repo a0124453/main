@@ -29,21 +29,24 @@ public interface CommandFactory {
             Period recurringPeriod, LocalDate limitDate);
 
     /**
-     * Returns a CommandObject that lists all calendar entries.
+     * Returns a CommandObject that lists all non-archived calendar entries.
+     * <p>
+     * This method accepts a boolean to filter out only tasks for today.
      *
+     * @param isOnlyToday If only entries today are to be returned.
      * @return The CommandObject to find all entries
      */
-    CommandObject find();
+    CommandObject find(boolean isOnlyToday);
 
-    CommandObject find(String searchString);
+    CommandObject find(String searchString, boolean isOnlyToday);
 
-    CommandObject findAll();
+    CommandObject findAll(boolean isOnlyToday);
 
-    CommandObject findAll(String searchString);
+    CommandObject findAll(String searchString, boolean isOnlyToday);
 
-    CommandObject findOld();
+    CommandObject findOld(boolean isOnlyToday);
 
-    CommandObject findOld(String searchTerm);
+    CommandObject findOld(String searchTerm, boolean isOnlyToday);
 
     CommandObject delete(int id);
 

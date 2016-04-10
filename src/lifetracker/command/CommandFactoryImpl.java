@@ -57,33 +57,33 @@ public class CommandFactoryImpl implements CommandFactory {
     }
 
     @Override
-    public CommandObject find() {
-        return new FindCommand();
+    public CommandObject find(boolean isOnlyToday) {
+        return new FindCommand(isOnlyToday);
     }
 
     @Override
-    public CommandObject find(String searchString) {
-        return new FindCommand(searchString);
+    public CommandObject find(String searchString, boolean isOnlyToday) {
+        return new FindCommand(searchString, isOnlyToday);
     }
 
     @Override
-    public CommandObject findAll() {
-        return new FindAllCommand();
+    public CommandObject findAll(boolean isOnlyToday) {
+        return new FindAllCommand(isOnlyToday);
     }
 
     @Override
-    public CommandObject findAll(String searchString) {
-        return new FindAllCommand(searchString);
+    public CommandObject findAll(String searchString, boolean isOnlyToday) {
+        return new FindAllCommand(searchString, isOnlyToday);
     }
 
     @Override
-    public CommandObject findOld(){
-        return new FindOldCommand();
+    public CommandObject findOld(boolean isOnlyToday){
+        return new FindOldCommand(isOnlyToday);
     }
 
     @Override
-    public CommandObject findOld(String searchTerm){
-        return new FindOldCommand(searchTerm);
+    public CommandObject findOld(String searchTerm, boolean isOnlyToday){
+        return new FindOldCommand(searchTerm, isOnlyToday);
     }
 
     @Override
