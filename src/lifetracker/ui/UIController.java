@@ -345,7 +345,8 @@ public class UIController implements Initializable {
             inputHistoryIndex++;
             setTextInputHistory();
             setEndCaretPosition();
-        } else {
+        } else if (inputHistoryIndex == inputHistory.size() - 1) {
+            inputHistoryIndex++;
             textInput.setText(FIELD_EMPTY);
         }
     }
