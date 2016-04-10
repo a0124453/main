@@ -405,7 +405,8 @@ public interface CalendarList {
      * @param toSearch
      *            The desired text to search for.
      * 
-     * @return A {@code CalendarList} with customized task and event lists.
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
      */
     CalendarList findByName(String toSearch);
 
@@ -418,7 +419,8 @@ public interface CalendarList {
      * 
      * @param toSearch
      *            The desired text to search for.
-     * @return A {@code CalendarList} with customized task and event lists.
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
      */
     CalendarList findArchivedByName(String toSearch);
 
@@ -430,10 +432,20 @@ public interface CalendarList {
      * 
      * @param toSearch
      *            The desired text to search for.
-     * @return A {@code CalendarList} with customized task and event lists.
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
      */
     CalendarList findAllByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListResult} object with
+     * {@code taskList} and {@code eventList} containing only active tasks that
+     * are due on the same day, active events that start on the same day, and
+     * active events that are ongoing at the time when the method is called.
+     * 
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
+     */
     CalendarList findToday();
 
 }
