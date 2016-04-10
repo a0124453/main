@@ -20,12 +20,29 @@ public interface CalendarEntry extends VisitableEntry {
      */
     int getId();
 
+    /**
+     * @param id
+     *            The desired ID number to assign to the entry.
+     */
     void setId(int id);
 
+    /**
+     * @return The description of the entry.
+     */
     String getName();
 
+    /**
+     * @param name
+     *            The desired name to assign to the entry.
+     */
     void setName(String name);
 
+    /**
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * 
+     * @return A {@code LocalDateTime} property of the entry.
+     */
     LocalDateTime getDateTime(CalendarProperty property);
 
     void setDateTime(CalendarProperty property, LocalDateTime dateTime);
