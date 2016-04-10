@@ -45,14 +45,37 @@ public interface CalendarEntry extends VisitableEntry {
      */
     LocalDateTime getDateTime(CalendarProperty property);
 
+    /**
+     * @param property
+     *            An {@code enum} representing the property to be modified.
+     * 
+     * @param dateTime
+     *            The new {@code LocalDateTime} to be set.
+     */
     void setDateTime(CalendarProperty property, LocalDateTime dateTime);
 
+    /**
+     * @param period
+     *            The period to assign to the (recurring) entry.
+     */
     void setPeriod(Period period);
 
+    /**
+     * @return The period of the (recurring) entry.
+     */
     Period getPeriod();
 
+    /**
+     * Switches the status of an active entry to inactive, and vice versa.
+     */
     void toggleActive();
 
+    /**
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * @return A {@code boolean} to indicate whether the entry satisfies the
+     *         specified property.
+     */
     boolean isProperty(CalendarProperty property);
 
     /**
