@@ -24,7 +24,7 @@ public class AddParameterParser extends EditOneParametersParser {
         return result;
     }
 
-    void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
 
         super.determineTypeAndPopulateFields(commandMap, result);
 
@@ -39,7 +39,7 @@ public class AddParameterParser extends EditOneParametersParser {
         }
     }
 
-    void fillUpTaskNull(Map<CommandOptions, String> commandMap) {
+    protected void fillUpTaskNull(Map<CommandOptions, String> commandMap) {
         if (!commandMap.containsKey(CommandOptions.BY)) {
             commandMap.put(CommandOptions.BY, "");
         }
