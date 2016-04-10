@@ -1,9 +1,9 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.VisitableEntry;
-
 import java.time.LocalDateTime;
 import java.time.Period;
+
+import lifetracker.calendar.visitor.VisitableEntry;
 
 public interface CalendarEntry extends VisitableEntry {
 
@@ -15,7 +15,9 @@ public interface CalendarEntry extends VisitableEntry {
         }
     }
 
-    // get() and set() functions for variables
+    /**
+     * @return The unique ID number of the entry.
+     */
     int getId();
 
     void setId(int id);
@@ -36,6 +38,12 @@ public interface CalendarEntry extends VisitableEntry {
 
     boolean isProperty(CalendarProperty property);
 
+    /**
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * 
+     * @return An integer property of the entry.
+     */
     int getIntegerProperty(CalendarProperty property);
 
 }
