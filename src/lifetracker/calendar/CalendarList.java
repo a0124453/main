@@ -398,8 +398,9 @@ public interface CalendarList {
 
     /**
      * Creates and returns a copy of the {@code CalendarListResult} object with
-     * task and event lists filtered to contain only entries with descriptions
-     * containing the desired text. Allows room for minor typographical errors.
+     * {@code taskList} and {@code eventList} filtered to contain only entries
+     * with descriptions containing the desired text. Allows room for minor
+     * typographical errors.
      * 
      * @param toSearch
      *            The desired text to search for.
@@ -409,10 +410,11 @@ public interface CalendarList {
     CalendarList findByName(String toSearch);
 
     /**
-     * Creates and returns a {@code CalendarListResult} object with task and
-     * event lists set as the archived lists of the main {@code CalendarList},
-     * filtered to contain only entries with descriptions containing the desired
-     * text. Allows room for minor typographical errors.
+     * Creates and returns a {@code CalendarListResult} object with
+     * {@code taskList} and {@code eventList} set as the archived lists of the
+     * main {@code CalendarList}, filtered to contain only entries with
+     * descriptions containing the desired text. Allows room for minor
+     * typographical errors.
      * 
      * @param toSearch
      *            The desired text to search for.
@@ -420,6 +422,16 @@ public interface CalendarList {
      */
     CalendarList findArchivedByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListResult} object with
+     * {@code taskList} and {@code eventList} containing all entries (active or
+     * archived) whose descriptions contain the desired text. Allows room for
+     * minor typographical errors.
+     * 
+     * @param toSearch
+     *            The desired text to search for.
+     * @return A {@code CalendarList} with customized task and event lists.
+     */
     CalendarList findAllByName(String toSearch);
 
     CalendarList findToday();
