@@ -1,9 +1,9 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDateTime;
 import java.time.Period;
+
+import lifetracker.calendar.visitor.EntryVisitor;
 
 public class GenericEntry implements CalendarEntry {
 
@@ -55,11 +55,21 @@ public class GenericEntry implements CalendarEntry {
         throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_COMMAND);
     }
 
+    /**
+     * Method not allowed for {@code GenericEntry} object.
+     * 
+     * @throws IllegalArgumentException
+     */
     @Override
     public void setPeriod(Period period) {
         throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_COMMAND);
     }
 
+    /**
+     * Returns {@code null} for non-recurring tasks.
+     * 
+     * @return {@code null}.
+     */
     @Override
     public Period getPeriod() {
         return null;
@@ -70,6 +80,15 @@ public class GenericEntry implements CalendarEntry {
         this.isActive = !this.isActive;
     }
 
+    /**
+     * A {@code GenericEntry} has no deadline and is always ongoing.
+     * 
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * 
+     * @return A {@code boolean} to indicate whether the entry satisfies the
+     *         specified property.
+     */
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
