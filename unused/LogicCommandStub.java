@@ -6,6 +6,8 @@ import lifetracker.calendar.CalendarList;
 import lifetracker.calendar.CalendarListImpl;
 import lifetracker.command.CommandObject;
 
+//@@author A0149467N-unused
+
 public class LogicCommandStub implements CommandObject {
     
     private static final String MESSAGE_ADDED = "\"%1$s\" is added.";

@@ -10,6 +10,8 @@ import lifetracker.storage.Storage;
 
 import java.io.IOException;
 
+//@@author A0149467N
+
 public class StorageAdapter {
 
     private Storage calendarStorage;

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0149467N
+
 public class LogicTaskImpl implements LogicTask {
     
     private String name;
@@ -18,6 +20,8 @@ public class LogicTaskImpl implements LogicTask {
     
     @Override
     public void setName(String name) {
+        assert name != null;
+        
         this.name = name;
     }
     
@@ -28,6 +32,8 @@ public class LogicTaskImpl implements LogicTask {
     
     @Override
     public void setId(int id) {
+        assert id > 0;
+        
         this.id = id;
     }
     
@@ -106,6 +112,7 @@ public class LogicTaskImpl implements LogicTask {
         this.isNew = isNew;
     }
 
+    //Auto-generated function
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -137,6 +144,7 @@ public class LogicTaskImpl implements LogicTask {
 
     }
 
+    //Auto-generated function
     @Override
     public int hashCode() {
         int result = getName().hashCode();
