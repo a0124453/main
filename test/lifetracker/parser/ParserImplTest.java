@@ -150,17 +150,17 @@ public class ParserImplTest {
     public void testSearch() throws Exception {
         //Partition: find all non-archived
         parser.parse("find");
-        verify(cmdFactory).find();
+        verify(cmdFactory).find(false);
 
         //Partition with search term
         parser.parse("search something");
-        verify(cmdFactory).find("something");
+        verify(cmdFactory).find("something", false);
 
         parser.parse("find something else");
-        verify(cmdFactory).find("something else");
+        verify(cmdFactory).find("something else", false);
 
         //Boundary: with separators
         parser.parse("list something in the water > ?? > !!");
-        verify(cmdFactory).find("something in the water > ?? > !!");
+        verify(cmdFactory).find("something in the water > ?? > !!", false);
     }
 }
