@@ -40,11 +40,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //@@author A0114240B
+/**
+ * This class is the main controller for the User Interface (UI) of LifeTracker.
+ * The user interface design that this class is controlling can be found
+ * inside the file /lifetracker/ui/UIDesign.fxml. All functions that relate
+ * user action to the Logic Class can be found here.
+ */
 public class UIController implements Initializable {
+    /** Variables used for logging */
     private static final Logger STORE_LOG = Logger.getGlobal();
     private static final String LOG_STARTUP = "UI: Starting";
     private static final String LOG_SHUTDOWN = "UI: Exiting";
     
+    /** Constant variables to avoid magic number/string */
     private static final String PATH_README_CSS = "/lifetracker/ui/README.css";
     private static final String PATH_README_HTML = "/lifetracker/ui/README.html";
     private static final String FIELD_EMPTY = "";
@@ -67,6 +75,7 @@ public class UIController implements Initializable {
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
 
+    /** Variables linked to UIDesign.fxml */
     @FXML
     Label labelTitle;
     @FXML
@@ -98,6 +107,10 @@ public class UIController implements Initializable {
     @FXML
     WebView webView;
 
+    /**
+     * Initialize all the variables that are linked to UIDesign.fxml.
+     * These variables are linked to various UI components of LifeTracker.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initLog();
@@ -110,10 +123,17 @@ public class UIController implements Initializable {
         focusTextInput();
     }
     
+    /**
+     * Logging when the UI is launched
+     */
     private void initLog() {
         STORE_LOG.log(Level.INFO, LOG_STARTUP);
     }
 
+    /**
+     * Get the input from <TextField> textInput when user press enter.
+     * This method is linked to textInput component in the UI via UIDesign.fxml.
+     */
     @FXML
     public void getInput() {
         String userInput = textInput.getText();
@@ -122,25 +142,47 @@ public class UIController implements Initializable {
         textInput.setText(FIELD_EMPTY);
     }
     
+    /**
+     * Return Logic object.
+     * The Logic object can never be null, thus assertion is used.
+     * 
+     * @return  Logic object.
+     */
     public Logic getLogic() {
         assert l != null;
         return l;
     }
 
+    /**
+     * Set the Logic object that will be used in various functions under this class.
+     * The Logic object can never be null, thus assertion is used.
+     * 
+     * @param l Logic object.
+     */
     public void setLogic(Logic l) {
         assert l != null;
         UIController.l = l;
     }
     
+    /**
+     * Initialize how the behavior works when user press TAB button.
+     * User can only switch from textInput to tableEvent to tableTask and not the
+     * rest of the UI component.
+     */
     private void initTabBehaviour() {
         textInput.setFocusTraversable(true);
         tableEvent.setFocusTraversable(true);
-        tableEvent.setFocusTraversable(true);
+        tableTask.setFocusTraversable(true);
         webView.setFocusTraversable(true);
         labelFeedback.setFocusTraversable(false);
         labelTitle.setFocusTraversable(false);
     }
     
+    /**
+     * Initialize the webView and load it with README.html.
+     * README.html can be found in /lifetracker/ui/README.html. The initial visibility
+     * is set to false since webView is loaded behind tableTask and tableEvent.
+     */
     private void initWebView() {
         String htmlURL = LifeTracker.class.getResource(PATH_README_HTML).toExternalForm();
         String cssURL = LifeTracker.class.getResource(PATH_README_CSS).toString();
@@ -150,11 +192,19 @@ public class UIController implements Initializable {
         webView.setVisible(false);
     }
     
+    /**
+     * Initialize the array inputHistory to keep track of the user input.
+     */
     private void initInputHistory() {
         inputHistory = new ArrayList<String>();
         inputHistoryIndex = -1;
     }
     
+    /**
+     * Initialize tableTask.
+     * This method initialize tableTask by indicating what field to be
+     * put inside each cell.
+     */
     private void initTableTask() {
         initColumnTaskId();
         initColumnTaskName();
@@ -164,6 +214,11 @@ public class UIController implements Initializable {
         tableTask.setItems(taskList);
     }
     
+    /**
+     * Initialize tableEvent.
+     * This method initialize tableEvent by indicating what field to be
+     * put inside each cell.
+     */
     private void initTableEvent() {
         initColumnEventId();
         initColumnEventName();
@@ -174,6 +229,9 @@ public class UIController implements Initializable {
         tableEvent.setItems(eventList);
     }
     
+    /**
+     * Detect the key that are being released when the user is typing in textInput.
+     */
     private void initTextInputKeyDetection() {
         textInput.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
@@ -183,6 +241,9 @@ public class UIController implements Initializable {
         });
     }
     
+    /**
+     * Set the focus on the textInput component of the UI with the caret.
+     */
     private void focusTextInput() {
         Platform.runLater(new Runnable() {
             @Override
@@ -192,6 +253,9 @@ public class UIController implements Initializable {
         });
     }
     
+    /**
+     * Initialize the columnTaskId of the tableTask.
+     */
     private void initColumnTaskId() {
         columnTaskId
                 .setCellValueFactory(param -> new ReadOnlyStringWrapper(Integer.toString(param.getValue().getId())));
