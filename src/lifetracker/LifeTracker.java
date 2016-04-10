@@ -58,7 +58,7 @@ public class LifeTracker extends Application {
         Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
         UIController.setLogic(programLogic);
-        UIController.populateList(programLogic.executeCommand("list"));
+        UIController.populateList(programLogic.executeCommand("today"));
         primaryStage.getIcons().add(new Image("/lifetracker/icon.png"));
         primaryStage.show();
         
