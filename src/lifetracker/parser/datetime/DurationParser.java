@@ -74,12 +74,12 @@ public class DurationParser {
     }
 
     private String singularize(String word) {
-        word = word.trim();
+        String singularWord = word.trim();
 
-        if (!word.isEmpty() && word.charAt(word.length() - 1) == 's') {
-            return word.substring(0, word.length() - 1);
+        if (!singularWord.isEmpty() && singularWord.charAt(singularWord.length() - 1) == 's') {
+            return singularWord.substring(0, singularWord.length() - 1);
         } else {
-            return word;
+            return singularWord;
         }
     }
 }
