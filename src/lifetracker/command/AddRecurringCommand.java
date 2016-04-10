@@ -60,7 +60,10 @@ public class AddRecurringCommand extends AddCommand {
     public CalendarList execute(CalendarList calendar) {
         assert calendar != null;
 
-        setAddedEntryID(addToCalendar(calendar));
+        int newId = addToCalendar(calendar);
+
+        setAddedEntryID(newId);
+        addHighlightEntry(newId);
 
         setExecuted(true);
 

@@ -31,6 +31,8 @@ public class EditEventCommand extends EditDeadlineTaskCommand {
             }
         }
 
+        addHighlightEntry(id);
+
         setExecuted(true);
         setComment(String.format(MESSAGE_EDITED, id));
 

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0149467N
+
 public interface LogicTask {
 
     void setName(String name);

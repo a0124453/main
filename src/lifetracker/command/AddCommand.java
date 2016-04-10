@@ -56,6 +56,8 @@ public class AddCommand extends CommandObject {
             addedEntryID = calendar.add(name, startDateTime, endDateTime);
         }
 
+        addHighlightEntry(addedEntryID);
+
         setComment(String.format(MESSAGE_ADDED, name));
 
         return super.execute(calendar);

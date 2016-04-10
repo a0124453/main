@@ -53,6 +53,9 @@ public class EditOneCommand extends CommandObject {
             processEditEvent(calendar);
         }
 
+        addHighlightEntry(id);
+        addHighlightEntry(editedEntry.getId());
+
         setComment(String.format(MESSAGE_EDITED, id, editedEntry.getId()));
 
         return super.execute(calendar);

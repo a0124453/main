@@ -20,6 +20,9 @@ public class MarkCommand extends CommandObject {
     @Override
     public CalendarList execute(CalendarList calendar) {
         markedEntryPair = calendar.mark(entryId);
+
+        addHighlightEntry(entryId);
+
         setComment(String.format(MESSAGE_MARKED_DONE, entryId));
 
         return super.execute(calendar);

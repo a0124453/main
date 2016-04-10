@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0149467N
+
 public class LogicEventImpl implements LogicEvent {
 
     private String name;
@@ -19,6 +21,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setName(String name) {
+        assert name != null;
+        
         this.name = name;
     }
     
@@ -29,6 +33,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setId(int id) {
+        assert id > 0;
+        
         this.id = id;
     }
     
@@ -39,6 +45,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setStart(LocalDateTime start) {
+        assert start != null;
+        
         this.start = start;
     }
     
@@ -49,6 +57,8 @@ public class LogicEventImpl implements LogicEvent {
     
     @Override
     public void setEnd(LocalDateTime end) {
+        assert end != null;
+        
         this.end = end;
     }
     
@@ -78,8 +88,8 @@ public class LogicEventImpl implements LogicEvent {
     }
     
     @Override
-    public void setPeriod(Period period) {
-     this.period = period;   
+    public void setPeriod(Period period) {      
+        this.period = period;   
     }
     
     @Override
@@ -117,6 +127,7 @@ public class LogicEventImpl implements LogicEvent {
         this.isNew = isNew;
     }
 
+    //Auto-generated function
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -148,6 +159,7 @@ public class LogicEventImpl implements LogicEvent {
 
     }
 
+    //Auto-generated function
     @Override
     public int hashCode() {
         int result = getName().hashCode();

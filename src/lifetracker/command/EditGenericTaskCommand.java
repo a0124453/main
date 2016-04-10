@@ -24,6 +24,7 @@ public class EditGenericTaskCommand extends CommandObject {
     @Override
     public CalendarList execute(CalendarList calendar) {
         oldEntry = calendar.updateToGeneric(id, name, isForcedConvert);
+        addHighlightEntry(id);
 
         setComment(String.format(MESSAGE_EDITED, id));
 
