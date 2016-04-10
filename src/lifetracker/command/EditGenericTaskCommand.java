@@ -9,11 +9,11 @@ public class EditGenericTaskCommand extends CommandObject {
     protected static final String MESSAGE_EDITED = "%1$s was edited.";
     protected static final String MESSAGE_UNEDITED = "Changes to %1$s were reverted.";
 
-    final int id;
-    final String name;
-    final boolean isForcedConvert;
+    protected final int id;
+    protected final String name;
+    protected final boolean isForcedConvert;
 
-    CalendarEntry oldEntry;
+    protected CalendarEntry oldEntry;
 
     public EditGenericTaskCommand(int id, String name, boolean isForcedConvert) {
         this.id = id;

@@ -4,21 +4,21 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.TreeMap;
 
-public class CalendarListTemp extends CalendarListImpl {
+public class CalendarListResult extends CalendarListImpl {
 
-    void setTaskList(TreeMap<Integer, CalendarEntry> map) {
+    protected void setTaskList(TreeMap<Integer, CalendarEntry> map) {
         this.taskList = map;
     }
 
-    void setEventList(TreeMap<Integer, CalendarEntry> map) {
+    protected void setEventList(TreeMap<Integer, CalendarEntry> map) {
         this.eventList = map;
     }
 
-    void setArchivedTaskList(TreeMap<Integer, CalendarEntry> map) {
+    protected void setArchivedTaskList(TreeMap<Integer, CalendarEntry> map) {
         this.archivedTaskList = map;
     }
 
-    void setArchivedEventList(TreeMap<Integer, CalendarEntry> map) {
+    protected void setArchivedEventList(TreeMap<Integer, CalendarEntry> map) {
         this.archivedEventList = map;
     }
 

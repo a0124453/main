@@ -133,7 +133,8 @@ public class DateTimeParser {
     private LocalDateTime[] adjustDoubleDateToDefault(LocalDateTime startDateTime, LocalDateTime endDateTime,
             Set<String> startParseElements, Set<String> endParseElements) {
 
-        LocalDateTime adjustedStart, adjustedEnd;
+        LocalDateTime adjustedStart;
+        LocalDateTime adjustedEnd;
         LocalDateTime defaultDateTime = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
         //Fill in proper default dates
@@ -206,17 +207,17 @@ public class DateTimeParser {
 
     private LocalDateTime adjustTimeBeforeReferenceOneHour(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
-
+        LocalDateTime tempDateTime = dateTime;
         if (!parseElements.contains(NATTY_TIME_FIELD)
-                && (dateTime.isAfter(reference) || dateTime.isEqual(reference))) {
+                && (tempDateTime.isAfter(reference) || tempDateTime.isEqual(reference))) {
 
             if (parseElements.contains(NATTY_DATE_FIELD)) {
-                dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
+                tempDateTime = LocalDateTime.of(tempDateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
             } else{
-                dateTime = reference.minusHours(1);
+                tempDateTime = reference.minusHours(1);
             }
         }
 
-        return dateTime;
+        return tempDateTime;
     }
 }

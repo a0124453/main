@@ -44,7 +44,7 @@ public class EditParameterParser extends AddParameterParser {
         return result;
     }
 
-    void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
         if (isEventMap(commandMap)) {
             fillUpEventNull(commandMap);
             populateEventParameters(commandMap, result);
@@ -77,7 +77,7 @@ public class EditParameterParser extends AddParameterParser {
     }
 
     @Override
-    boolean isEventMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isEventMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, BY, NODUE);
         return super.isEventMap(commandMap);
     }
@@ -112,7 +112,7 @@ public class EditParameterParser extends AddParameterParser {
         }
     }
 
-    boolean isStopMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isStopMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, STOP, EVERY);
         checkMutuallyExclusiveKeywords(commandMap, FOR, UNTIL,FOREVER);
 
