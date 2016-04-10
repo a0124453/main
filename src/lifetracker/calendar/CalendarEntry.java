@@ -73,6 +73,7 @@ public interface CalendarEntry extends VisitableEntry {
     /**
      * @param property
      *            An {@code enum} representing the desired property.
+     * 
      * @return A {@code boolean} to indicate whether the entry satisfies the
      *         specified property.
      */
