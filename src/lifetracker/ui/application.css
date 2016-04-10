@@ -85,29 +85,6 @@
 .table-row-cell .table-column{  
     -fx-border-width: 1px;          
 }  
-  
-  
-/* 
-.table-row-cell:filled:even{  
-    -fx-background-color: white;  
-}  
-  
-  
-.table-row-cell:filled:odd{  
-    -fx-background-color: #F6F7F8;  
-}  */
-
-/*
-.table-row-cell:filled:selected { 
-  -fx-background: -fx-control-inner-background ;
-  -fx-background-color: -fx-table-cell-border-color, -fx-background ;
-  -fx-background-insets: 0, 0 0 1 0 ;
-  -fx-table-cell-border-color: derive(-fx-color, 5%);
-}
-
-.table-row-cell:odd:filled:selected {
-  -fx-background: -fx-control-inner-background-alt ;
-} */
 
 .table-row-cell:overdue {
  	-fx-background-color: rgba(255, 159, 160, .4);
@@ -123,16 +100,16 @@
   
 
 /* HIDE HORIZONTAL SCROLLBAR */
-.table-view *.scroll-bar:horizontal *.increment-button,
-.table-view *.scroll-bar:horizontal *.decrement-button {
+.table-view .scroll-bar:horizontal .increment-button,
+.table-view .scroll-bar:horizontal .decrement-button {
     -fx-background-color: null;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
 
-.table-view *.scroll-bar:horizontal *.increment-arrow, 
-.table-view *.scroll-bar:horizontal *.decrement-arrow {
+.table-view .scroll-bar:horizontal .increment-arrow, 
+.table-view .scroll-bar:horizontal .decrement-arrow {
     -fx-background-color: null;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
