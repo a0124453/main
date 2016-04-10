@@ -240,6 +240,32 @@ public interface CalendarList {
      */
     CalendarEntry delete(int id);
 
+    /**
+     * Changes an entry into a {@code GenericEntry}.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code DeadlineTask}, the deadline
+     * will be lost.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced);
 
     CalendarEntry updateToDeadline(int id, String newName, LocalDateTime newDeadline, boolean isConvertForced);
@@ -251,7 +277,7 @@ public interface CalendarList {
             boolean isLimitKept, boolean isConvertForced);
 
     /**
-     * Updates an entry into a RecurringTask.
+     * Changes an entry into a {@code RecurringTask}.
      * <p>
      * Empty fields will be skipped during update, unless a conversion for the
      * entry requires it, in which case an {@code IllegalArgumentException} will
@@ -370,8 +396,27 @@ public interface CalendarList {
      */
     CalendarEntry get(int id);
 
+    /**
+     * Creates and returns a copy of the {@code CalendarListResult} object with
+     * task and event lists filtered to contain only entries with descriptions
+     * containing the desired text. Allows room for minor typographical errors.
+     * 
+     * @param toSearch
+     *            The desired text to search for.
+     * 
+     * @return A {@code CalendarList} with filtered task and event lists.
+     */
     CalendarList findByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListResult} object with task and
+     * event lists set as the archived lists of the main {@code CalendarList},
+     * filtered to contain only entries with descriptions containing the desired
+     * text. Allows room for minor typographical errors.
+     * 
+     * @param toSearch
+     * @return
+     */
     CalendarList findArchivedByName(String toSearch);
 
     CalendarList findAllByName(String toSearch);
