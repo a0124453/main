@@ -217,25 +217,6 @@ public class IntegrationLogicTest {
                 false);
         expected.setComment(String.format(MESSAGE_ADD, "interview"));
         assertExecuteResult(expected, actual);
-        
-        //@@author A0114240B
-<<<<<<< HEAD
-        //Partition: Missing end date and time
-=======
-        //Partition: Add events with no end time
->>>>>>> master
-        actual = logic.executeCommand("add event from 22/3/16 2.30pm");
-        expectedStartDateTime = LocalDateTime.of(2016, 3, 22, 14, 30);
-        expectedEndDateTime = LocalDateTime.of(2016, 3, 22, 15, 30);
-        expected.addEventLine(2, "event", expectedStartDateTime, expectedEndDateTime, false, true, null, -1, null,
-                false);
-        expected.setComment(String.format(MESSAGE_ADD, "event"));
-        assertExecuteResult(expected, actual);
-<<<<<<< HEAD
-        
-        //Partition: Missing start date
-=======
->>>>>>> master
     }
 
     @Test

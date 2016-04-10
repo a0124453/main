@@ -122,12 +122,6 @@ public class UIController implements Initializable {
         addInputToHistory(userInput);
         process(userInput);
         textInput.setText(FIELD_EMPTY);
-        tableEvent.requestFocus();
-        tableEvent.getFocusModel().focus(newEventIndex);
-        tableEvent.scrollTo(newEventIndex);
-        if (hasNewEvent) {
-
-        }
     }
     
     public static Logic getLogic() {
@@ -501,13 +495,13 @@ public class UIController implements Initializable {
             setOverdueStyle(overdue, done);
             setDoneStyle(event, b, done);
             super.updateItem(event, b);
-            int index = super.getIndex();
-            boolean newEvent = (event != null) && (index == 5);
-            pseudoClassStateChanged(PSEUDO_CLASS_NEW, newEvent);
+            boolean newEvent = (event != null) && (event.isNew());
+            /*
+            hasNewEvent = newEvent;
             if (newEvent) {
-                hasNewEvent = true;
-                newEventIndex = index;
-            }
+                newEventIndex = super.getIndex();
+            }*/
+            pseudoClassStateChanged(PSEUDO_CLASS_NEW, newEvent);
         }
 
         private void setDoneStyle(LogicEvent event, boolean b, boolean done) {
