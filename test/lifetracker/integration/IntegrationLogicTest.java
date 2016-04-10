@@ -59,7 +59,7 @@ public class IntegrationLogicTest {
         globalLogger.addHandler(new FileHandler(LOG_FOLDER + LOG_FILE));
 
         File configFile = new File(CONFIG_FILE);
-        if(!configFile.exists()){
+        if (!configFile.exists()) {
             configFile.createNewFile();
         }
 
@@ -104,19 +104,28 @@ public class IntegrationLogicTest {
 
         //Partition: Add floating task
         actual = logic.executeCommand("add floating");
-        expected.addTaskLine(1, "floating", null, false, true, null, 0, null, false);
+        expected.addTaskLine(1, "floating", null, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "floating"));
         assertExecuteResult(expected, actual);
 
         //Boundary: no command
         actual = logic.executeCommand("free floating");
-        expected.addTaskLine(2, "free floating", null, false, true, null, 0, null, false);
+
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "floating", null, false, true, null, 0, null, false);
+        expected.addTaskLine(2, "free floating", null, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "free floating"));
         assertExecuteResult(expected, actual);
 
         //Boundary: reserved words
         actual = logic.executeCommand("add add");
-        expected.addTaskLine(3, "add", null, false, true, null, 0, null, false);
+
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "floating", null, false, true, null, 0, null, false);
+        expected.addTaskLine(2, "free floating", null, false, true, null, 0, null, false);
+        expected.addTaskLine(3, "add", null, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "add"));
         assertExecuteResult(expected, actual);
 
@@ -137,31 +146,46 @@ public class IntegrationLogicTest {
 
         //Partition: Add deadline tasks
         actual = logic.executeCommand("meeting by 12-5-15 3.30pm");
-        expected.addTaskLine(1, "meeting", LocalDateTime.of(LocalDate.of(2015, 5, 12), LocalTime.of(15, 30)), true,
-                true, null, 0, null, false);
+        LocalDateTime task1ExpectedDateTime = LocalDateTime.of(LocalDate.of(2015, 5, 12), LocalTime.of(15, 30));
+        expected.addTaskLine(1, "meeting", task1ExpectedDateTime, true, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "meeting"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Missing date
         actual = logic.executeCommand("assignment by 1534");
-        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 34));
-        if (expectedDateTime.isBefore(LocalDateTime.now())) {
-            expectedDateTime = expectedDateTime.plusDays(1);
+        LocalDateTime task2ExpectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 34));
+        if (task2ExpectedDateTime.isBefore(LocalDateTime.now())) {
+            task2ExpectedDateTime = task2ExpectedDateTime.plusDays(1);
         }
-        expected.addTaskLine(2, "assignment", expectedDateTime, false, true, null, 0, null, false);
+
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "meeting", task1ExpectedDateTime, true, true, null, 0, null, false);
+        expected.addTaskLine(2, "assignment", task2ExpectedDateTime, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "assignment"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Missing Time
         actual = logic.executeCommand("code review by tomorrow");
-        expectedDateTime = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT.minusMinutes(1));
-        expected.addTaskLine(3, "code review", expectedDateTime, false, true, null, 0, null, false);
+        LocalDateTime task3ExpectedDateTime = LocalDateTime
+                .of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT.minusMinutes(1));
+
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "meeting", task1ExpectedDateTime, true, true, null, 0, null, false);
+        expected.addTaskLine(2, "assignment", task2ExpectedDateTime, false, true, null, 0, null, false);
+        expected.addTaskLine(3, "code review", task3ExpectedDateTime, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "code review"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Invalid identifier
         actual = logic.executeCommand("meeting by boss");
-        expected.addTaskLine(4, "meeting by boss", null, false, true, null, 0, null, false);
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "meeting", task1ExpectedDateTime, true, true, null, 0, null, false);
+        expected.addTaskLine(2, "assignment", task2ExpectedDateTime, false, true, null, 0, null, false);
+        expected.addTaskLine(3, "code review", task3ExpectedDateTime, false, true, null, 0, null, false);
+        expected.addTaskLine(4, "meeting by boss", null, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "meeting by boss"));
         assertExecuteResult(expected, actual);
 
@@ -181,22 +205,31 @@ public class IntegrationLogicTest {
 
         //Partition: Add recurring deadline tasks
         actual = logic.executeCommand("add report by 14/1/15 2pm every 2 days");
-        LocalDateTime expectedDateTime = LocalDateTime.of(LocalDate.of(2015,1,14), LocalTime.of(14, 0));
-        expected.addTaskLine(1, "report", expectedDateTime, true, true, Period.ofDays(2), -1, null, false);
+        LocalDateTime task1ExpectedDeadline = LocalDateTime.of(LocalDate.of(2015, 1, 14), LocalTime.of(14, 0));
+        expected.addTaskLine(1, "report", task1ExpectedDeadline, true, true, Period.ofDays(2), -1, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "report"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Missing date time
         actual = logic.executeCommand("pump bicycle wheels every 2 weeks");
-        expectedDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
-        expected.addTaskLine(2, "pump bicycle wheels", expectedDateTime, false, true, Period.ofWeeks(2), -1, null,
-                false);
+        LocalDateTime task2ExpectedDeadline = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1));
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "report", task1ExpectedDeadline, true, true, Period.ofDays(2), -1, null, false);
+        expected.addTaskLine(2, "pump bicycle wheels", task2ExpectedDeadline, false, true, Period.ofWeeks(2), -1, null,
+                true);
         expected.setComment(String.format(MESSAGE_ADD, "pump bicycle wheels"));
         assertExecuteResult(expected, actual);
 
         //Boundary: Invalid recurring period identifier
         actual = logic.executeCommand("meeting every now and then");
-        expected.addTaskLine(3, "meeting every now and then", null, false, true, null, 0, null, false);
+
+        expected = new ExecuteResultImpl();
+        expected.setType(ExecuteResult.CommandType.DISPLAY);
+        expected.addTaskLine(1, "report", task1ExpectedDeadline, true, true, Period.ofDays(2), -1, null, false);
+        expected.addTaskLine(2, "pump bicycle wheels", task2ExpectedDeadline, false, true, Period.ofWeeks(2), -1, null,
+                false);
+        expected.addTaskLine(3, "meeting every now and then", null, false, true, null, 0, null, true);
         expected.setComment(String.format(MESSAGE_ADD, "meeting every now and then"));
         assertExecuteResult(expected, actual);
     }
@@ -309,7 +342,7 @@ public class IntegrationLogicTest {
         expected.addTaskLine(2, "xyzt", null, false, true, null, 0, null, false);
         expected.addEventLine(3, "xyzt", LocalDateTime.of(2016, 3, 22, 14, 0), LocalDateTime.of(2016, 3, 22, 15, 0),
                 false, false, null, 0, null, false);
-        expected.setComment("Displaying all entries.");
+        expected.setComment("Displaying entries.");
         assertExecuteResult(expected, actual);
 
         //Boundary: With other keywords

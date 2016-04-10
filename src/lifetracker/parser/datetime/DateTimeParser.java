@@ -34,6 +34,11 @@ public class DateTimeParser {
     private static final String EMPTY_DATE_DEFAULT_STRING = "today";
     private static final String NATTY_TIME_FIELD = "explicit_time";
     private static final String NATTY_DATE_FIELD = "date";
+    private static final String NATTY_MERIDIAN_INDICATOR = "meridian_indicator";
+
+    //Natty parses "1" as 1am, but "12" as 12pm so there's no need to adjust
+    private static final LocalTime UNGODLY_HOUR_START = LocalTime.of(0, 59, 59);
+    private static final LocalTime UNGODLY_HOUR_END = LocalTime.of(7, 0);
 
     private static DateTimeParser instance = new DateTimeParser();
     private final com.joestelmach.natty.Parser nattyParser = new com.joestelmach.natty.Parser();
@@ -84,8 +89,7 @@ public class DateTimeParser {
         Set<String> startParseElements = isStartEmpty ?
                 Collections.emptySet() :
                 startDateGroup.getParseLocations().keySet();
-        // If end datetime was empty to begin with, we have to pretend nothing
-        // was parsed.
+        // If end datetime was empty to begin with, we have to pretend nothing was parsed.
         Set<String> endParseElements = isEndEmpty ? Collections.emptySet() : endDateGroup.getParseLocations().keySet();
 
         LocalDateTime[] adjustedDates = adjustDoubleDateToDefault(startDateTime, endDateTime, startParseElements,
@@ -127,6 +131,8 @@ public class DateTimeParser {
 
         dateTime = adjustDateAfterReferenceByDays(dateTime, LocalDateTime.now().withNano(0), parseElements);
 
+        dateTime = adjustAmPm(dateTime, parseElements);
+
         return dateTime;
     }
 
@@ -160,6 +166,9 @@ public class DateTimeParser {
                     jointParse);
         }
 
+        adjustedStart = adjustAmPm(adjustedStart, startParseElements);
+        adjustedEnd = adjustAmPm(adjustedEnd, endParseElements);
+
         return new LocalDateTime[] {adjustedStart, adjustedEnd};
     }
 
@@ -173,6 +182,22 @@ public class DateTimeParser {
 
         if (!parseElements.contains(NATTY_DATE_FIELD)) {
             adjustedDateTime = LocalDateTime.of(defaultDateTime.toLocalDate(), adjustedDateTime.toLocalTime());
+        }
+
+        return adjustedDateTime;
+    }
+
+    private LocalDateTime adjustAmPm(LocalDateTime dateTime, Set<String> parseElements) {
+
+        LocalDateTime adjustedDateTime = dateTime.withNano(0);
+
+        if (!parseElements.contains(NATTY_MERIDIAN_INDICATOR)) {
+            LocalTime time = dateTime.toLocalTime();
+
+            if (time.isAfter(UNGODLY_HOUR_START) && time.isBefore(UNGODLY_HOUR_END)) {
+                time = time.plusHours(12);
+                adjustedDateTime = LocalDateTime.of(dateTime.toLocalDate(), time);
+            }
         }
 
         return adjustedDateTime;
@@ -196,7 +221,7 @@ public class DateTimeParser {
 
             if (parseElements.contains(NATTY_DATE_FIELD)) {
                 dateTime = LocalDateTime.of(dateTime.toLocalDate(), reference.toLocalTime().plusHours(1));
-            } else{
+            } else {
                 dateTime = reference.plusHours(1);
             }
 
@@ -213,7 +238,7 @@ public class DateTimeParser {
 
             if (parseElements.contains(NATTY_DATE_FIELD)) {
                 tempDateTime = LocalDateTime.of(tempDateTime.toLocalDate(), reference.toLocalTime().minusHours(1));
-            } else{
+            } else {
                 tempDateTime = reference.minusHours(1);
             }
         }
