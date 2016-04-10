@@ -85,7 +85,7 @@ public class LogicImpl implements Logic {
         assert commandString != null;
 
         String[] commandContent = commandString.split(" ");
-        ExecuteResult runResult = new CommandLineResult();
+        ExecuteResult runResult = new ExecuteResultImpl();
 
         if (commandContent[0].equals("saveat")) {
             runResult.setType(CommandType.SAVE);
@@ -142,7 +142,7 @@ public class LogicImpl implements Logic {
             redoStack.push(commandToExecute);
             executedState = commandToExecute.undo(calendar);
         } catch (EmptyStackException ex) {
-            ExecuteResult errorResult = new CommandLineResult();
+            ExecuteResult errorResult = new ExecuteResultImpl();
             errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_UNDO_STACK_EMPTY));
             errorResult.setType(CommandType.ERROR);
             return errorResult;
@@ -161,7 +161,7 @@ public class LogicImpl implements Logic {
             commandStack.push(commandToExecute);
             executedState = commandToExecute.execute(calendar);
         } catch (EmptyStackException ex) {
-            ExecuteResult errorResult = new CommandLineResult();
+            ExecuteResult errorResult = new ExecuteResultImpl();
             errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ERROR_ERROR_REDO_STACK_EMPTY));
             errorResult.setType(CommandType.ERROR);
             return errorResult;
@@ -179,7 +179,7 @@ public class LogicImpl implements Logic {
             commandToExecute = commandParser.parse(commandString);
             executedState = commandToExecute.execute(calendar);
         } catch (IllegalArgumentException ex) {
-            ExecuteResult errorResult = new CommandLineResult();
+            ExecuteResult errorResult = new ExecuteResultImpl();
             errorResult.setComment(String.format(ERROR_INVALID_COMMAND, ex.getMessage()));
             errorResult.setType(CommandType.ERROR);
             return errorResult;

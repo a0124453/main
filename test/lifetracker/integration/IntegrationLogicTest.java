@@ -1,7 +1,7 @@
 package lifetracker.integration;
 
 import lifetracker.command.CommandFactoryImpl;
-import lifetracker.logic.CommandLineResult;
+import lifetracker.logic.ExecuteResultImpl;
 import lifetracker.logic.ExecuteResult;
 import lifetracker.logic.Logic;
 import lifetracker.logic.LogicImpl;
@@ -99,7 +99,7 @@ public class IntegrationLogicTest {
     @Test
     public void testAddFloating() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: Add floating task
@@ -122,7 +122,7 @@ public class IntegrationLogicTest {
 
         //Boundary: Empty name
         actual = logic.executeCommand("add");
-        ExecuteResult error = new CommandLineResult();
+        ExecuteResult error = new ExecuteResultImpl();
         error.setType(ExecuteResult.CommandType.ERROR);
         error.setComment("Invalid Command: Task/Event's name cannot be empty!");
         assertExecuteResult(error, actual);
@@ -132,7 +132,7 @@ public class IntegrationLogicTest {
     @Test
     public void testAddDeadLine() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: Add deadline tasks
@@ -167,7 +167,7 @@ public class IntegrationLogicTest {
 
         //Boundary: Missing name
         actual = logic.executeCommand("by 2pm");
-        ExecuteResult error = new CommandLineResult();
+        ExecuteResult error = new ExecuteResultImpl();
         error.setType(ExecuteResult.CommandType.ERROR);
         error.setComment("Invalid Command: Task/Event's name cannot be empty!");
         assertExecuteResult(error, actual);
@@ -176,7 +176,7 @@ public class IntegrationLogicTest {
     @Test
     public void testAddRecurringDeadlineTask() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         //Partition: Add recurring deadline tasks
@@ -204,7 +204,7 @@ public class IntegrationLogicTest {
     @Test
     public void testAddEvents() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
         LocalDateTime expectedStartDateTime;
         LocalDateTime expectedEndDateTime;
@@ -232,7 +232,7 @@ public class IntegrationLogicTest {
     @Test
     public void testAddRecurringEvents() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
         LocalDateTime expectedStartDateTime;
         LocalDateTime expectedEndDateTime;
@@ -256,7 +256,7 @@ public class IntegrationLogicTest {
     @Test
     public void testDeleteEntries() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         logic.executeCommand("add floating task 1");
@@ -270,7 +270,7 @@ public class IntegrationLogicTest {
 
         //Boundary: Delete non-existent entry
         actual = logic.executeCommand("delete 100");
-        ExecuteResult error = new CommandLineResult();
+        ExecuteResult error = new ExecuteResultImpl();
         error.setType(ExecuteResult.CommandType.ERROR);
         error.setComment("Invalid Command: Entry 100 is not found!");
         assertExecuteResult(error, actual);
@@ -284,7 +284,7 @@ public class IntegrationLogicTest {
     @Test
     public void testSearch() throws Exception {
         ExecuteResult actual;
-        ExecuteResult expected = new CommandLineResult();
+        ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
 
         logic.executeCommand("abcd efg");
@@ -313,7 +313,7 @@ public class IntegrationLogicTest {
 
         //Partition: Search all
         actual = logic.executeCommand("find");
-        expected = new CommandLineResult();
+        expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
         expected.addTaskLine(1, "abcd efg", null, false, true, null, 0, null, false);
         expected.addTaskLine(2, "xyzt", null, false, true, null, 0, null, false);
