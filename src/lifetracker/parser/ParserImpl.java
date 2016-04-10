@@ -1,13 +1,5 @@
 package lifetracker.parser;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.apache.commons.lang3.StringUtils;
-
 import lifetracker.command.CommandFactory;
 import lifetracker.command.CommandObject;
 import lifetracker.parser.datetime.DateTimeParser;
@@ -19,6 +11,13 @@ import lifetracker.parser.syntax.CommandSectionsParser;
 import lifetracker.parser.syntax.EditOneParametersParser;
 import lifetracker.parser.syntax.EditParameterParser;
 import lifetracker.parser.syntax.Parameters;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 //@@author A0091173J
 public class ParserImpl implements Parser {
@@ -97,7 +96,7 @@ public class ParserImpl implements Parser {
 
         return commands.get(command).apply(commandSegments);
     }
-    
+
     private void populateCommand() {
         commands.put("add", this::processAdd);
         commands.put("delete", this::processDelete);
@@ -112,6 +111,9 @@ public class ParserImpl implements Parser {
         commands.put("findold", this::processFindOld);
         commands.put("listold", this::processFindOld);
         commands.put("searchold", this::processFindOld);
+        commands.put("today", this::processToday);
+        commands.put("todayall", this::processTodayAll);
+        commands.put("todayold", this::processToday);
         commands.put("mark", this::processMark);
     }
 
@@ -180,9 +182,9 @@ public class ParserImpl implements Parser {
         String searchTerm = restoreCommandSections(commandBody).trim();
 
         if (searchTerm.isEmpty()) {
-            return commandObjectFactory.find();
+            return commandObjectFactory.find(false);
         } else {
-            return commandObjectFactory.find(searchTerm);
+            return commandObjectFactory.find(searchTerm, false);
         }
     }
 
@@ -190,9 +192,9 @@ public class ParserImpl implements Parser {
         String searchTerm = restoreCommandSections(commandBody).trim();
 
         if (searchTerm.isEmpty()) {
-            return commandObjectFactory.findAll();
+            return commandObjectFactory.findAll(false);
         } else {
-            return commandObjectFactory.findAll(searchTerm);
+            return commandObjectFactory.findAll(searchTerm, false);
         }
     }
 
@@ -200,9 +202,39 @@ public class ParserImpl implements Parser {
         String searchTerm = restoreCommandSections(commandBody).trim();
 
         if (searchTerm.isEmpty()) {
-            return commandObjectFactory.findOld();
+            return commandObjectFactory.findOld(false);
         } else {
-            return commandObjectFactory.findOld(searchTerm);
+            return commandObjectFactory.findOld(searchTerm, false);
+        }
+    }
+
+    private CommandObject processToday(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.find(true);
+        } else {
+            return commandObjectFactory.find(searchTerm, false);
+        }
+    }
+
+    private CommandObject processTodayOld(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.findOld(true);
+        } else {
+            return commandObjectFactory.findOld(searchTerm, false);
+        }
+    }
+
+    private CommandObject processTodayAll(List<String> commandBody) {
+        String searchTerm = restoreCommandSections(commandBody).trim();
+
+        if (searchTerm.isEmpty()) {
+            return commandObjectFactory.findAll(true);
+        } else {
+            return commandObjectFactory.findAll(searchTerm, false);
         }
     }
 

@@ -11,5 +11,6 @@ public enum CommandOptions {
     UNTIL,
     NODUE,
     FOREVER,
-    STOP
+    STOP,
+    TODAY
 }
