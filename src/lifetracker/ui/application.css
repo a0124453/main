@@ -27,6 +27,11 @@
 	-fx-padding: 0 0 0 15;
 }
 
+.table-view .placeholder .label {
+	-fx-font-family: 'Lato-Bold'; 
+    -fx-font-size: 20px;  
+}
+
 .table-view .column-header .label { 
 	-fx-font-family: 'Lato-Bold'; 
     -fx-font-size: 16px;  
@@ -106,6 +111,10 @@
 
 .table-row-cell:overdue {
  	-fx-background-color: rgba(255, 159, 160, .4);
+}
+
+.table-row-cell:new {
+ 	-fx-background-color: rgba(0, 255, 0, .4);
 }
 
 .table-row-cell:done .text {
