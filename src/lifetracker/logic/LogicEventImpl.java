@@ -127,6 +127,7 @@ public class LogicEventImpl implements LogicEvent {
         this.isNew = isNew;
     }
 
+    //Auto-generated function
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -158,6 +159,7 @@ public class LogicEventImpl implements LogicEvent {
 
     }
 
+    //Auto-generated function
     @Override
     public int hashCode() {
         int result = getName().hashCode();

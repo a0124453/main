@@ -112,6 +112,7 @@ public class LogicTaskImpl implements LogicTask {
         this.isNew = isNew;
     }
 
+    //Auto-generated function
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -143,6 +144,7 @@ public class LogicTaskImpl implements LogicTask {
 
     }
 
+    //Auto-generated function
     @Override
     public int hashCode() {
         int result = getName().hashCode();
