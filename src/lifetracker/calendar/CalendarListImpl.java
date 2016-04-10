@@ -286,7 +286,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findByName(String toSearch) {
-        CalendarListTemp result = new CalendarListTemp();
+        CalendarListResult result = new CalendarListResult();
         TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
         copyTaskList.putAll(this.taskList);
         filterByName(copyTaskList, toSearch);
@@ -300,7 +300,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findArchivedByName(String toSearch) {
-        CalendarListTemp result = new CalendarListTemp();
+        CalendarListResult result = new CalendarListResult();
         result.setTaskList(this.archivedTaskList);
         result.setEventList(this.archivedEventList);
         return result.findByName(toSearch);
@@ -308,7 +308,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findAllByName(String toSearch) {
-        CalendarListTemp result = new CalendarListTemp();
+        CalendarListResult result = new CalendarListResult();
 
         TreeMap<Integer, CalendarEntry> combinedTask = new TreeMap<>(taskList);
         combinedTask.putAll(archivedTaskList);
@@ -323,7 +323,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findToday() {
-        CalendarListTemp result = new CalendarListTemp();
+        CalendarListResult result = new CalendarListResult();
 
         Map<Integer, CalendarEntry> todayTasks = taskList.entrySet().stream()
                 .filter(e -> e.getValue().isProperty(CalendarProperty.TODAY))
