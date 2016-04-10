@@ -19,33 +19,34 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.EmptyStackException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 
 //@@author A0149467N
 
 public class LogicImpl implements Logic {
-    
+
     //configure file constant
     private static final String CONFIG_FILE_NAME = "config.properties";
     private static final String SAVE_FILE_PROPERTY = "savefile";
     private static final String DEFAULT_SAVE_FILE_NAME = "lifetracker.dat";
-    
+
     //Error message
     private static final String ERROR_INVALID_COMMAND = "Invalid Command: %1$s";
     private static final String ERROR_SAVE = "Warning: There was an error saving to the save file!";
     private static final String ERROR_ERROR_UNDO_STACK_EMPTY = "No command to undo!";
     private static final String ERROR_ERROR_REDO_STACK_EMPTY = "No command to redo!";
-    
+
     //save comment
     private static final String COMMENT_SAVE = "Calendar is saved at ";
 
     private Parser commandParser;
     private Storage calendarStorage;
     private CalendarList calendar;
-    
+
     private Stack<CommandObject> commandStack;
     private Stack<CommandObject> redoStack;
-    
+
     private Properties property;
     private File propertyFile;
 
@@ -86,35 +87,35 @@ public class LogicImpl implements Logic {
         String[] commandContent = commandString.split(" ");
         ExecuteResult runResult = new CommandLineResult();
 
-        if(commandContent[0].equals("saveat")) {
+        if (commandContent[0].equals("saveat")) {
             runResult.setType(CommandType.SAVE);
             return saveat(commandString, runResult);
         }
-        
+
         switch (commandString) {
-        case "exit":
-            runResult.setType(CommandType.EXIT);
-            return runResult;
-        case "help":
-            runResult.setType(CommandType.HELP);
-            return runResult;
-        default:
-            runResult.setType(CommandType.DISPLAY);
-            switch (commandString) {
-            case "undo":
-                return undo(runResult);
-            case "redo":
-                return redo(runResult);
+            case "exit":
+                runResult.setType(CommandType.EXIT);
+                return runResult;
+            case "help":
+                runResult.setType(CommandType.HELP);
+                return runResult;
             default:
-                return otherCommand(commandString, runResult);
-            }
+                runResult.setType(CommandType.DISPLAY);
+                switch (commandString) {
+                    case "undo":
+                        return undo(runResult);
+                    case "redo":
+                        return redo(runResult);
+                    default:
+                        return otherCommand(commandString, runResult);
+                }
         }
     }
-    
+
     private ExecuteResult saveat(String commandString, ExecuteResult runResult) {
         int position = commandString.indexOf(" ");
         String location = commandString.substring(position + 1);
-        
+
         saveat(location);
 
         runResult.setComment(COMMENT_SAVE + location);
@@ -135,7 +136,7 @@ public class LogicImpl implements Logic {
     private ExecuteResult undo(ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
-        
+
         try {
             commandToExecute = commandStack.pop();
             redoStack.push(commandToExecute);
@@ -146,15 +147,15 @@ public class LogicImpl implements Logic {
             errorResult.setType(CommandType.ERROR);
             return errorResult;
         }
-        
+
         store();
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
-    
+
     private ExecuteResult redo(ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
-        
+
         try {
             commandToExecute = redoStack.pop();
             commandStack.push(commandToExecute);
@@ -165,15 +166,15 @@ public class LogicImpl implements Logic {
             errorResult.setType(CommandType.ERROR);
             return errorResult;
         }
-        
+
         store();
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
-    
+
     private ExecuteResult otherCommand(String commandString, ExecuteResult runResult) {
         CommandObject commandToExecute;
         CalendarList executedState;
-        
+
         try {
             commandToExecute = commandParser.parse(commandString);
             executedState = commandToExecute.execute(calendar);
@@ -183,10 +184,10 @@ public class LogicImpl implements Logic {
             errorResult.setType(CommandType.ERROR);
             return errorResult;
         }
-   
+
         commandStack.push(commandToExecute);
         redoStack.clear();
-        
+
         store();
         return processExecutionResults(runResult, commandToExecute, executedState);
     }
@@ -205,24 +206,24 @@ public class LogicImpl implements Logic {
         assert commandExecuted != null;
         assert executedState != null;
 
+        Set<Integer> entriesToHighlight = commandExecuted.getHighlightEntries();
+
         runResult.setComment(commandExecuted.getComment());
 
         if (!executedState.getTaskList().isEmpty()) {
-            executedState.getTaskList().forEach(task -> {
-                addTask(runResult, task);
-            });
+            executedState.getTaskList()
+                    .forEach(task -> addTask(runResult, task, entriesToHighlight.contains(task.getId())));
         }
 
         if (!executedState.getEventList().isEmpty()) {
-            executedState.getEventList().forEach(event -> {
-                addEvent(runResult, event);
-            });
+            executedState.getEventList()
+                    .forEach(event -> addEvent(runResult, event, entriesToHighlight.contains(event.getId())));
         }
 
         return runResult;
     }
 
-    private void addTask(ExecuteResult runResult, CalendarEntry task) {
+    private void addTask(ExecuteResult runResult, CalendarEntry task, boolean isHighlighted) {
         LocalDateTime limitDate = task.getDateTime(CalendarProperty.DATE_LIMIT);
         runResult.addTaskLine(
                 task.getId(),
@@ -233,10 +234,10 @@ public class LogicImpl implements Logic {
                 task.getPeriod(),
                 task.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
                 limitDate == null ? null : limitDate.toLocalDate(),
-                false);
+                isHighlighted);
     }
-    
-    private void addEvent(ExecuteResult runResult, CalendarEntry event) {
+
+    private void addEvent(ExecuteResult runResult, CalendarEntry event, boolean isHighlighted) {
         LocalDateTime limitDate = event.getDateTime(CalendarProperty.DATE_LIMIT);
         runResult.addEventLine(
                 event.getId(),
@@ -248,6 +249,6 @@ public class LogicImpl implements Logic {
                 event.getPeriod(),
                 event.getIntegerProperty(CalendarProperty.OCCURRENCE_LIMIT),
                 limitDate == null ? null : limitDate.toLocalDate(),
-                false);
+                isHighlighted);
     }
 }

@@ -17,7 +17,7 @@ public abstract class CommandObject {
     protected static final String MESSAGE_ERROR = "Error: Command was not executed.";
 
     private boolean executed = false;
-    private Set<Integer> newEntries = new HashSet<>();
+    private Set<Integer> highlightEntries = new HashSet<>();
     private String comment = MESSAGE_ERROR;
 
     public CalendarList execute(CalendarList calendar) {
@@ -36,8 +36,8 @@ public abstract class CommandObject {
         return comment;
     }
 
-    public Set<Integer> getNewEntries() {
-        return new HashSet<>(newEntries);
+    public Set<Integer> getHighlightEntries() {
+        return new HashSet<>(highlightEntries);
     }
 
     protected void setComment(String comment) {
@@ -46,7 +46,7 @@ public abstract class CommandObject {
     }
 
     protected void addHighlightEntry(int id) {
-        newEntries.add(id);
+        highlightEntries.add(id);
     }
 
     protected boolean isExecuted() {
