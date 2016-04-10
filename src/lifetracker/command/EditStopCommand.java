@@ -22,6 +22,8 @@ public class EditStopCommand extends EditGenericTaskCommand {
             oldEntry = calendar.updateToEvent(id, name, null, null, true);
         }
 
+        addHighlightEntry(id);
+
         setExecuted(true);
         setComment(String.format(MESSAGE_EDITED, id));
 

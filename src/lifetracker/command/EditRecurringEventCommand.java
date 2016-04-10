@@ -43,6 +43,8 @@ public class EditRecurringEventCommand extends EditRecurringTaskCommand {
                     .updateToRecurringEvent(id, name, startDateTime, endDateTime, recurringPeriod, occurLimit);
         }
 
+        addHighlightEntry(id);
+
         setExecuted(true);
         setComment(String.format(MESSAGE_EDITED, id));
 

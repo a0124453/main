@@ -63,6 +63,8 @@ public class EditRecurringEntryCommand extends EditGenericTaskCommand {
             }
         }
 
+        addHighlightEntry(id);
+
         setComment(String.format(MESSAGE_EDITED, id));
         setExecuted(true);
 

@@ -40,6 +40,8 @@ public class EditRecurringTaskCommand extends EditRecurringEntryCommand {
             oldEntry = calendar.updateToRecurringTask(id, name, endDateTime, recurringPeriod, occurLimit, true);
         }
 
+        addHighlightEntry(id);
+
         setExecuted(true);
         setComment(String.format(MESSAGE_EDITED, id));
         return calendar;

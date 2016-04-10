@@ -2,6 +2,9 @@ package lifetracker.command;
 
 import lifetracker.calendar.CalendarList;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A generic command object.
  * <p>
@@ -11,10 +14,10 @@ import lifetracker.calendar.CalendarList;
 //@@author A0091173J
 public abstract class CommandObject {
 
-    static final String MESSAGE_ERROR = "Error: Command was not executed.";
+    protected static final String MESSAGE_ERROR = "Error: Command was not executed.";
 
     private boolean executed = false;
-
+    private Set<Integer> newEntries = new HashSet<>();
     private String comment = MESSAGE_ERROR;
 
     public CalendarList execute(CalendarList calendar) {
@@ -33,9 +36,17 @@ public abstract class CommandObject {
         return comment;
     }
 
+    public Set<Integer> getNewEntries() {
+        return new HashSet<>(newEntries);
+    }
+
     protected void setComment(String comment) {
         assert comment != null;
         this.comment = comment;
+    }
+
+    protected void addHighlightEntry(int id) {
+        newEntries.add(id);
     }
 
     protected boolean isExecuted() {

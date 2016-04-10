@@ -29,6 +29,8 @@ public class EditDeadlineTaskCommand extends EditGenericTaskCommand {
             }
         }
 
+        addHighlightEntry(id);
+
         setComment(String.format(MESSAGE_EDITED, id));
         setExecuted(true);
 
