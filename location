@@ -1,0 +1,154 @@
+{
+  "taskList": {
+    "1": {
+      "SERIAL_TYPE_IDENTIFIER": "GenericEntry",
+      "name": "1",
+      "id": 1,
+      "isActive": true
+    },
+    "2": {
+      "SERIAL_TYPE_IDENTIFIER": "GenericEntry",
+      "name": "12",
+      "id": 2,
+      "isActive": true
+    },
+    "3": {
+      "SERIAL_TYPE_IDENTIFIER": "GenericEntry",
+      "name": "31853",
+      "id": 3,
+      "isActive": true
+    }
+  },
+  "eventList": {
+    "4": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "Event",
+      "name": "123",
+      "id": 4,
+      "isActive": true
+    },
+    "5": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "Event",
+      "name": "234234",
+      "id": 5,
+      "isActive": true
+    },
+    "6": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "Event",
+      "name": "dfszfsdf",
+      "id": 6,
+      "isActive": true
+    },
+    "7": {
+      "startDateTime": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 6,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "deadline": {
+        "date": {
+          "year": 2016,
+          "month": 4,
+          "day": 11
+        },
+        "time": {
+          "hour": 7,
+          "minute": 0,
+          "second": 0,
+          "nano": 0
+        }
+      },
+      "SERIAL_TYPE_IDENTIFIER": "Event",
+      "name": "saldz;ckz",
+      "id": 7,
+      "isActive": true
+    }
+  },
+  "archivedTaskList": {},
+  "archivedEventList": {}
+}
