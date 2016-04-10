@@ -66,6 +66,7 @@ public class UIController implements Initializable {
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
+    private static int newTaskIndex;
 
     @FXML
     Label labelTitle;
@@ -119,15 +120,15 @@ public class UIController implements Initializable {
         String userInput = textInput.getText();
         addInputToHistory(userInput);
         process(userInput);
-        textInput.setText(FIELD_EMPTY);      
+        textInput.setText(FIELD_EMPTY);
     }
     
-    public static Logic getLogic() {
+    public Logic getLogic() {
         assert l != null;
         return l;
     }
 
-    public static void setLogic(Logic l) {
+    public void setLogic(Logic l) {
         assert l != null;
         UIController.l = l;
     }
@@ -465,19 +466,19 @@ public class UIController implements Initializable {
         return duration == 0 ? FIELD_EMPTY : duration + " " + label + " ";
     }
 
-    public static void populateList(ExecuteResult result) {
+    public void populateList(ExecuteResult result) {
         populateTaskList(result);
         populateEventList(result);
     }
 
-    private static void populateEventList(ExecuteResult result) {
+    private void populateEventList(ExecuteResult result) {
         eventList.clear();
         for (LogicEvent event : result.getEventList()) {
             eventList.add(event);
         }
     }
 
-    private static void populateTaskList(ExecuteResult result) {
+    private void populateTaskList(ExecuteResult result) {
         taskList.clear();
         for (LogicTask task : result.getTaskList()) {
             taskList.add(task);

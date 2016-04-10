@@ -10,10 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
+
 <!-- @@author A0114240B -->
+
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lifetracker.ui.UIController">
    <children>
-      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="2.5" style="-fx-background-color: transparent;" stylesheets="@application.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="2.5" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane VBox.vgrow="NEVER">
                <children>
@@ -31,7 +33,7 @@
                         <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" />
                         <VBox alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: transparent;" StackPane.alignment="TOP_CENTER">
                            <children>
-                              <TableView fx:id="tableEvent" prefHeight="225.0" stylesheets="@application.css" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="tableEvent" prefHeight="225.0" VBox.vgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="columnEventStartTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="START TIME" />
                                     <TableColumn fx:id="columnEventEndTime" editable="false" maxWidth="200.0" minWidth="2.0" prefWidth="200.0" resizable="false" sortable="false" text="END TIME" />

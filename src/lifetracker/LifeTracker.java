@@ -50,15 +50,17 @@ public class LifeTracker extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         fileStorage = new ThreadedFileStorage();
-        Parent root = FXMLLoader.load(getClass().getResource("/lifetracker/ui/UIDesign.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Parent root = fxmlLoader.load(getClass().getResource("/lifetracker/ui/UIDesign.fxml").openStream());
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/lifetracker/ui/application.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/lifetracker/ui/application.css").toExternalForm());   
         primaryStage.setTitle("Life Tracker");
         primaryStage.setScene(scene);
         Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
-        UIController.setLogic(programLogic);
-        UIController.populateList(programLogic.executeCommand("today"));
+        UIController uiController = (UIController) fxmlLoader.getController();
+        uiController.setLogic(programLogic);
+        uiController.populateList(programLogic.executeCommand("today"));
         primaryStage.getIcons().add(new Image("/lifetracker/icon.png"));
         primaryStage.show();
         
