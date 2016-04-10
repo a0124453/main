@@ -228,7 +228,7 @@ public class IntegrationLogicTest {
         expected.setComment(String.format(MESSAGE_ADD, "event"));
         assertExecuteResult(expected, actual);
         
-        //Partition: AMissing start date
+        //Partition: Missing start date
     }
 
     @Test

@@ -58,6 +58,7 @@ public class UIController implements Initializable {
     private static final String FIELD_LIMIT_DATE = " until ";
     private static final PseudoClass PSEUDO_CLASS_OVERDUE = PseudoClass.getPseudoClass("overdue");
     private static final PseudoClass PSEUDO_CLASS_DONE = PseudoClass.getPseudoClass("done");
+    private static final PseudoClass PSEUDO_CLASS_NEW = PseudoClass.getPseudoClass("new");
 
     private static Logic l;
     private static List<String> inputHistory;
@@ -65,6 +66,8 @@ public class UIController implements Initializable {
     private static ObservableList<LogicTask> taskList = FXCollections.observableArrayList();
     private static ObservableList<LogicEvent> eventList = FXCollections.observableArrayList();
     private static WebEngine webEngine;
+    private static boolean hasNewEvent;
+    private static int newEventIndex;
 
     @FXML
     Label labelTitle;
@@ -119,7 +122,12 @@ public class UIController implements Initializable {
         addInputToHistory(userInput);
         process(userInput);
         textInput.setText(FIELD_EMPTY);
+        tableEvent.requestFocus();
+        tableEvent.getFocusModel().focus(newEventIndex);
+        tableEvent.scrollTo(newEventIndex);
+        if (hasNewEvent) {
 
+        }
     }
     
     public static Logic getLogic() {
@@ -492,6 +500,14 @@ public class UIController implements Initializable {
             boolean done = (event != null) && (!event.isDone());
             setOverdueStyle(overdue, done);
             setDoneStyle(event, b, done);
+            super.updateItem(event, b);
+            int index = super.getIndex();
+            boolean newEvent = (event != null) && (index == 5);
+            pseudoClassStateChanged(PSEUDO_CLASS_NEW, newEvent);
+            if (newEvent) {
+                hasNewEvent = true;
+                newEventIndex = index;
+            }
         }
 
         private void setDoneStyle(LogicEvent event, boolean b, boolean done) {

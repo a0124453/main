@@ -108,6 +108,10 @@
  	-fx-background-color: rgba(255, 159, 160, .4);
 }
 
+.table-row-cell:new {
+ 	-fx-background-color: rgba(0, 255, 0, .4);
+}
+
 .table-row-cell:done .text {
  	-fx-strikethrough: true;
 }
