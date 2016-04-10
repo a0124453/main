@@ -1,5 +1,6 @@
 package lifetracker.calendar;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
@@ -108,7 +109,11 @@ public class CalendarListTest {
 
     @Test
     public void testGetTaskList() {
-        fail("Not yet implemented");
+        List<CalendarEntry> actualTaskList = testCalendar.getTaskList();
+        assertEquals(expectedTaskList.size(), actualTaskList.size());
+        for (int i = 0; i < actualTaskList.size(); i++) {
+            assertEquals(expected, actual);
+        }
     }
 
     @Test
