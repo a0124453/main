@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0091173J
 public class AddRecurringCommand extends AddCommand {
 
     private static final int OCCUR_INF = -1;

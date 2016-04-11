@@ -5,13 +5,14 @@ import lifetracker.calendar.CalendarList;
 import java.util.HashSet;
 import java.util.Set;
 
+//@@author A0091173J
+
 /**
  * A generic command object.
  * <p>
  * This abstract class implements command comments, as well as checks for executing and undoing only when allowed.
  * Avoid calling the super method when inheriting to skip such checks.
  */
-//@@author A0091173J
 public abstract class CommandObject {
 
     protected static final String MESSAGE_ERROR = "Error: Command was not executed.";

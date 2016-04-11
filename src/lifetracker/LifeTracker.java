@@ -21,6 +21,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+//@@author A0114240B
 public class LifeTracker extends Application {
 
     private static final String LOG_FOLDER = "logs/";
@@ -32,6 +33,7 @@ public class LifeTracker extends Application {
         launch(args);
     }
 
+    //@@author A0091173J
     private static void setLogger() throws IOException {
 
         File logDir = new File(LOG_FOLDER);
@@ -47,6 +49,7 @@ public class LifeTracker extends Application {
 
     }
 
+    //@@author A0114240B
     @Override
     public void start(Stage primaryStage) throws Exception {
         fileStorage = new ThreadedFileStorage();
@@ -58,7 +61,7 @@ public class LifeTracker extends Application {
         primaryStage.setScene(scene);
         Parser commandParser = new ParserImpl(new CommandFactoryImpl());
         Logic programLogic = new LogicImpl(commandParser, fileStorage);
-        UiController uiController = (UiController) fxmlLoader.getController();
+        UiController uiController = fxmlLoader.getController();
         uiController.setLogic(programLogic);
         uiController.populateList(programLogic.executeCommand("today"));
         primaryStage.getIcons().add(new Image("/lifetracker/icon.png"));
