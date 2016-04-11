@@ -6,7 +6,7 @@ import java.time.Period;
 
 //@@author A0091173J
 public interface CommandFactory {
-    CommandObject addFloatingTask(String name);
+    CommandObject addGenericTask(String name);
 
     CommandObject addDeadlineTask(String name, LocalDateTime deadLine);
 

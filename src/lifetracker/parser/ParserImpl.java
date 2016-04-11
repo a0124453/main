@@ -252,7 +252,7 @@ public class ParserImpl implements Parser {
     private CommandObject processParametersForAdd(Parameters params) {
         switch (params.commandClass) {
             case GENERIC:
-                return commandObjectFactory.addFloatingTask(params.name);
+                return commandObjectFactory.addGenericTask(params.name);
             case DEADLINE:
                 return commandObjectFactory.addDeadlineTask(params.name, params.endDateTime);
             case RECURRING_TASK:

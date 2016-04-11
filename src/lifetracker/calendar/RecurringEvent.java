@@ -21,17 +21,20 @@ public class RecurringEvent extends RecurringTask {
         super(name, end, period, limit);
         CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
+        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
     }
 
     public RecurringEvent(String name, LocalDateTime start, LocalDateTime end, Period period, LocalDate limit) {
         super(name, end, period, limit);
         CalendarEntry.checkStartBeforeEnd(start, end);
         startDateTime = start;
+        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
     }
 
     public RecurringEvent(RecurringEvent entry) {
         super(entry);
         this.startDateTime = entry.startDateTime;
+        SERIAL_TYPE_IDENTIFIER = "RecurringEvent";
     }
 
     @Override
@@ -66,7 +69,7 @@ public class RecurringEvent extends RecurringTask {
             boolean isOver = isProperty(CalendarProperty.OVER);
             return hasStarted && !isOver;
         case TODAY :
-            boolean startsToday = (LocalDateTime.now().equals(startDateTime));
+            boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
             boolean isOngoing = isProperty(CalendarProperty.ONGOING);
             return startsToday || isOngoing;
         default :

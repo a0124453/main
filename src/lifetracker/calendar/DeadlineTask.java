@@ -18,6 +18,7 @@ public class DeadlineTask extends GenericEntry {
     public DeadlineTask(DeadlineTask entry) {
         super(entry);
         this.setDateTime(CalendarProperty.END, entry.deadline);
+        SERIAL_TYPE_IDENTIFIER = "DeadlineTask";
     }
 
     @Override
