@@ -268,13 +268,71 @@ public interface CalendarList {
      */
     CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced);
 
+    /**
+     * Changes an entry into a {@code DeadlineTask}.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code RecurringTask}, the
+     * frequency of occurrence will be lost.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newDeadline
+     *            The new deadline to be set.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToDeadline(int id, String newName, LocalDateTime newDeadline, boolean isConvertForced);
 
+    /**
+     * Changes an entry into a {@code Event}.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code RecurringEvent}, the
+     * frequency of occurrence will be lost.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newStartTime
+     *            The new start date and time to be set.
+     * 
+     * @param newEndTime
+     *            The new end date and time to be set.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToEvent(int id, String newName, LocalDateTime newStartTime, LocalDateTime newEndTime,
             boolean isConvertForced);
-
-    CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
-            boolean isLimitKept, boolean isConvertForced);
 
     /**
      * Changes an entry into a {@code RecurringTask}.
@@ -287,11 +345,47 @@ public interface CalendarList {
      * convert the entry into a recurring task, even if information will be
      * lost. For example, if the entry was a {@code RecurringEvent}, the start
      * date and time will be lost.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newStartTime
+     *            The new start date and time to be set.
+     * 
+     * @param newEndTime
+     *            The new end date and time to be set.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
+    CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
+            boolean isLimitKept, boolean isConvertForced);
+
+    /**
+     * Changes an entry into a {@code RecurringTask} with a new occurrence
+     * limit.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code RecurringEvent}, the start
+     * date and time will be lost.
      * <p>
      * {@code newLimit} specifies the new number of occurrences to happen after
      * and including the current occurrence. For example, if {@code newLimit} is
-     * set to 4, then the recurring task will happen 4 more times (including the
-     * current iteration), no matter how many times it has occurred in the past.
+     * set to 4, then the task will happen 4 more times (including the current
+     * iteration), no matter how many times it has occurred in the past.
      *
      * @param id
      *            The ID of the entry to update.
@@ -319,12 +413,50 @@ public interface CalendarList {
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             int newLimit, boolean isConvertForced);
 
+    /**
+     * Changes an entry into a {@code RecurringTask} with a new limiting date.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code RecurringEvent}, the start
+     * date and time will be lost.
+     * <p>
+     * {@code newLimitDate} specifies the new date after which the task will
+     * stop recurring regardless of how many times it has occurred in the past.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newDeadLine
+     *            The new deadline.
+     * 
+     * @param newPeriod
+     *            The new period.
+     * 
+     * @param newLimitDate
+     *            The new limiting date.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             LocalDate newLimitDate, boolean isConvertForced);
 
     /**
-     * Updates an entry into a recurring event without a limiting number of
-     * occurrences.
+     * Updates an entry into a {@code RecurringEvent} without a limiting number
+     * of occurrences.
      * <p>
      * Empty fields will be skipped during update, unless a conversion for the
      * entry requires it, in which case an {@code IllegalArgumentException} will
@@ -359,11 +491,81 @@ public interface CalendarList {
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, boolean isLimitKept);
 
+    /**
+     * Updates an entry into a {@code RecurringEvent} with a new occurrence
+     * limit.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * {@code newLimit} specifies the new number of occurrences to happen after
+     * and including the current occurrence. For example, if {@code newLimit} is
+     * set to 4, then the event will happen 4 more times (including the current
+     * iteration), no matter how many times it has occurred in the past.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newStart
+     *            The new start date and time.
+     * 
+     * @param newEnd
+     *            The new end date and time.
+     * 
+     * @param newPeriod
+     *            The new recurring time period.
+     * 
+     * @param newLimit
+     *            The new occurrence limit.
+     * 
+     * @return The old entry before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, int newLimit);
 
+    /**
+     * Updates an entry into a {@code RecurringEvent} with a new limiting date.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * {@code newLimitDate} specifies the new limiting date after which the
+     * event will not start, regardless of how many times it has occurred in the
+     * past.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param newStart
+     *            The new start date and time.
+     * 
+     * @param newEnd
+     *            The new end date and time.
+     * 
+     * @param newPeriod
+     *            The new recurring time period.
+     * 
+     * @param newLimitDate
+     *            The new limiting date.
+     * 
+     * @return The old entry before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
-            Period newPeriod, LocalDate newLimit);
+            Period newPeriod, LocalDate newLimitDate);
 
     /**
      * Overwrites an entry in the {@code CalendarList} with the new entry
@@ -380,6 +582,18 @@ public interface CalendarList {
      */
     CalendarEntry update(CalendarEntry newEntry);
 
+    /**
+     * Marks an entry with ID number {@code id}. Uses a {@code MarkVisitor} to
+     * mark the entry.
+     * 
+     * @see lifetracker.calendar.visitor.MarkVisitor
+     * 
+     * @param id
+     *            The ID number of the entry to be marked.
+     * 
+     * @return A pair of entries, one of which is the old entry before marking,
+     *         and the other an updated one.
+     */
     OldNewEntryPair mark(int id);
 
     /**
