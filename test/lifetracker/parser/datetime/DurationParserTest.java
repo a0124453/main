@@ -9,7 +9,7 @@ import java.time.Period;
 //@@author A0091173J
 public class DurationParserTest {
 
-    DurationParser parser = DurationParser.getInstance();
+    private DurationParser parser = DurationParser.getInstance();
 
     @Test
     public void testFullParse() throws Exception {

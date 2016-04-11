@@ -98,6 +98,8 @@ public class GenericEntry implements CalendarEntry {
                 return this.isActive;
             case OVER :
                 return false;
+            case TODAY :
+                return true;
             default :
                 return false;
         }

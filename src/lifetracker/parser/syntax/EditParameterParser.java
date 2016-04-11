@@ -83,14 +83,14 @@ public class EditParameterParser extends AddParameterParser {
     }
 
     @Override
-    boolean isTaskMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isTaskMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, FROM, NODUE);
         checkMutuallyExclusiveKeywords(commandMap, TO, NODUE);
         return super.isTaskMap(commandMap);
     }
 
     @Override
-    void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void populateRecurringParameters(Map<CommandOptions, String> commandMap, Parameters result) {
 
         if (commandMap.containsKey(EVERY)) {
             result.recurringPeriod = durationParser.parse(commandMap.get(EVERY));

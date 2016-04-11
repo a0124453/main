@@ -27,9 +27,10 @@ public class CommandSectionsParser {
     }
 
     public List<String> parseFullCommand(String fullCommand, String fullCommandSeparator) {
-        fullCommandSeparator = Pattern.quote(fullCommandSeparator);
+        String newFullCommandSeparator = fullCommandSeparator;
+        newFullCommandSeparator = Pattern.quote(newFullCommandSeparator);
 
-        String[] components = fullCommand.split(fullCommandSeparator);
+        String[] components = fullCommand.split(newFullCommandSeparator);
 
         components[0] = augmentDefaultToFullCommand(components[0]);
 
