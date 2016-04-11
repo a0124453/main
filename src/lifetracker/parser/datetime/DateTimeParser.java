@@ -80,9 +80,9 @@ public class DateTimeParser {
     public LocalDateTime parseSingleDateTime(String dateTimeString) {
         assert isDateTime(dateTimeString);
 
-        String filledDateTimeString = fillEmpty(dateTimeString);
+        dateTimeString = fillEmpty(dateTimeString);
 
-        DateGroup parsedDateGroup = parseWithNatty(filledDateTimeString);
+        DateGroup parsedDateGroup = parseWithNatty(dateTimeString);
 
         LocalDateTime parsedDateTimeObj = convertDateGroupToLocalDateTime(parsedDateGroup);
 
@@ -114,11 +114,11 @@ public class DateTimeParser {
         boolean isEndEmpty = StringUtils.isBlank(endString);
         boolean isStartEmpty = StringUtils.isBlank(startString);
 
-        String filledStartString = fillEmpty(startString);
-        String filledEndString = fillEmpty(endString);
+        startString = fillEmpty(startString);
+        endString = fillEmpty(endString);
 
-        DateGroup startDateGroup = parseWithNatty(filledStartString);
-        DateGroup endDateGroup = parseWithNatty(filledEndString);
+        DateGroup startDateGroup = parseWithNatty(startString);
+        DateGroup endDateGroup = parseWithNatty(endString);
 
         LocalDateTime startDateTime = convertDateGroupToLocalDateTime(startDateGroup);
         LocalDateTime endDateTime = convertDateGroupToLocalDateTime(endDateGroup);
@@ -162,15 +162,15 @@ public class DateTimeParser {
     }
 
     private LocalDateTime adjustSingleDateToDefault(LocalDateTime dateTime, Set<String> parseElements) {
-        LocalDateTime defaultDateTime = dateTime;
-        defaultDateTime = fillDefaultDateTime(defaultDateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1)),
+
+        dateTime = fillDefaultDateTime(dateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1)),
                 parseElements);
 
-        defaultDateTime = adjustDateAfterReferenceByDays(defaultDateTime, LocalDateTime.now().withNano(0), parseElements);
+        dateTime = adjustDateAfterReferenceByDays(dateTime, LocalDateTime.now().withNano(0), parseElements);
 
-        defaultDateTime = adjustAmPm(defaultDateTime, parseElements);
+        dateTime = adjustAmPm(dateTime, parseElements);
 
-        return defaultDateTime;
+        return dateTime;
     }
 
     private LocalDateTime[] adjustDoubleDateToDefault(LocalDateTime startDateTime, LocalDateTime endDateTime,
@@ -242,14 +242,13 @@ public class DateTimeParser {
 
     private LocalDateTime adjustDateAfterReferenceByDays(LocalDateTime dateTime, LocalDateTime reference,
             Set<String> parseElements) {
-        LocalDateTime newDateTime = dateTime;
         if (!parseElements.contains(NATTY_DATE_FIELD)) {
             while (dateTime.isBefore(reference)) {
-                newDateTime = newDateTime.plusDays(1);
+                dateTime = dateTime.plusDays(1);
             }
         }
 
-        return newDateTime;
+        return dateTime;
     }
 
     private LocalDateTime adjustTimeAfterReferenceOneHour(LocalDateTime dateTime, LocalDateTime reference,
