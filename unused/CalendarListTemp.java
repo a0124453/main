@@ -77,4 +77,10 @@ public class CalendarListTemp extends CalendarListImpl {
     public CalendarEntry delete(int id) {
         return null;
     }
+
+    @Override
+    public CalendarEntry update(CalendarEntry newEntry) {
+        return null;
+    }
+
 }
