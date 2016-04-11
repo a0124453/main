@@ -13,7 +13,7 @@ public class GenericEntry implements CalendarEntry {
 
     private String name;
     private int id;
-    public boolean isActive = true;
+    private boolean isActive = true;
 
     public GenericEntry(String name) {
         this.name = name;
