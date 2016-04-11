@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+//@@author A0108473E-unused
+//Test no longer works after new Calendar component implemenatation
 public class CalendarListTest {
 
     public static final int NO_OF_FLOATING_TASKS = 3;

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0108473E
 public class RecurringEvent extends RecurringTask {
 
     private LocalDateTime startDateTime;

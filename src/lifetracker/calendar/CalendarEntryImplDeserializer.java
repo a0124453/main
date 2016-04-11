@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+//@@author A0091173J
 public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarEntry> {
 
     private static final String SERIAL_CLASS_ID_FIELD = "SERIAL_TYPE_IDENTIFIER";

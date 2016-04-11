@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.TreeMap;
 
+//@@author A0108473E-unused
+//Replaced by CalendarListImpl itself
 public class CalendarListResult extends CalendarListImpl {
 
     protected void setTaskList(TreeMap<Integer, CalendarEntry> map) {
