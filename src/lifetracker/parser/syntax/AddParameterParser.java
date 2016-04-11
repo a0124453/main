@@ -5,6 +5,10 @@ import java.util.Map;
 import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
+
+/**
+ * The parameters parser for "add" command.
+ */
 public class AddParameterParser extends EditOneParametersParser {
     private static AddParameterParser ourInstance = new AddParameterParser();
 
@@ -12,6 +16,9 @@ public class AddParameterParser extends EditOneParametersParser {
         return ourInstance;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
         assert commandMap.containsKey(CommandOptions.NAME);
@@ -24,13 +31,16 @@ public class AddParameterParser extends EditOneParametersParser {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
 
         super.determineTypeAndPopulateFields(commandMap, result);
 
-        if(isRecurringMap(commandMap)){
+        if (isRecurringMap(commandMap)) {
 
-            if(result.commandClass == CommandClass.GENERIC){
+            if (result.commandClass == CommandClass.GENERIC) {
                 fillUpTaskNull(commandMap);
                 populateTaskParameters(commandMap, result);
             }
@@ -45,7 +55,7 @@ public class AddParameterParser extends EditOneParametersParser {
         }
     }
 
-    boolean isRecurringMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isRecurringMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, CommandOptions.UNTIL, CommandOptions.FOR);
 
         return commandMap.containsKey(CommandOptions.EVERY);
