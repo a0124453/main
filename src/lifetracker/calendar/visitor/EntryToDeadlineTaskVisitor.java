@@ -1,5 +1,7 @@
 package lifetracker.calendar.visitor;
 
+import java.time.LocalDateTime;
+
 import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarProperty;
 import lifetracker.calendar.DeadlineTask;
@@ -8,7 +10,7 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
-import java.time.LocalDateTime;
+//@@author A0091173J
 
 public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair> {
 
@@ -66,12 +68,21 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair>
             convertedTask = new DeadlineTask(convertedTask);
         }
 
+<<<<<<< HEAD
         if(name != null && !name.isEmpty()){
             convertedTask.setName(name);
         }
 
         if (deadline!=null){
             convertedTask.setDateTime(CalendarProperty.END, deadline);
+=======
+        if (name != null && !name.isEmpty()) {
+            task.setName(name);
+        }
+
+        if (deadline != null) {
+            task.setDateTime(CalendarProperty.END, deadline);
+>>>>>>> master
         }
 
         return new OldNewEntryPair(clone, convertedTask);

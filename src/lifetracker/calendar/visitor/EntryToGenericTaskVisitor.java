@@ -7,6 +7,8 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
+//@@author A0091173J
+
 public class EntryToGenericTaskVisitor implements EntryVisitor<OldNewEntryPair> {
 
     private String name;

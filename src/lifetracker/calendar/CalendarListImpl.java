@@ -31,12 +31,26 @@ public class CalendarListImpl implements CalendarList {
     private static final double WORD_SIMILARITY_THRESHOLD_INDEX = 0.85;
 
     // variables
-    protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
 
-    // get() and set() functions for variables
+    private void setTaskList(TreeMap<Integer, CalendarEntry> map) {
+        this.taskList = map;
+    }
+
+    private void setEventList(TreeMap<Integer, CalendarEntry> map) {
+        this.eventList = map;
+    }
+
+    private void setArchivedTaskList(TreeMap<Integer, CalendarEntry> map) {
+        this.archivedTaskList = map;
+    }
+
+    private void setArchivedEventList(TreeMap<Integer, CalendarEntry> map) {
+        this.archivedEventList = map;
+    }
 
     @Override
     public List<CalendarEntry> getTaskList() {
@@ -286,7 +300,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
         TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
         copyTaskList.putAll(this.taskList);
         filterByName(copyTaskList, toSearch);
@@ -300,7 +314,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findArchivedByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
         result.setTaskList(this.archivedTaskList);
         result.setEventList(this.archivedEventList);
         return result.findByName(toSearch);
@@ -308,7 +322,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findAllByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
 
         TreeMap<Integer, CalendarEntry> combinedTask = new TreeMap<>(taskList);
         combinedTask.putAll(archivedTaskList);
@@ -323,7 +337,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findToday() {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
 
         Map<Integer, CalendarEntry> todayTasks = taskList.entrySet().stream()
                 .filter(e -> e.getValue().isProperty(CalendarProperty.TODAY))
@@ -352,13 +366,6 @@ public class CalendarListImpl implements CalendarList {
         }
     }
 
-    private TreeMap<Integer, CalendarEntry> filterList(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
-        TreeMap<Integer, CalendarEntry> copyMap = new TreeMap<>();
-        copyMap.putAll(treeMap);
-        filterByName(copyMap, toSearch);
-        return copyMap;
-    }
-
     private void filterByName(TreeMap<Integer, CalendarEntry> treeMap, String toSearch) {
         if (toSearch == null || toSearch.isEmpty()) {
             return;
@@ -372,86 +379,6 @@ public class CalendarListImpl implements CalendarList {
             }
         }
     }
-
-    // void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate
-    // startDate) {
-    // if (startDate == null) {
-    // return;
-    // }
-    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
-    // treeMap.entrySet().iterator();
-    // while (iterator.hasNext()) {
-    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    // if (entry.getValue().getStart() == null) {
-    // iterator.remove();
-    // } else {
-    // LocalDate entryStartDate = entry.getValue().getStart().toLocalDate();
-    // if (!entryStartDate.equals(startDate)) {
-    // iterator.remove();
-    // }
-    // }
-    // }
-    // }
-    //
-    // void filterByStartTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime
-    // startTime) {
-    // if (startTime == null) {
-    // return;
-    // }
-    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
-    // treeMap.entrySet().iterator();
-    // while (iterator.hasNext()) {
-    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    // if (entry.getValue().getStart() == null) {
-    // iterator.remove();
-    // } else {
-    // LocalTime entryStartTime = entry.getValue().getStart().toLocalTime();
-    // if (!entryStartTime.equals(startTime)) {
-    // iterator.remove();
-    // }
-    // }
-    // }
-    // }
-    //
-    // void filterByEndDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate
-    // endDate) {
-    // if (endDate == null) {
-    // return;
-    // }
-    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
-    // treeMap.entrySet().iterator();
-    // while (iterator.hasNext()) {
-    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    // if (entry.getValue().getEnd() == null) {
-    // iterator.remove();
-    // } else {
-    // LocalDate entryEndDate = entry.getValue().getEnd().toLocalDate();
-    // if (!entryEndDate.equals(endDate)) {
-    // iterator.remove();
-    // }
-    // }
-    // }
-    // }
-    //
-    // void filterByEndTime(TreeMap<Integer, CalendarEntry> treeMap, LocalTime
-    // endTime) {
-    // if (endTime == null) {
-    // return;
-    // }
-    // Iterator<Map.Entry<Integer, CalendarEntry>> iterator =
-    // treeMap.entrySet().iterator();
-    // while (iterator.hasNext()) {
-    // Map.Entry<Integer, CalendarEntry> entry = iterator.next();
-    // if (entry.getValue().getEnd() == null) {
-    // iterator.remove();
-    // } else {
-    // LocalTime entryEndTime = entry.getValue().getEnd().toLocalTime();
-    // if (!entryEndTime.equals(endTime)) {
-    // iterator.remove();
-    // }
-    // }
-    // }
-    // }
 
     private int getNextId() {
         int taskMax = getLastKey(this.taskList);
