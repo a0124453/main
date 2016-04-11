@@ -239,43 +239,130 @@ public class IntegrationLogicTest {
         ExecuteResult actual;
         ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
-        LocalDateTime expectedStartDateTime;
-        LocalDateTime expectedEndDateTime;
 
         //Partition: Add events
         actual = logic.executeCommand("add interview from 22/3/16 2.30pm to 22/3/16 4pm");
-        expectedStartDateTime = LocalDateTime.of(2016, 3, 22, 14, 30);
-        expectedEndDateTime = LocalDateTime.of(2016, 3, 22, 16, 0);
-        expected.addEventLine(1, "interview", expectedStartDateTime, expectedEndDateTime, false, true, null, -1, null,
+        LocalDateTime expectedStartDateTime1 = LocalDateTime.of(2016, 3, 22, 14, 30);
+        LocalDateTime expectedEndDateTime1 = LocalDateTime.of(2016, 3, 22, 16, 0);
+        expected.addEventLine(1, "interview", expectedStartDateTime1, expectedEndDateTime1, false, true, null, -1, null,
                 false);
         expected.setComment(String.format(MESSAGE_ADD, "interview"));
         assertExecuteResult(expected, actual);
+        
+        //@@author A0114240B
+        //Partition: Add events with missing end date parameters
+        actual = logic.executeCommand("dinner from 23/3/16 2.30pm");
+        LocalDateTime expectedStartDateTime2 = LocalDateTime.of(2016, 3, 23, 14, 30);
+        LocalDateTime expectedEndDateTime2 = LocalDateTime.of(2016, 3, 23, 15, 30);
+        expected.addEventLine(1, "interview", expectedStartDateTime1, expectedEndDateTime1, false, true, null, -1, null,
+                false);
+        expected.addEventLine(2, "dinner", expectedStartDateTime2, expectedEndDateTime2, false, true, null, -1, null,
+                false);
+        expected.setComment(String.format(MESSAGE_ADD, "dinner"));
+        assertExecuteResult(expected, actual);
+        actual = logic.executeCommand("chalet from 23/3/16 2.30pm to 24/3/16");
+        LocalDateTime expectedStartDateTime3 = LocalDateTime.of(2016, 3, 23, 14, 30);
+        LocalDateTime expectedEndDateTime3 = LocalDateTime.of(2016, 3, 24, 14, 30);
+        expected.addEventLine(1, "interview", expectedStartDateTime1, expectedEndDateTime1, false, true, null, -1, null,
+                false);
+        expected.addEventLine(2, "dinner", expectedStartDateTime2, expectedEndDateTime2, false, true, null, -1, null,
+                false);
+        expected.addEventLine(3, "chalet", expectedStartDateTime3, expectedEndDateTime3, false, true, null, -1, null,
+                false);
+        expected.setComment(String.format(MESSAGE_ADD, "chalet"));
+        assertExecuteResult(expected, actual);
+        actual = logic.executeCommand("class from 23/3/16 2.30pm to 7pm");
+        LocalDateTime expectedStartDateTime4 = LocalDateTime.of(2016, 3, 23, 14, 30);
+        LocalDateTime expectedEndDateTime4 = LocalDateTime.of(2016, 3, 23, 19, 0);
+        expected.addEventLine(1, "interview", expectedStartDateTime1, expectedEndDateTime1, false, true, null, -1, null,
+                false);
+        expected.addEventLine(2, "dinner", expectedStartDateTime2, expectedEndDateTime2, false, true, null, -1, null,
+                false);
+        expected.addEventLine(3, "chalet", expectedStartDateTime3, expectedEndDateTime3, false, true, null, -1, null,
+                false);
+        expected.addEventLine(4, "class", expectedStartDateTime4, expectedEndDateTime4, false, true, null, -1, null,
+                false);
+        expected.setComment(String.format(MESSAGE_ADD, "class"));
+        assertExecuteResult(expected, actual);
+        
+        //Partion: Add events with missing start parameters
+        actual = logic.executeCommand("swim from 23/3/16 to 7pm");
+        LocalDateTime expectedStartDateTime5 = LocalDateTime.of(2016, 3, 23, 18, 00);
+        LocalDateTime expectedEndDateTime5 = LocalDateTime.of(2016, 3, 23, 19, 0);
+        expected.addEventLine(1, "interview", expectedStartDateTime1, expectedEndDateTime1, false, true, null, -1, null,
+                false);
+        expected.addEventLine(2, "dinner", expectedStartDateTime2, expectedEndDateTime2, false, true, null, -1, null,
+                false);
+        expected.addEventLine(3, "chalet", expectedStartDateTime3, expectedEndDateTime3, false, true, null, -1, null,
+                false);
+        expected.addEventLine(4, "class", expectedStartDateTime4, expectedEndDateTime4, false, true, null, -1, null,
+                false);
+        expected.addEventLine(5, "swim", expectedStartDateTime5, expectedEndDateTime5, false, true, null, -1, null,
+                false);
+        expected.setComment(String.format(MESSAGE_ADD, "swim"));
+        assertExecuteResult(expected, actual);
+        
     }
 
+    //@@author A0091173J
     @Test
     public void testAddRecurringEvents() throws Exception {
         ExecuteResult actual;
         ExecuteResult expected = new ExecuteResultImpl();
         expected.setType(ExecuteResult.CommandType.DISPLAY);
-        LocalDateTime expectedStartDateTime;
-        LocalDateTime expectedEndDateTime;
-        Period expectedRecurringPeriod;
 
         //Partition: Add recurring events
         actual = logic.executeCommand("add tutorial from 24/3/16 3pm to 4pm every week");
-        expectedStartDateTime = LocalDateTime.of(2016, 3, 24, 15, 0);
-        expectedEndDateTime = expectedStartDateTime.plusHours(1);
-        expectedRecurringPeriod = Period.ofWeeks(1);
-        while (expectedEndDateTime.isBefore(LocalDateTime.now())) {
-            expectedStartDateTime = expectedStartDateTime.plus(expectedRecurringPeriod);
-            expectedEndDateTime = expectedEndDateTime.plus(expectedRecurringPeriod);
+        LocalDateTime expectedStartDateTime1 = LocalDateTime.of(2016, 3, 24, 15, 0);
+        LocalDateTime expectedEndDateTime1 = expectedStartDateTime1.plusHours(1);
+        Period expectedRecurringPeriod1 = Period.ofWeeks(1);
+        while (expectedEndDateTime1.isBefore(LocalDateTime.now())) {
+            expectedStartDateTime1 = expectedStartDateTime1.plus(expectedRecurringPeriod1);
+            expectedEndDateTime1 = expectedEndDateTime1.plus(expectedRecurringPeriod1);
         }
-        expected.addEventLine(1, "tutorial", expectedStartDateTime, expectedEndDateTime, false, true,
-                expectedRecurringPeriod, 0, null, false);
+        expected.addEventLine(1, "tutorial", expectedStartDateTime1, expectedEndDateTime1, false, true,
+                expectedRecurringPeriod1, 0, null, false);
         expected.setComment(String.format(MESSAGE_ADD, "tutorial"));
+        assertExecuteResult(expected, actual);
+        
+        //@@author A0114240B
+        //Partition: Add recurring events with limitOccur
+        actual = logic.executeCommand("add lesson from 24/3/16 3pm to 4pm every week for 5");
+        LocalDateTime expectedStartDateTime2 = LocalDateTime.of(2016, 3, 24, 15, 0);
+        LocalDateTime expectedEndDateTime2 = expectedStartDateTime2.plusHours(1);
+        Period expectedRecurringPeriod2 = Period.ofWeeks(1);
+        while (expectedEndDateTime2.isBefore(LocalDateTime.now())) {
+            expectedStartDateTime2 = expectedStartDateTime2.plus(expectedRecurringPeriod2);
+            expectedEndDateTime2 = expectedEndDateTime2.plus(expectedRecurringPeriod2);
+        }
+        expected.addEventLine(1, "tutorial", expectedStartDateTime2, expectedEndDateTime1, false, true,
+                expectedRecurringPeriod1, 0, null, false);
+        expected.addEventLine(2, "lesson", expectedStartDateTime2, expectedEndDateTime1, false, true,
+                expectedRecurringPeriod1, 5, null, false);
+        expected.setComment(String.format(MESSAGE_ADD, "lesson"));
+        assertExecuteResult(expected, actual);
+        
+        //Partition: Add recurring events with limit date
+        actual = logic.executeCommand("add work from 24/3/16 3pm to 4pm every week until 25/3/16");
+        LocalDateTime expectedStartDateTime3 = LocalDateTime.of(2016, 3, 24, 15, 0);
+        LocalDateTime expectedEndDateTime3 = expectedStartDateTime3.plusHours(1);
+        LocalDate limitDate = LocalDate.of(2016, 3, 25);
+        Period expectedRecurringPeriod3 = Period.ofWeeks(1);
+        while (expectedEndDateTime3.isBefore(LocalDateTime.now())) {
+            expectedStartDateTime3 = expectedStartDateTime3.plus(expectedRecurringPeriod3);
+            expectedEndDateTime3 = expectedEndDateTime3.plus(expectedRecurringPeriod3);
+        }
+        expected.addEventLine(1, "tutorial", expectedStartDateTime1, expectedEndDateTime2, false, true,
+                expectedRecurringPeriod1, 0, null, false);
+        expected.addEventLine(2, "lesson", expectedStartDateTime2, expectedEndDateTime2, false, true,
+                expectedRecurringPeriod1, 5, null, false);
+        expected.addEventLine(2, "work", expectedStartDateTime2, expectedEndDateTime2, false, true,
+                expectedRecurringPeriod1, 0, limitDate, false);
+        expected.setComment(String.format(MESSAGE_ADD, "work"));
         assertExecuteResult(expected, actual);
     }
 
+    //@@author A0091173J
     @Test
     public void testDeleteEntries() throws Exception {
         ExecuteResult actual;
