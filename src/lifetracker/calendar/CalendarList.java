@@ -13,19 +13,40 @@ public interface CalendarList {
     int BASE_ID = 0;
 
     /**
-     * @return A {@code List} of task objects sorted in ascending order of
-     *         deadline, with floating tasks at the tail end.
+     * Sorts all active task objects in ascending order of deadline, and all
+     * archived task objects in descending order of deadline, in two separate
+     * lists. Floating tasks are at the tail end of both lists. The lists are
+     * concatenated and returned as a single list.
+     * 
+     * @return A sorted {@code List} of task objects.
      */
     List<CalendarEntry> getTaskList();
 
     /**
-     * @return A {@code List} of event objects sorted in ascending order of end
-     *         date and time, followed by start date and time.
+     * Sorts all active event objects in ascending order, and all archived
+     * events in descending order, of end date and time followed by start date
+     * and time, in two separate lists. The lists are concatenated and returned
+     * as a single list.
+     * 
+     * @return A sorted {@code List} of event objects.
      */
     List<CalendarEntry> getEventList();
 
+    /**
+     * Sorts and returns only the archived tasks in the {@code CalendarList}, in
+     * descending order.
+     * 
+     * @return A sorted {@code List} of archived task objects.
+     */
     List<CalendarEntry> getArchivedTaskList();
 
+    /**
+     * Sorts and returns only the archived events in the {@code CalendarList},
+     * in descending order of end date and time, followed by start date and
+     * time.
+     * 
+     * @return A sorted {@code List} of archived event objects.
+     */
     List<CalendarEntry> getArchivedEventList();
 
     /**
@@ -219,6 +240,32 @@ public interface CalendarList {
      */
     CalendarEntry delete(int id);
 
+    /**
+     * Changes an entry into a {@code GenericEntry}.
+     * <p>
+     * Empty fields will be skipped during update, unless a conversion for the
+     * entry requires it, in which case an {@code IllegalArgumentException} will
+     * be thrown.
+     * <p>
+     * If {@code isConvertForced} is set, then this method will forcefully
+     * convert the entry into a recurring task, even if information will be
+     * lost. For example, if the entry was a {@code DeadlineTask}, the deadline
+     * will be lost.
+     *
+     * @param id
+     *            The ID of the entry to update.
+     * 
+     * @param newName
+     *            The new name.
+     * 
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
+     * 
+     * @return The old entry object before the update.
+     * 
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
+     */
     CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced);
 
     CalendarEntry updateToDeadline(int id, String newName, LocalDateTime newDeadline, boolean isConvertForced);
@@ -230,7 +277,7 @@ public interface CalendarList {
             boolean isLimitKept, boolean isConvertForced);
 
     /**
-     * Updates an entry into a RecurringTask.
+     * Changes an entry into a {@code RecurringTask}.
      * <p>
      * Empty fields will be skipped during update, unless a conversion for the
      * entry requires it, in which case an {@code IllegalArgumentException} will
@@ -349,12 +396,56 @@ public interface CalendarList {
      */
     CalendarEntry get(int id);
 
+    /**
+     * Creates and returns a copy of the {@code CalendarListImpl} object with
+     * {@code taskList} and {@code eventList} filtered to contain only entries
+     * with descriptions containing the desired text. Allows room for minor
+     * typographical errors.
+     * 
+     * @param toSearch
+     *            The desired text to search for.
+     * 
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
+     */
     CalendarList findByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListImpl} object with
+     * {@code taskList} and {@code eventList} set as the archived lists of the
+     * main {@code CalendarList}, filtered to contain only entries with
+     * descriptions containing the desired text. Allows room for minor
+     * typographical errors.
+     * 
+     * @param toSearch
+     *            The desired text to search for.
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
+     */
     CalendarList findArchivedByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListImpl} object with
+     * {@code taskList} and {@code eventList} containing all entries (active or
+     * archived) whose descriptions contain the desired text. Allows room for
+     * minor typographical errors.
+     * 
+     * @param toSearch
+     *            The desired text to search for.
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
+     */
     CalendarList findAllByName(String toSearch);
 
+    /**
+     * Creates and returns a {@code CalendarListImpl} object with
+     * {@code taskList} and {@code eventList} containing only active tasks that
+     * are due on the same day, active events that start on the same day, and
+     * active events that are ongoing at the time when the method is called.
+     * 
+     * @return A {@code CalendarList} with customized {@code taskList} and
+     *         {@code eventList}.
+     */
     CalendarList findToday();
 
 }

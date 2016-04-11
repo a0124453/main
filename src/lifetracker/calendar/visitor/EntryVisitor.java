@@ -6,6 +6,8 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
+//@@author A0091173J
+
 public interface EntryVisitor<T> {
     T visit(GenericEntry entry);
 

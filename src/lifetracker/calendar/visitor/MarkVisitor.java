@@ -8,6 +8,8 @@ import lifetracker.calendar.GenericEntry;
 import lifetracker.calendar.RecurringEvent;
 import lifetracker.calendar.RecurringTask;
 
+//@@author A0091173J
+
 public class MarkVisitor implements EntryVisitor<OldNewEntryPair> {
 
     @Override
