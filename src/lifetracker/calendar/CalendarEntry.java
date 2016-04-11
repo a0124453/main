@@ -1,11 +1,14 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.VisitableEntry;
-
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import lifetracker.calendar.visitor.VisitableEntry;
+
 //@@author A0108473E
+/**
+ * Interface implemented by all entries.
+ */
 public interface CalendarEntry extends VisitableEntry {
 
     String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";

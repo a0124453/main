@@ -1,11 +1,18 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 //@@author A0108473E
+
+/**
+ * 
+ * Represents an entry with only a name, without a deadline or start/end
+ * date/time.
+ * 
+ */
 public class GenericEntry implements CalendarEntry {
 
     protected String SERIAL_TYPE_IDENTIFIER = "GenericEntry";
@@ -26,31 +33,56 @@ public class GenericEntry implements CalendarEntry {
         this.isActive = entry.isProperty(CalendarProperty.ACTIVE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getId() {
         return this.id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns {@code null} because a {@code GenericEntry} has no associated
+     * {@code LocalDateTime}.
+     * 
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * @return {@code null}.
+     */
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         return null;
     }
 
+    /**
+     * Method not allowed for {@code GenericEntry} object.
+     * 
+     * @throws IllegalArgumentException
+     */
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_COMMAND);
@@ -67,7 +99,7 @@ public class GenericEntry implements CalendarEntry {
     }
 
     /**
-     * Returns {@code null} for non-recurring tasks.
+     * Returns {@code null} for {@code GenericEntry}.
      * 
      * @return {@code null}.
      */
@@ -76,13 +108,17 @@ public class GenericEntry implements CalendarEntry {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void toggleActive() {
         this.isActive = !this.isActive;
     }
 
     /**
-     * A {@code GenericEntry} has no deadline and is always ongoing.
+     * Returns a {@code boolean} to indicate whether the entry satisfies the
+     * specified property.
      * 
      * @param property
      *            An {@code enum} representing the desired property.
@@ -106,11 +142,22 @@ public class GenericEntry implements CalendarEntry {
         }
     }
 
+    /**
+     * A {@code GenericEntry} has no associated integer property (other than ID
+     * number, which has its own getter).
+     * 
+     * @param property
+     *            An {@code enum} representing the desired property.
+     * @return 0.
+     */
     @Override
     public int getIntegerProperty(CalendarProperty property) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T accept(EntryVisitor<T> visitor) {
         return visitor.visit(this);
