@@ -7,6 +7,12 @@ import java.time.LocalDateTime;
 import java.time.Period;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} edits recurring period and limit of an task entry in the calendar.
+ * <p>
+ * If the entry was not a recurring task beforehand, it will be converted to a recurring task.
+ */
 public class EditRecurringTaskCommand extends EditRecurringEntryCommand {
 
     protected final LocalDateTime endDateTime;

@@ -3,6 +3,13 @@ package lifetracker.command;
 import lifetracker.calendar.CalendarList;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that finds all active entries in the calendar.
+ * <p>
+ * This class processes the query and returns the results in a new calendar. Undoing this command simply returns the
+ * same calendar that execute was called with.
+ */
 public class FindCommand extends CommandObject {
 
     private static final String MESSAGE_SEARCH_TERM = "Displaying entries with: \"%1$s\".";

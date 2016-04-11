@@ -4,6 +4,10 @@ import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that deletes a entry from a calendar.
+ */
 public class DeleteCommand extends CommandObject {
 
     private static final String MESSAGE_DELETED = "%1$d is deleted.";

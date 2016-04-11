@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that adds a recurring task to a calendar.
+ */
 public class AddRecurringCommand extends AddCommand {
 
     private static final int OCCUR_INF = -1;

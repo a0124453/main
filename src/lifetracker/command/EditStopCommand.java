@@ -5,6 +5,10 @@ import lifetracker.calendar.CalendarList;
 import lifetracker.calendar.CalendarProperty;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that stops an entry from recurring.
+ */
 public class EditStopCommand extends EditGenericTaskCommand {
 
     public EditStopCommand(int id, String name) {

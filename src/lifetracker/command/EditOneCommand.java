@@ -7,6 +7,10 @@ import lifetracker.calendar.visitor.OldNewEntryPair;
 import java.time.LocalDateTime;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that edits a single instance of an recurring entry in the calendar.
+ */
 public class EditOneCommand extends CommandObject {
 
     private static final String ERROR_NON_RECURRING = "Cannot edit single occurrence of non-recurring task!";
@@ -73,39 +77,38 @@ public class EditOneCommand extends CommandObject {
         return calendar;
     }
 
-    private void processEditName(CalendarList calendar){
+    private void processEditName(CalendarList calendar) {
         markEntry(calendar);
 
         calendar.updateToGeneric(newEntryId, name, false);
     }
 
-    private void processEditDeadLine(CalendarList calendar){
+    private void processEditDeadLine(CalendarList calendar) {
         markEntry(calendar);
 
         calendar.updateToDeadline(newEntryId, name, end, true);
     }
 
-    private void processEditEvent(CalendarList calendar){
+    private void processEditEvent(CalendarList calendar) {
         markEntry(calendar);
 
         calendar.updateToEvent(newEntryId, name, start, end, true);
     }
 
-    private void markEntry(CalendarList calendar){
+    private void markEntry(CalendarList calendar) {
         OldNewEntryPair pair = calendar.mark(id);
 
         assert pair.oldEntry != null;
 
         editedEntry = pair.oldEntry;
 
-        if(pair.newEntry == null){
+        if (pair.newEntry == null) {
             calendar.mark(id);
             throw new IllegalArgumentException(ERROR_NON_RECURRING);
         }
 
         newEntryId = pair.newEntry.getId();
         calendar.mark(newEntryId);
-
 
     }
 

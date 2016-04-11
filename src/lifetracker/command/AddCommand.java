@@ -5,6 +5,10 @@ import lifetracker.calendar.CalendarList;
 import java.time.LocalDateTime;
 
 //@@author A0091173J
+
+/**
+ * A Command that adds an entry to a Calendar.
+ */
 public class AddCommand extends CommandObject {
 
     private static final String MESSAGE_UNDO = "%1$d: \"%2$s\" removed.";
@@ -16,6 +20,11 @@ public class AddCommand extends CommandObject {
 
     private int addedEntryID;
 
+    /**
+     * Creates a new {@code AddCommand} which adds a entry with only a name.
+     *
+     * @param name The entry name
+     */
     public AddCommand(String name) {
         assert name != null;
 
@@ -24,6 +33,12 @@ public class AddCommand extends CommandObject {
         this.endDateTime = null;
     }
 
+    /**
+     * Creates a new {@code AddCommand} which adds a entry with both a name and a deadline.
+     *
+     * @param name        The entry name
+     * @param dueDateTime The entry deadline
+     */
     public AddCommand(String name, LocalDateTime dueDateTime) {
         assert name != null;
         assert dueDateTime != null;
@@ -33,6 +48,13 @@ public class AddCommand extends CommandObject {
         this.endDateTime = dueDateTime;
     }
 
+    /**
+     * Creates a new {@code AddCommand} which adds a entry with a name, a start date/time and a end date/time.
+     *
+     * @param name          The entry name
+     * @param startDateTime The start date/time
+     * @param endDateTime   The end date/time
+     */
     public AddCommand(String name, LocalDateTime startDateTime, LocalDateTime endDateTime) {
 
         assert name != null;
@@ -44,6 +66,9 @@ public class AddCommand extends CommandObject {
         this.endDateTime = endDateTime;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CalendarList execute(CalendarList calendar) {
         assert calendar != null;
@@ -63,6 +88,9 @@ public class AddCommand extends CommandObject {
         return super.execute(calendar);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CalendarList undo(CalendarList calendar) {
 

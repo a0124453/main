@@ -4,6 +4,12 @@ import lifetracker.calendar.CalendarEntry;
 import lifetracker.calendar.CalendarList;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} edits the name of an entry in the calendar.
+ * <p>
+ * This class can also be configured such that the entry is forcefully converted into a generic entry with only a name.
+ */
 public class EditGenericTaskCommand extends CommandObject {
 
     protected static final String MESSAGE_EDITED = "%1$s was edited.";

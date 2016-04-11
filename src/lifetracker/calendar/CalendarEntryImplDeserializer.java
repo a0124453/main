@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 //@@author A0091173J
+
+/**
+ * This class helps GSON identify the correct implementation of {@code CalendarEntry} to deserialize into.
+ */
 public class CalendarEntryImplDeserializer implements JsonDeserializer<CalendarEntry> {
 
     private static final String SERIAL_CLASS_ID_FIELD = "SERIAL_TYPE_IDENTIFIER";

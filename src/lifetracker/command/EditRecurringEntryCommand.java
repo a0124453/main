@@ -10,7 +10,7 @@ import java.time.Period;
 //@@author A0091173J
 
 /**
- * @author Shen Yichen <2007.yichen@gmail.com>
+ * A {@code CommandObject} that edits recurring period and limit of an entry in the calendar.
  */
 public class EditRecurringEntryCommand extends EditGenericTaskCommand {
 

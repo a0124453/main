@@ -4,6 +4,10 @@ import lifetracker.calendar.CalendarList;
 import lifetracker.calendar.visitor.OldNewEntryPair;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that marks an entry in the calendar.
+ */
 public class MarkCommand extends CommandObject {
 
     private static final String MESSAGE_MARKED_DONE = "\"%1$d\" marked.";
@@ -31,7 +35,7 @@ public class MarkCommand extends CommandObject {
     @Override
     public CalendarList undo(CalendarList calendar) {
 
-        if(markedEntryPair.newEntry != null){
+        if (markedEntryPair.newEntry != null) {
             calendar.delete(markedEntryPair.newEntry.getId());
         }
 

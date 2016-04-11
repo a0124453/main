@@ -7,6 +7,12 @@ import lifetracker.calendar.CalendarProperty;
 import java.time.LocalDateTime;
 
 //@@author A0091173J
+
+/**
+ * A {@code CommandObject} that edits the name and the deadline of an entry in the calendar.
+ *
+ * This command can also specify that the entry be converted forcefully into a DeadlineTask.
+ */
 public class EditDeadlineTaskCommand extends EditGenericTaskCommand {
 
     final protected LocalDateTime endDateTime;
