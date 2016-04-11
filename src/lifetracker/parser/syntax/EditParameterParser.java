@@ -26,13 +26,24 @@ import static lifetracker.parser.syntax.CommandOptions.UNTIL;
 import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
+
+/**
+ * The parameters parser for the "edit" command.
+ */
 public class EditParameterParser extends AddParameterParser {
     private static EditParameterParser ourInstance = new EditParameterParser();
 
+    /**
+     * Gets the instance of this Singleton class.
+     * @return The instance of this class.
+     */
     public static EditParameterParser getInstance() {
         return ourInstance;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
         Parameters result = new Parameters();
@@ -44,6 +55,9 @@ public class EditParameterParser extends AddParameterParser {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters result) {
         if (isEventMap(commandMap)) {
             fillUpEventNull(commandMap);
@@ -66,7 +80,7 @@ public class EditParameterParser extends AddParameterParser {
     }
 
     @Override
-    boolean isRecurringMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isRecurringMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, NODUE, EVERY);
         checkMutuallyExclusiveKeywords(commandMap, FOREVER, FOR, UNTIL);
         checkMutuallyExclusiveKeywords(commandMap, STOP, EVERY);
@@ -119,13 +133,13 @@ public class EditParameterParser extends AddParameterParser {
         return commandMap.containsKey(STOP);
     }
 
-    boolean isUnlimitMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isUnlimitMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, FOR, UNTIL, FOREVER);
 
         return commandMap.containsKey(FOREVER);
     }
 
-    boolean isRemoveDateMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isRemoveDateMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, BY, NODUE);
         checkMutuallyExclusiveKeywords(commandMap, TO, NODUE);
         checkMutuallyExclusiveKeywords(commandMap, FROM, NODUE);

@@ -10,7 +10,10 @@ import java.util.function.Predicate;
 //@@author A0091173J
 
 /**
- * @author Shen Yichen <2007.yichen@gmail.com>
+ * This class parses a section of the command.
+ * <p>
+ * It extracts the parameters from the command, checks that their values are valid, and organises them into a map
+ * indexed by {@code CommandOptions} to the values of these parameters.
  */
 public class CommandSectionParser<T extends Enum<T>> {
 
@@ -20,6 +23,13 @@ public class CommandSectionParser<T extends Enum<T>> {
     private final Map<String, T> keywordToEnumMap;
     private final T defaultField;
 
+    /**
+     * Creates a new {@code CommandSectionParser}, based on the mapping given.
+     *
+     * @param keywordToEnumMap A map that links keywords to enums.
+     * @param verificationMap  A map with predicates for verifying the values of parameters
+     * @param defaultField     The default field to put all other values without options into
+     */
     public CommandSectionParser(Map<String, T> keywordToEnumMap, Map<T, Predicate<String>> verificationMap,
             T defaultField) {
         this.verificationMap = verificationMap;
