@@ -13,11 +13,11 @@ import java.time.Period;
 public class EditRecurringEntryCommand extends EditGenericTaskCommand {
 
     static final int OCCUR_INF = -1;
-    protected static final int OCCUR_DATE = -2;
+    static final int OCCUR_DATE = -2;
 
     final Period recurringPeriod;
     final int occurLimit;
-    protected final LocalDate dateLimit;
+    final LocalDate dateLimit;
 
     public EditRecurringEntryCommand(int id, String name, Period recurringPeriod, boolean isForcedConvert) {
         super(id, name, isForcedConvert);

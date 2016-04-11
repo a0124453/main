@@ -129,30 +129,31 @@ public class EntryToRecurringTaskVisitor implements EntryVisitor<OldNewEntryPair
     }
 
     private OldNewEntryPair edit(CalendarEntry clone, RecurringTask task) {
+        RecurringTask convertedTask = task;
         if (isConvertForced) {
-            task = new RecurringTask(task);
+            convertedTask = new RecurringTask(convertedTask);
         }
 
         if (name != null && !name.isEmpty()) {
-            task.setName(name);
+            convertedTask.setName(name);
         }
 
         if (deadline != null) {
-            task.setDateTime(CalendarProperty.END, deadline);
+            convertedTask.setDateTime(CalendarProperty.END, deadline);
         }
 
         if (recurringPeriod != null) {
-            task.setPeriod(recurringPeriod);
+            convertedTask.setPeriod(recurringPeriod);
         }
 
         if (occurLimit == LIMIT_INF && !isLimitKept) {
-            task.removeLimit();
+            convertedTask.removeLimit();
         } else if (occurLimit == LIMIT_DATE && limitDate!=null) {
-            task.setDateTime(CalendarProperty.DATE_LIMIT, limitDate.atStartOfDay());
+            convertedTask.setDateTime(CalendarProperty.DATE_LIMIT, limitDate.atStartOfDay());
         } else if (occurLimit != LIMIT_INF && occurLimit != LIMIT_DATE) {
-            task.setOccurrenceLimit(occurLimit);
+            convertedTask.setOccurrenceLimit(occurLimit);
         }
 
-        return new OldNewEntryPair(clone, task);
+        return new OldNewEntryPair(clone, convertedTask);
     }
 }

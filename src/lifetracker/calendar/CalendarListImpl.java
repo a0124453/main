@@ -437,8 +437,9 @@ public class CalendarListImpl implements CalendarList {
     }
 
     private List<CalendarEntry> sortReverseByDateTime(CalendarProperty property, List<CalendarEntry> list) {
-        list = sortByDateTime(property, list);
-        Collections.reverse(list);
+        List<CalendarEntry> sortedList = new ArrayList<CalendarEntry>();
+        sortedList = sortByDateTime(property, list);
+        Collections.reverse(sortedList);
 
         Comparator<CalendarEntry> comparator = (CalendarEntry entry1, CalendarEntry entry2) -> {
             LocalDateTime date1 = entry1.getDateTime(property);
@@ -455,9 +456,9 @@ public class CalendarListImpl implements CalendarList {
             }
         };
 
-        Collections.sort(list, comparator);
+        Collections.sort(sortedList, comparator);
 
-        return list;
+        return sortedList;
     }
 
     private boolean containsAnyWord(String entryName, String toSearch) {

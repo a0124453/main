@@ -45,7 +45,7 @@ public class EditOneParametersParser implements CommandParametersParser {
         }
     }
 
-    boolean isTaskMap(Map<CommandOptions, String> commandMap) {
+    protected boolean isTaskMap(Map<CommandOptions, String> commandMap) {
         checkMutuallyExclusiveKeywords(commandMap, BY, FROM);
         checkMutuallyExclusiveKeywords(commandMap, BY, TO);
 
@@ -67,7 +67,7 @@ public class EditOneParametersParser implements CommandParametersParser {
         result.commandClass = CommandClass.EVENT;
     }
 
-    void fillUpEventNull(Map<CommandOptions, String> commandMap) {
+    protected void fillUpEventNull(Map<CommandOptions, String> commandMap) {
         if (!commandMap.containsKey(FROM)) {
             commandMap.put(FROM, "");
         }
@@ -77,7 +77,7 @@ public class EditOneParametersParser implements CommandParametersParser {
         }
     }
 
-    void populateTaskParameters(Map<CommandOptions, String> commandMap, Parameters result) {
+    protected void populateTaskParameters(Map<CommandOptions, String> commandMap, Parameters result) {
         result.endDateTime = dateTimeParser.parseSingleDateTime(commandMap.get(BY));
         result.commandClass = CommandClass.DEADLINE;
     }

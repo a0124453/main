@@ -63,18 +63,19 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair>
     }
 
     private OldNewEntryPair edit(CalendarEntry clone, DeadlineTask task) {
+        DeadlineTask convertedTask = task;
         if (isConvertForced) {
-            task = new DeadlineTask(task);
+            convertedTask = new DeadlineTask(convertedTask);
         }
 
-        if (name != null && !name.isEmpty()) {
-            task.setName(name);
+        if(name != null && !name.isEmpty()){
+            convertedTask.setName(name);
         }
 
-        if (deadline != null) {
-            task.setDateTime(CalendarProperty.END, deadline);
+        if (deadline!=null){
+            convertedTask.setDateTime(CalendarProperty.END, deadline);
         }
 
-        return new OldNewEntryPair(clone, task);
+        return new OldNewEntryPair(clone, convertedTask);
     }
 }
