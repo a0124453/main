@@ -1,8 +1,6 @@
+//@@author A0091173J
+
 /**
- * 
- */
-/**
- * @author bankkk
- *
+ * The command package contains CommandObjects, created by the parser component, and executed by the logic component.
  */
 package lifetracker.command;

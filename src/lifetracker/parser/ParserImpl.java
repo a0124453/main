@@ -20,6 +20,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 //@@author A0091173J
+
+/**
+ * An implementation of the Parser.
+ * <p>
+ * This ParserImpl parses commands from the user. It supports commands involving IDs, date/times, as well as durations.
+ * <p>
+ * The ParserImpl automatically determines the type of command to be executed by detecting the options the user has
+ * provided, and creates the correct CommandObject accordingly.
+ */
 public class ParserImpl implements Parser {
 
     private static final String ERROR_INVALID_ID = "\"%1$s\" is not a valid ID!";
@@ -81,12 +90,20 @@ public class ParserImpl implements Parser {
 
     private final CommandFactory commandObjectFactory;
 
+    /**
+     * Creates a new {@code ParserImpl} with the specified {@code CommandFactory} as an injected dependency.
+     *
+     * @param commandFactory The {@code CommandFactory} dependency.
+     */
     public ParserImpl(CommandFactory commandFactory) {
         populateCommand();
         cmdParser = new FullCommandParser(commands.keySet(), defaultCommand);
         commandObjectFactory = commandFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CommandObject parse(String userInput) {
         List<String> commandSegments = cmdParser.parseFullCommand(userInput, FULL_COMMAND_SEPARATOR);
@@ -113,10 +130,21 @@ public class ParserImpl implements Parser {
         commands.put("searchold", this::processFindOld);
         commands.put("today", this::processToday);
         commands.put("todayall", this::processTodayAll);
-        commands.put("todayold", this::processToday);
+        commands.put("todayold", this::processTodayOld);
         commands.put("mark", this::processMark);
     }
 
+    /**
+     * Parses the split sections of a command identified as "add", and produces an AddCommand accordingly.
+     * <p>
+     * This method will further parse and analyze additional options to the command to determine the type of Add
+     * command
+     * the user intends.
+     *
+     * @param commandBody The sections of the command
+     * @return The corresponding {@code AddCommand}
+     * @see lifetracker.command.AddCommand
+     */
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
@@ -141,6 +169,16 @@ public class ParserImpl implements Parser {
         }
     }
 
+    /**
+     * Parses the split sections of a command identified as "edit", and produces the respectively CommandObject that
+     * edits the calendar accordingly.
+     * <p>
+     * This method acts similar to the {@link #processAdd(List)} method. However, it expects a ID in the first
+     * section of the command.
+     *
+     * @param commandBody The split command sections
+     * @return The corresponding edit {@code CommandObject}
+     */
     private CommandObject processEdit(List<String> commandBody) {
         if (commandBody.size() < 2) {
             throw new IllegalArgumentException(ERROR_INVALID_EDIT);
@@ -160,6 +198,16 @@ public class ParserImpl implements Parser {
         return processParametersForEdit(id, params);
     }
 
+    /**
+     * Parses the split sections of a command identified as "editone", and produces an {@code EditOneCommand}
+     * accordingly.
+     * <p>
+     * This method acts similarly to {@link #processEdit(List)}, though less options are allowed.
+     *
+     * @param commandBody The split command sections
+     * @return The corresponding {@code EditOneCommand}
+     * @see lifetracker.command.EditOneCommand
+     */
     private CommandObject processEditOne(List<String> commandBody) {
         if (commandBody.size() < 2) {
             throw new IllegalArgumentException(ERROR_INVALID_EDIT);
@@ -249,100 +297,128 @@ public class ParserImpl implements Parser {
         }
     }
 
+    /**
+     * Determines the correct "add" {@code CommandObject} to create based on the {@code CommandClass} specified in the
+     * given {@code Paramaters} object.
+     *
+     * @param params The Parameters object.
+     * @return The correct "add" {@code CommandObject}
+     * @see Parameters
+     * @see lifetracker.parser.syntax.CommandClass
+     */
     private CommandObject processParametersForAdd(Parameters params) {
         switch (params.commandClass) {
-            case GENERIC:
-                return commandObjectFactory.addGenericTask(params.name);
-            case DEADLINE:
-                return commandObjectFactory.addDeadlineTask(params.name, params.endDateTime);
-            case RECURRING_TASK:
-                return commandObjectFactory
-                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod);
-            case RECURRING_TASK_DATE:
-                return commandObjectFactory
-                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
-                                params.dateLimit);
-            case RECURRING_TASK_OCCURRENCES:
-                return commandObjectFactory
-                        .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
-                                params.occurLimit);
-            case EVENT:
-                return commandObjectFactory.addEvent(params.name, params.startDateTime, params.endDateTime);
-            case RECURRING_EVENT:
-                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
-                        params.recurringPeriod);
-            case RECURRING_EVENT_OCCURRENCES:
-                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
-                        params.recurringPeriod, params.occurLimit);
-            case RECURRING_EVENT_DATE:
-                return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
-                        params.recurringPeriod, params.dateLimit);
-            default:
-                assert false;
-                return null;
+        case GENERIC :
+            return commandObjectFactory.addGenericTask(params.name);
+        case DEADLINE :
+            return commandObjectFactory.addDeadlineTask(params.name, params.endDateTime);
+        case RECURRING_TASK :
+            return commandObjectFactory
+                    .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod);
+        case RECURRING_TASK_DATE :
+            return commandObjectFactory
+                    .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                            params.dateLimit);
+        case RECURRING_TASK_OCCURRENCES :
+            return commandObjectFactory
+                    .addRecurringDeadlineTask(params.name, params.endDateTime, params.recurringPeriod,
+                            params.occurLimit);
+        case EVENT :
+            return commandObjectFactory.addEvent(params.name, params.startDateTime, params.endDateTime);
+        case RECURRING_EVENT :
+            return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                    params.recurringPeriod);
+        case RECURRING_EVENT_OCCURRENCES :
+            return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                    params.recurringPeriod, params.occurLimit);
+        case RECURRING_EVENT_DATE :
+            return commandObjectFactory.addRecurringEvent(params.name, params.startDateTime, params.endDateTime,
+                    params.recurringPeriod, params.dateLimit);
+        default :
+            assert false;
+            return null;
         }
     }
 
+    /**
+     * Determines the correct "edit" {@code CommandObject} to create based on the {@code CommandClass} specified in the
+     * given {@code Paramaters} object.
+     *
+     * @param params The Parameters object.
+     * @return The correct "edit" {@code CommandObject}
+     * @see Parameters
+     * @see lifetracker.parser.syntax.CommandClass
+     */
     private CommandObject processParametersForEdit(int id, Parameters params) {
         switch (params.commandClass) {
-            case GENERIC:
-                return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
-            case DEADLINE:
-                return commandObjectFactory
-                        .editDeadline(id, params.name, params.endDateTime, params.isForcedOverwrite);
-            case RECURRING_TASK:
-                return commandObjectFactory
-                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
-                                params.isForcedOverwrite);
-            case RECURRING_TASK_DATE:
-                return commandObjectFactory
-                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
-                                params.dateLimit);
-            case RECURRING_TASK_OCCURRENCES:
-                return commandObjectFactory
-                        .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
-                                params.occurLimit);
-            case EVENT:
-                return commandObjectFactory.editEvent(id, params.name, params.startDateTime, params.endDateTime,
-                        params.isForcedOverwrite);
-            case RECURRING_EVENT:
-                return commandObjectFactory
-                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
-                                params.recurringPeriod, params.isForcedOverwrite);
-            case RECURRING_EVENT_DATE:
-                return commandObjectFactory
-                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
-                                params.recurringPeriod, params.dateLimit);
-            case RECURRING_EVENT_OCCURRENCES:
-                return commandObjectFactory
-                        .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
-                                params.recurringPeriod, params.occurLimit);
-            case RECURRING:
-                return commandObjectFactory
-                        .editRecurring(id, params.name, params.recurringPeriod, params.isForcedOverwrite);
-            case RECURRING_DATE:
-                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.dateLimit);
-            case RECURRING_OCCURRENCES:
-                return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
-            case STOP_RECURRING:
-                return commandObjectFactory.editStop(id, params.name);
-            default:
-                assert false;
-                return null;
+        case GENERIC :
+            return commandObjectFactory.editGenericTask(id, params.name, params.isForcedOverwrite);
+        case DEADLINE :
+            return commandObjectFactory
+                    .editDeadline(id, params.name, params.endDateTime, params.isForcedOverwrite);
+        case RECURRING_TASK :
+            return commandObjectFactory
+                    .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                            params.isForcedOverwrite);
+        case RECURRING_TASK_DATE :
+            return commandObjectFactory
+                    .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                            params.dateLimit);
+        case RECURRING_TASK_OCCURRENCES :
+            return commandObjectFactory
+                    .editRecurringDeadline(id, params.name, params.endDateTime, params.recurringPeriod,
+                            params.occurLimit);
+        case EVENT :
+            return commandObjectFactory.editEvent(id, params.name, params.startDateTime, params.endDateTime,
+                    params.isForcedOverwrite);
+        case RECURRING_EVENT :
+            return commandObjectFactory
+                    .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                            params.recurringPeriod, params.isForcedOverwrite);
+        case RECURRING_EVENT_DATE :
+            return commandObjectFactory
+                    .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                            params.recurringPeriod, params.dateLimit);
+        case RECURRING_EVENT_OCCURRENCES :
+            return commandObjectFactory
+                    .editRecurringEvent(id, params.name, params.startDateTime, params.endDateTime,
+                            params.recurringPeriod, params.occurLimit);
+        case RECURRING :
+            return commandObjectFactory
+                    .editRecurring(id, params.name, params.recurringPeriod, params.isForcedOverwrite);
+        case RECURRING_DATE :
+            return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.dateLimit);
+        case RECURRING_OCCURRENCES :
+            return commandObjectFactory.editRecurring(id, params.name, params.recurringPeriod, params.occurLimit);
+        case STOP_RECURRING :
+            return commandObjectFactory.editStop(id, params.name);
+        default :
+            assert false;
+            return null;
         }
     }
 
+    /**
+     * Determines the correct "editone" {@code CommandObject} to create based on the {@code CommandClass} specified in
+     * the
+     * given {@code Paramaters} object.
+     *
+     * @param params The Parameters object.
+     * @return The correct "editone" {@code CommandObject}
+     * @see Parameters
+     * @see lifetracker.parser.syntax.CommandClass
+     */
     private CommandObject processParametersForEditOne(int id, Parameters params) {
         switch (params.commandClass) {
-            case GENERIC:
-                return commandObjectFactory.editOne(id, params.name);
-            case DEADLINE:
-                return commandObjectFactory.editOneToDeadline(id, params.name, params.endDateTime);
-            case EVENT:
-                return commandObjectFactory.editOneToEvent(id, params.name, params.startDateTime, params.endDateTime);
-            default:
-                assert false;
-                return null;
+        case GENERIC :
+            return commandObjectFactory.editOne(id, params.name);
+        case DEADLINE :
+            return commandObjectFactory.editOneToDeadline(id, params.name, params.endDateTime);
+        case EVENT :
+            return commandObjectFactory.editOneToEvent(id, params.name, params.startDateTime, params.endDateTime);
+        default :
+            assert false;
+            return null;
         }
     }
 

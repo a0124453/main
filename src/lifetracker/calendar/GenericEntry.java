@@ -1,10 +1,11 @@
 package lifetracker.calendar;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 import java.time.LocalDateTime;
 import java.time.Period;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
+//@@author A0108473E
 public class GenericEntry implements CalendarEntry {
 
     protected String SERIAL_TYPE_IDENTIFIER = "GenericEntry";

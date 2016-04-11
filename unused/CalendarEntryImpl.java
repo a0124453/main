@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
+//@@author A0108473E-unused
+//Replaced with specialized CalendarEntry classes
 public class CalendarEntryImpl implements CalendarEntry {
 
     // variables

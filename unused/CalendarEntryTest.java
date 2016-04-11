@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import lifetracker.calendar.CalendarEntry.EntryType;
 
+//@@author A0108473E
+//Test no longer works for new Calendar component
 public class CalendarEntryTest {
 
     public static final LocalDateTime NOW = LocalDateTime.now();

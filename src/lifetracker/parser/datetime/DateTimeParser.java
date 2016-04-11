@@ -98,12 +98,15 @@ public class DateTimeParser {
      * <li>If end time is missing, the end DateTime defaults to one hour after start if they are on the same day, or to
      * the same time if they are on different days.
      * <li>If end date is missing, it defaults to the first date where start DateTime is before end DateTime.
-     * <li>//TODO continue
+     * <li>Start date/time, if missing, is adjusted to one hour before the end date/time if they fall on the same date,
+     * or at the same date if they are determined to be on different dates.
+     * <li>If both are missing, both date times are adjusted such that they are one hour apart at least, with the start
+     * time adjusted to the next hour if no time is specified.
      * </ul>
      *
-     * @param startString
-     * @param endString
-     * @return
+     * @param startString The String representing the start date/time
+     * @param endString   The String representing the end date/time
+     * @return A list with 2 {@code LocalDateTime}s, which are the start and end dates respectively.
      */
     public List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
         assert isDateTime(startString);
@@ -137,6 +140,14 @@ public class DateTimeParser {
         return dateTimeResults;
     }
 
+    /**
+     * Parses a date/time from a String without any adjustments.
+     * <p>
+     * The defaults from natty will be directly returned.
+     *
+     * @param dateTimeString The date/time String to parse
+     * @return The date/time produced as by natty
+     */
     public LocalDateTime parseDateTimeAsIs(String dateTimeString) {
         DateGroup parsedDateGroup = parseWithNatty(dateTimeString);
 
@@ -161,6 +172,15 @@ public class DateTimeParser {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
+    /**
+     * This method looks at the parseElements to determine with fields are explicitly specified, and then replaces
+     * field
+     * not explicitly specified with default values (Today's date and 2359).
+     *
+     * @param dateTime      The date/time to begin with
+     * @param parseElements The parse map from natty
+     * @return The adjusted date/time
+     */
     private LocalDateTime adjustSingleDateToDefault(LocalDateTime dateTime, Set<String> parseElements) {
 
         dateTime = fillDefaultDateTime(dateTime, LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT.minusMinutes(1)),
@@ -173,6 +193,19 @@ public class DateTimeParser {
         return dateTime;
     }
 
+    /**
+     * Adjusts two date times with respect to each other, for fields that are not explicitly specified, as from their
+     * parse maps.
+     * <p>
+     * This method adjusts two date/times such that non-explicit date/times are adjusted based on either other
+     * explicitly stated fields, or based the next hour from the time now.
+     *
+     * @param startDateTime      The initial start date/time String
+     * @param endDateTime        The initial end date/time String
+     * @param startParseElements The natty parse map for the start date/time
+     * @param endParseElements   The natty parse map for the end date/time
+     * @return A array of two {@code LocalDateTime}s representing the start and end date/times
+     */
     private LocalDateTime[] adjustDoubleDateToDefault(LocalDateTime startDateTime, LocalDateTime endDateTime,
             Set<String> startParseElements, Set<String> endParseElements) {
 
@@ -209,6 +242,14 @@ public class DateTimeParser {
         return new LocalDateTime[] {adjustedStart, adjustedEnd};
     }
 
+    /**
+     * Fill in non-explicit fields of the date/time given with field from the default date/time specified.
+     *
+     * @param dateTime        The initial date/time
+     * @param defaultDateTime The default date/time
+     * @param parseElements   The natty parse map
+     * @return The adjusted date/time
+     */
     private LocalDateTime fillDefaultDateTime(LocalDateTime dateTime, LocalDateTime defaultDateTime,
             Set<String> parseElements) {
         LocalDateTime adjustedDateTime = dateTime;

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+//@@author A0108473E
 public class RecurringTask extends DeadlineTask {
     protected static final int INF_LIMIT_CONST = -1;
     protected static final int DATE_LIMIT_CONST = -2;

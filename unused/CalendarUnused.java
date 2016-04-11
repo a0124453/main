@@ -1,4 +1,6 @@
 
+//@@author A0108473E-unused
+//Collection of unused functions from features that we did not implement
 public class CalendarUnused {
     void filterByStartDate(TreeMap<Integer, CalendarEntry> treeMap, LocalDate startDate) {
         if (startDate == null) {

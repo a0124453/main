@@ -5,6 +5,7 @@ import lifetracker.calendar.visitor.EntryVisitor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+//@@author A0108473E
 public class DeadlineTask extends GenericEntry {
 
     private LocalDateTime deadline;

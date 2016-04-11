@@ -10,6 +10,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//@@author A0091173J
+
 /**
  * A class that writes strings to a file.
  * <p>

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAmount;
 
+//@@author A0108473E-unused
+//Replaced by specialized CalendarEntry implementations
 public interface CalendarEntryOld {
 
     public static final String MESSAGE_ERROR_START_AFTER_END = "Start date/time cannot be after end date/time!";

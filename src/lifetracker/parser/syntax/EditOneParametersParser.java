@@ -14,16 +14,28 @@ import static lifetracker.parser.syntax.CommandOptions.TO;
 import static lifetracker.parser.syntax.CommandParametersParser.checkMutuallyExclusiveKeywords;
 
 //@@author A0091173J
+
+/**
+ * The parameters parser for the "editone" command.
+ */
 public class EditOneParametersParser implements CommandParametersParser {
 
     private static EditOneParametersParser ourInstance = new EditOneParametersParser();
     protected final DateTimeParser dateTimeParser = DateTimeParser.getInstance();
     protected final DurationParser durationParser = DurationParser.getInstance();
-    
+
+    /**
+     * Gets the instance of this Singleton class.
+     *
+     * @return The instance of this class
+     */
     public static EditOneParametersParser getInstance() {
         return ourInstance;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Parameters parseCommandMap(Map<CommandOptions, String> commandMap) {
         Parameters results = new Parameters();
@@ -34,13 +46,22 @@ public class EditOneParametersParser implements CommandParametersParser {
         return results;
     }
 
-    void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters results){
-        if(isEventMap(commandMap)){
+    /**
+     * Determines the correct "add" {@code CommandObject} to create based on the {@code CommandClass} specified in the
+     * given {@code Paramaters} object.
+     *
+     * @param params The Parameters object.
+     * @return The correct "add" {@code CommandObject}
+     * @see Parameters
+     * @see lifetracker.parser.syntax.CommandClass
+     */
+    protected void determineTypeAndPopulateFields(Map<CommandOptions, String> commandMap, Parameters results) {
+        if (isEventMap(commandMap)) {
             fillUpEventNull(commandMap);
             populateEventParameters(commandMap, results);
-        } else if(isTaskMap(commandMap)){
+        } else if (isTaskMap(commandMap)) {
             populateTaskParameters(commandMap, results);
-        } else{
+        } else {
             results.commandClass = CommandClass.GENERIC;
         }
     }
