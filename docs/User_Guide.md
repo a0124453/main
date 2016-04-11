@@ -43,7 +43,7 @@
 
  - Square brackets: `[...]` indicates an optional command/field.
  - Pointed brackets: `<..>` indicated a required field.
- - Horizontal bar: `opt1 | opt2` means either opt1 or opt2 can be specified.
+ - Horizontal bar: `opt1 | opt2` means either `opt1` or `opt2` can be specified.
 
 ### Adding entries
 
