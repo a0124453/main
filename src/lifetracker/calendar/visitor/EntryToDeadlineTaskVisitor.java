@@ -68,21 +68,12 @@ public class EntryToDeadlineTaskVisitor implements EntryVisitor<OldNewEntryPair>
             convertedTask = new DeadlineTask(convertedTask);
         }
 
-<<<<<<< HEAD
         if(name != null && !name.isEmpty()){
             convertedTask.setName(name);
         }
 
         if (deadline!=null){
             convertedTask.setDateTime(CalendarProperty.END, deadline);
-=======
-        if (name != null && !name.isEmpty()) {
-            task.setName(name);
-        }
-
-        if (deadline != null) {
-            task.setDateTime(CalendarProperty.END, deadline);
->>>>>>> master
         }
 
         return new OldNewEntryPair(clone, convertedTask);
