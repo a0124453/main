@@ -1,11 +1,18 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 //@@author A0108473E
+
+/**
+ * 
+ * Represents an entry with only a name, without a deadline or start/end
+ * date/time.
+ * 
+ */
 public class GenericEntry implements CalendarEntry {
 
     protected String SERIAL_TYPE_IDENTIFIER = "GenericEntry";

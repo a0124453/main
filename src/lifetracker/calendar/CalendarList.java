@@ -8,6 +8,22 @@ import java.util.List;
 import lifetracker.calendar.visitor.OldNewEntryPair;
 
 //@@author A0108473E
+
+/**
+ * 
+ * An interface for a calendar storing entries.
+ * <p>
+ * On top of basic {@code add} and {@code delete} methods, the interface
+ * provides extensive search methods {@code findByName},
+ * {@code findArchivedByName} and {@code findAllByNamex} to search for methods
+ * with specified text in their descriptions. Additionally {@code findToday},
+ * returns all entries occurring today.
+ * <p>
+ * The {@code mark} method provides a way to mark an entry as done, and uses a
+ * visitor design pattern to determine the actions to be done to on entry
+ * depending on its class type.
+ *
+ */
 public interface CalendarList {
 
     String ERROR_INVALID_ID = "Entry %1$s is not found!";
@@ -53,7 +69,8 @@ public interface CalendarList {
     /**
      * Adds a floating task.
      *
-     * @param name Name of floating task.
+     * @param name
+     *            Name of floating task.
      * @return The entry ID of the newly added task.
      */
     int add(String name); // floating task
@@ -61,8 +78,10 @@ public interface CalendarList {
     /**
      * Adds a deadline task.
      *
-     * @param name     Name of deadline task.
-     * @param deadline Deadline of said task.
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of said task.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime deadline);
@@ -71,9 +90,12 @@ public interface CalendarList {
      * Adds a recurring deadline task that occurs periodically with an unlimited
      * number of occurrences.
      *
-     * @param name     Name of deadline task.
-     * @param deadline Deadline of the task.
-     * @param period   Period between each deadline.
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of the task.
+     * @param period
+     *            Period between each deadline.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime deadline, Period period);
@@ -82,10 +104,14 @@ public interface CalendarList {
      * Adds a recurring deadline task that occurs periodically with a limited
      * number of occurrences.
      *
-     * @param name     Name of deadline task.
-     * @param deadline Deadline of the task.
-     * @param period   Period between each deadline.
-     * @param limit    Maximum number of occurrences of this task.
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of the task.
+     * @param period
+     *            Period between each deadline.
+     * @param limit
+     *            Maximum number of occurrences of this task.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime deadline, Period period, int limit);
@@ -94,11 +120,15 @@ public interface CalendarList {
      * Adds a recurring deadline task that occurs periodically up to a specified
      * date, inclusive.
      *
-     * @param name      Name of deadline task.
-     * @param deadline  Deadline of the task.
-     * @param period    Period between each deadline.
-     * @param limitDate Date after which no more occurrences of this task will be
-     *                  recorded.
+     * @param name
+     *            Name of deadline task.
+     * @param deadline
+     *            Deadline of the task.
+     * @param period
+     *            Period between each deadline.
+     * @param limitDate
+     *            Date after which no more occurrences of this task will be
+     *            recorded.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime deadline, Period period, LocalDate limitDate);
@@ -106,9 +136,12 @@ public interface CalendarList {
     /**
      * Adds a one-time event.
      *
-     * @param name  Name of event.
-     * @param start Start date and time of the event.
-     * @param end   End date and time of the event.
+     * @param name
+     *            Name of event.
+     * @param start
+     *            Start date and time of the event.
+     * @param end
+     *            End date and time of the event.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime start, LocalDateTime end);
@@ -117,10 +150,14 @@ public interface CalendarList {
      * Adds a recurring event that occurs periodically with an unlimited number
      * of occurrences.
      *
-     * @param name   Name of event.
-     * @param start  Start date and time of the event.
-     * @param end    End date and time of the event.
-     * @param period Period between each occurrence of this event.
+     * @param name
+     *            Name of event.
+     * @param start
+     *            Start date and time of the event.
+     * @param end
+     *            End date and time of the event.
+     * @param period
+     *            Period between each occurrence of this event.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime start, LocalDateTime end, Period period);
@@ -129,11 +166,16 @@ public interface CalendarList {
      * Adds a recurring event that occurs periodically with a limited number of
      * occurrences.
      *
-     * @param name   Name of event.
-     * @param start  Start date and time of the event.
-     * @param end    End date and time of the event.
-     * @param period Period between each occurrence of this event.
-     * @param limit  Maximum number of occurrences of this event.
+     * @param name
+     *            Name of event.
+     * @param start
+     *            Start date and time of the event.
+     * @param end
+     *            End date and time of the event.
+     * @param period
+     *            Period between each occurrence of this event.
+     * @param limit
+     *            Maximum number of occurrences of this event.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime start, LocalDateTime end, Period period, int limit);
@@ -142,11 +184,16 @@ public interface CalendarList {
      * Adds a recurring event that occurs periodically up to a specified
      * starting date, inclusive.
      *
-     * @param name   Name of event.
-     * @param start  Start date and time of the event.
-     * @param end    End date and time of the event.
-     * @param period Period between each occurrence of this event.
-     * @param limit  Maximum number of occurrences of this event.
+     * @param name
+     *            Name of event.
+     * @param start
+     *            Start date and time of the event.
+     * @param end
+     *            End date and time of the event.
+     * @param period
+     *            Period between each occurrence of this event.
+     * @param limit
+     *            Maximum number of occurrences of this event.
      * @return The entry ID of the newly added task.
      */
     int add(String name, LocalDateTime start, LocalDateTime end, Period period, LocalDate limitDate);
@@ -162,7 +209,8 @@ public interface CalendarList {
      * The entry will be added to the main or archived lists depending on
      * whether it is a task or event, and whether it is active or otherwise.
      *
-     * @param entry An object of one of the five supported classes.
+     * @param entry
+     *            An object of one of the five supported classes.
      * @return The entry ID of the newly added task.
      */
     int add(CalendarEntry entry);
@@ -170,7 +218,8 @@ public interface CalendarList {
     /**
      * Deletes an entry.
      *
-     * @param id ID number of the entry to be deleted.
+     * @param id
+     *            ID number of the entry to be deleted.
      * @return The entry object deleted.
      */
     CalendarEntry delete(int id);
@@ -187,11 +236,15 @@ public interface CalendarList {
      * lost. For example, if the entry was a {@code DeadlineTask}, the deadline
      * will be lost.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToGeneric(int id, String newName, boolean isConvertForced);
 
@@ -207,12 +260,17 @@ public interface CalendarList {
      * lost. For example, if the entry was a {@code RecurringTask}, the
      * frequency of occurrence will be lost.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param newDeadline     The new deadline to be set.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newDeadline
+     *            The new deadline to be set.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToDeadline(int id, String newName, LocalDateTime newDeadline, boolean isConvertForced);
 
@@ -228,13 +286,19 @@ public interface CalendarList {
      * lost. For example, if the entry was a {@code RecurringEvent}, the
      * frequency of occurrence will be lost.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param newStartTime    The new start date and time to be set.
-     * @param newEndTime      The new end date and time to be set.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newStartTime
+     *            The new start date and time to be set.
+     * @param newEndTime
+     *            The new end date and time to be set.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToEvent(int id, String newName, LocalDateTime newStartTime, LocalDateTime newEndTime,
             boolean isConvertForced);
@@ -251,13 +315,19 @@ public interface CalendarList {
      * lost. For example, if the entry was a {@code RecurringEvent}, the start
      * date and time will be lost.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param newStartTime    The new start date and time to be set.
-     * @param newEndTime      The new end date and time to be set.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newStartTime
+     *            The new start date and time to be set.
+     * @param newEndTime
+     *            The new end date and time to be set.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             boolean isLimitKept, boolean isConvertForced);
@@ -280,14 +350,21 @@ public interface CalendarList {
      * set to 4, then the task will happen 4 more times (including the current
      * iteration), no matter how many times it has occurred in the past.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param newDeadLine     The new deadline.
-     * @param newPeriod       The new period.
-     * @param newLimit        The new occurrence limit.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newDeadLine
+     *            The new deadline.
+     * @param newPeriod
+     *            The new period.
+     * @param newLimit
+     *            The new occurrence limit.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             int newLimit, boolean isConvertForced);
@@ -307,14 +384,21 @@ public interface CalendarList {
      * {@code newLimitDate} specifies the new date after which the task will
      * stop recurring regardless of how many times it has occurred in the past.
      *
-     * @param id              The ID of the entry to update.
-     * @param newName         The new name.
-     * @param newDeadLine     The new deadline.
-     * @param newPeriod       The new period.
-     * @param newLimitDate    The new limiting date.
-     * @param isConvertForced If information can be discarded during the conversion.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newDeadLine
+     *            The new deadline.
+     * @param newPeriod
+     *            The new period.
+     * @param newLimitDate
+     *            The new limiting date.
+     * @param isConvertForced
+     *            If information can be discarded during the conversion.
      * @return The old entry object before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringTask(int id, String newName, LocalDateTime newDeadLine, Period newPeriod,
             LocalDate newLimitDate, boolean isConvertForced);
@@ -330,14 +414,21 @@ public interface CalendarList {
      * If {@code isLimitKept} is set, then this method will discard the previous
      * recurring limit set in an entry with such a limit.
      *
-     * @param id          The ID of the entry to update.
-     * @param newName     The new name.
-     * @param newStart    The new start date and time.
-     * @param newEnd      The new end date and time.
-     * @param newPeriod   The new recurring time period.
-     * @param isLimitKept If the original limit should be discarded.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newStart
+     *            The new start date and time.
+     * @param newEnd
+     *            The new end date and time.
+     * @param newPeriod
+     *            The new recurring time period.
+     * @param isLimitKept
+     *            If the original limit should be discarded.
      * @return The old entry before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, boolean isLimitKept);
@@ -355,14 +446,21 @@ public interface CalendarList {
      * set to 4, then the event will happen 4 more times (including the current
      * iteration), no matter how many times it has occurred in the past.
      *
-     * @param id        The ID of the entry to update.
-     * @param newName   The new name.
-     * @param newStart  The new start date and time.
-     * @param newEnd    The new end date and time.
-     * @param newPeriod The new recurring time period.
-     * @param newLimit  The new occurrence limit.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newStart
+     *            The new start date and time.
+     * @param newEnd
+     *            The new end date and time.
+     * @param newPeriod
+     *            The new recurring time period.
+     * @param newLimit
+     *            The new occurrence limit.
      * @return The old entry before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, int newLimit);
@@ -378,14 +476,21 @@ public interface CalendarList {
      * event will not start, regardless of how many times it has occurred in the
      * past.
      *
-     * @param id           The ID of the entry to update.
-     * @param newName      The new name.
-     * @param newStart     The new start date and time.
-     * @param newEnd       The new end date and time.
-     * @param newPeriod    The new recurring time period.
-     * @param newLimitDate The new limiting date.
+     * @param id
+     *            The ID of the entry to update.
+     * @param newName
+     *            The new name.
+     * @param newStart
+     *            The new start date and time.
+     * @param newEnd
+     *            The new end date and time.
+     * @param newPeriod
+     *            The new recurring time period.
+     * @param newLimitDate
+     *            The new limiting date.
      * @return The old entry before the update.
-     * @throws IllegalArgumentException If fields that are required are empty.
+     * @throws IllegalArgumentException
+     *             If fields that are required are empty.
      */
     CalendarEntry updateToRecurringEvent(int id, String newName, LocalDateTime newStart, LocalDateTime newEnd,
             Period newPeriod, LocalDate newLimitDate);
@@ -397,9 +502,10 @@ public interface CalendarList {
      * If there are no old entries with the same ID, the new entry is simply
      * added to the CalendarList.
      *
-     * @param newEntry The new entry.
+     * @param newEntry
+     *            The new entry.
      * @return The old entry before the update if present, {@code null}
-     * otherwise.
+     *         otherwise.
      */
     CalendarEntry update(CalendarEntry newEntry);
 
@@ -407,9 +513,10 @@ public interface CalendarList {
      * Marks an entry with ID number {@code id}. Uses a {@code MarkVisitor} to
      * mark the entry.
      *
-     * @param id The ID number of the entry to be marked.
+     * @param id
+     *            The ID number of the entry to be marked.
      * @return A pair of entries, one of which is the old entry before marking,
-     * and the other an updated one.
+     *         and the other an updated one.
      * @see lifetracker.calendar.visitor.MarkVisitor
      */
     OldNewEntryPair mark(int id);
@@ -418,9 +525,11 @@ public interface CalendarList {
      * Finds and returns the {@code CalendarEntry} object with the specified ID
      * number.
      *
-     * @param id ID number of desired entry.
+     * @param id
+     *            ID number of desired entry.
      * @return The entry object with the specified ID number.
-     * @throws IllegalArgumentException If ID number is not found.
+     * @throws IllegalArgumentException
+     *             If ID number is not found.
      */
     CalendarEntry get(int id);
 
@@ -430,9 +539,10 @@ public interface CalendarList {
      * with descriptions containing the desired text. Allows room for minor
      * typographical errors.
      *
-     * @param toSearch The desired text to search for.
+     * @param toSearch
+     *            The desired text to search for.
      * @return A {@code CalendarList} with customized {@code taskList} and
-     * {@code eventList}.
+     *         {@code eventList}.
      */
     CalendarList findByName(String toSearch);
 
@@ -443,9 +553,10 @@ public interface CalendarList {
      * descriptions containing the desired text. Allows room for minor
      * typographical errors.
      *
-     * @param toSearch The desired text to search for.
+     * @param toSearch
+     *            The desired text to search for.
      * @return A {@code CalendarList} with customized {@code taskList} and
-     * {@code eventList}.
+     *         {@code eventList}.
      */
     CalendarList findArchivedByName(String toSearch);
 
@@ -455,9 +566,10 @@ public interface CalendarList {
      * archived) whose descriptions contain the desired text. Allows room for
      * minor typographical errors.
      *
-     * @param toSearch The desired text to search for.
+     * @param toSearch
+     *            The desired text to search for.
      * @return A {@code CalendarList} with customized {@code taskList} and
-     * {@code eventList}.
+     *         {@code eventList}.
      */
     CalendarList findAllByName(String toSearch);
 
@@ -468,7 +580,7 @@ public interface CalendarList {
      * active events that are ongoing at the time when the method is called.
      *
      * @return A {@code CalendarList} with customized {@code taskList} and
-     * {@code eventList}.
+     *         {@code eventList}.
      */
     CalendarList findToday();
 

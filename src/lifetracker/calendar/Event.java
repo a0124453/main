@@ -1,11 +1,17 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 //@@author A0108473E
+
+/**
+ * 
+ * Represents an entry with a start and end date/time.
+ * 
+ */
 public class Event extends DeadlineTask {
 
     private LocalDateTime startDateTime;
@@ -45,15 +51,15 @@ public class Event extends DeadlineTask {
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case ONGOING:
+            case ONGOING :
                 boolean hasStarted = LocalDateTime.now().isAfter(startDateTime);
                 boolean isOver = isProperty(CalendarProperty.OVER);
                 return hasStarted && !isOver;
-            case TODAY:
+            case TODAY :
                 boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
                 boolean isOngoing = isProperty(CalendarProperty.ONGOING);
                 return startsToday || isOngoing;
-            default:
+            default :
                 return super.isProperty(property);
         }
     }
