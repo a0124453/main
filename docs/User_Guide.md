@@ -35,18 +35,38 @@
  6. To permanently delete something:
     - `delete 2`
 
-> To learn more details of Life Tracker features, refer to the [Feature Details](#feat) section below.
+> To learn more details of Life Tracker features, refer to the [Feature Details](#feature) section below.
 
-## <a name="feat">Feature Details</a>
+## <a name="feature">Feature Details</a>
 
 ### Format
 
- - Square brackets: `[...]` indicates an optional command/field
+ - Square brackets: `[...]` indicates an optional command/field.
+ - Pointed brackets: `<..>` indicated a required field.
  - Horizontal bar: `opt1 | opt2` means either opt1 or opt2 can be specified.
 
 ### Adding entries
 
-The add command lets you add a entry, like:
+The common form of all add command entry is:
+
+```
+[add]<task>[KeywordPhrase]
+```
+
+where the list of KeywordPhrase can be found below.
+> Although the word `add` is optional, if you required the word `add` to be part of your task name, do type `add add...` to identify it as part of the name. This applies to other command keywords such as `edit`, `list`, etc. as well.
+
+| KewordPhrase | Description |
+| ------------ | ----------- |
+| NULL | When no phrase is given, a floating task will be created with no deadlines |
+| by [date and time] | <p>Add a task with a deadline specified by `date and time` field.</p><p>If the `date and time` field is empty after the `by` keyword, the deadline defaults to the day itself at 2359.</p> |
+| at | Alternative keyword to "by". Works the same way but cannot be used concurrently. |
+| from [date and time] | <p>Add an event with a start date specified by `date and time` field.</p><p>If the `date and time` field is empty after the `from` keyword, the start date defaults to the day itself at nearest hour to the current time.</p><p>MUST NOT be used concurrently with `by` or `at` keyword.</p> |
+| to [date and time] | <p>Add an event with an end date specified by `date and time` field.</p><p>If the `date and time` field is empty after the `to` keyword and the start date is not specified, the end date defaults to the day itself at nearest hour to the current time. Otherwise, the end date defaults to one hour after the start date</p><p>Should be used concurrently with `from` keyword. MUST NOT be used concurrently with `by` or `at` keyword.</p>
+| every [period] | <p>Make the event/task recurring with the interval specified by `period` field.</p><p>Can be used with any other keywords above.</p> |
+| until [date] | <p>Set the date limit for recurring event/task as specified by `date` field.</p><p>MUST only be used with `every` keyword.</p> |
+| for [no. of times] | <p>Set the no. of times for recurring event/task to be repeated.</p><p>MUST only be used with `every` keyword. MUST NOT be used concurrently with `until` keyword.</p> |
+> The order of the keywords does not matter e.g. `dinner from 7pm to 9pm` works the same way as `dinner to 9pm from 7pm`.<br>You can leave parts of `date and time` field empty; LifeTracker will find the appropriates values automatically.<br>
 
 | Command | Description |
 | ------- | ----------- |
@@ -103,6 +123,6 @@ will change the Water Plants tasks to be on 12th January.
 
 ### Date and Time
 
-Date is specified in DDMMYY or DDMMYYYY format, separators are optional. Year, or year and month can be omitted. If so they are replaced by the current month/year.
+Date is specified in DDMMYY or DDMMYYYY format, separators are optional. Year, or year and month can be omitted. If so they are replaced by the current month/year. However, a lot of other things work as well. Try `today`,`tuesday`, or even `day after tomorrow`. All these works! The date and time input is very, very flexible. So use your imagination:)
 
-Time can be specified in 24-hr format with a 'h' suffix e.g. `2359h`. 12-hr time ends with either 'am' or 'pm', e.g. `1259pm`. Separators are optional, and minutes can be omitted, to be replaced with 00 by default.
+Similarly, time can be specified in either 24-hr format e.g. `2359` or 12-hr format with 'am' or 'pm', e.g. `1259pm`. Separators are optional, and minutes can be omitted, to be replaced with 00 by default.
