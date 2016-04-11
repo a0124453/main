@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 /**
  * @author Shen Yichen <2007.yichen@gmail.com>
  */
-public class CommandBodyParser<T extends Enum<T>> {
+public class CommandSectionParser<T extends Enum<T>> {
 
     private static final String COMMAND_BODY_SEPARATOR = " ";
 
@@ -20,7 +20,7 @@ public class CommandBodyParser<T extends Enum<T>> {
     private final Map<String, T> keywordToEnumMap;
     private final T defaultField;
 
-    public CommandBodyParser(Map<String, T> keywordToEnumMap, Map<T, Predicate<String>> verificationMap,
+    public CommandSectionParser(Map<String, T> keywordToEnumMap, Map<T, Predicate<String>> verificationMap,
             T defaultField) {
         this.verificationMap = verificationMap;
         this.keywordToEnumMap = keywordToEnumMap;
