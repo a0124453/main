@@ -381,13 +381,24 @@ public class UiController implements Initializable {
      */
     private void addInputToHistory(String userInput) {
         if(!inputHistory.isEmpty()){ 
-            if (!isRepeatedInput(userInput)) {
-                storeInputToHistory(userInput);
-            }
+            checkForRepeatedInput(userInput);
         } else {
             storeInputToHistory(userInput);
         }
 
+    }
+
+    /**
+     * Only add the input if it is not repeated. Else, reset the inputHistoryIndex.
+     * 
+     * @param userInput User input from textInput.
+     */
+    private void checkForRepeatedInput(String userInput) {
+        if (!isRepeatedInput(userInput)) {
+            storeInputToHistory(userInput);
+        } else {
+            inputHistoryIndex = inputHistory.size();
+        }
     }
     
     /**
