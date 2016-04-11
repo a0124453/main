@@ -69,7 +69,7 @@ public class RecurringEvent extends RecurringTask {
             boolean isOver = isProperty(CalendarProperty.OVER);
             return hasStarted && !isOver;
         case TODAY :
-            boolean startsToday = (LocalDateTime.now().equals(startDateTime));
+            boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
             boolean isOngoing = isProperty(CalendarProperty.ONGOING);
             return startsToday || isOngoing;
         default :

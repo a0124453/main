@@ -2,6 +2,7 @@ package lifetracker.calendar;
 
 import lifetracker.calendar.visitor.EntryVisitor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Event extends DeadlineTask {
@@ -48,7 +49,7 @@ public class Event extends DeadlineTask {
                 boolean isOver = isProperty(CalendarProperty.OVER);
                 return hasStarted && !isOver;
             case TODAY:
-                boolean startsToday = (LocalDateTime.now().equals(startDateTime));
+                boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
                 boolean isOngoing = isProperty(CalendarProperty.ONGOING);
                 return startsToday || isOngoing;
             default:
