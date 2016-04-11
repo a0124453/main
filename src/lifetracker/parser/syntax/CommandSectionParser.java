@@ -42,7 +42,7 @@ public class CommandSectionParser<T extends Enum<T>> {
      * @param commandBody The command body to parse
      * @return A map with the components parsed
      */
-    public Map<T, String> parseCommandBody(String commandBody) {
+    public Map<T, String> parseCommandSection(String commandBody) {
 
         Map<T, String> keyWordArgumentMap = new LinkedHashMap<>();
 

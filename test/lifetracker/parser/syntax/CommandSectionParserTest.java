@@ -42,7 +42,7 @@ public class CommandSectionParserTest {
         expected.put(Options.EMPTY, "");
         expected.put(Options.NAME, "name");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandSection(commandBody));
 
         //Boundary: Blank name
         commandBody = "empty empty2";
@@ -52,7 +52,7 @@ public class CommandSectionParserTest {
         expected.put(Options.EMPTY, "");
         expected.put(Options.NAME, "");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandSection(commandBody));
 
         //Partition: repeated keywords
         commandBody = "name anything abs anything abc def three abc";
@@ -62,7 +62,7 @@ public class CommandSectionParserTest {
         expected.put(Options.ANYTHING, "abc def");
         expected.put(Options.NAME, "name anything abs");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandSection(commandBody));
 
         //Partition: Invalid keyword arguements
         commandBody = "anything something something empty aaa";
@@ -70,6 +70,6 @@ public class CommandSectionParserTest {
         expected.clear();
         expected.put(Options.NAME, "anything something something empty aaa");
 
-        Assert.assertEquals(expected, cmdParser.parseCommandBody(commandBody));
+        Assert.assertEquals(expected, cmdParser.parseCommandSection(commandBody));
     }
 }
