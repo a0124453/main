@@ -31,12 +31,26 @@ public class CalendarListImpl implements CalendarList {
     private static final double WORD_SIMILARITY_THRESHOLD_INDEX = 0.85;
 
     // variables
-    protected TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
-    protected TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> taskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> eventList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedTaskList = new TreeMap<>();
+    private TreeMap<Integer, CalendarEntry> archivedEventList = new TreeMap<>();
 
-    // get() and set() functions for variables
+    private void setTaskList(TreeMap<Integer, CalendarEntry> map) {
+        this.taskList = map;
+    }
+
+    private void setEventList(TreeMap<Integer, CalendarEntry> map) {
+        this.eventList = map;
+    }
+
+    private void setArchivedTaskList(TreeMap<Integer, CalendarEntry> map) {
+        this.archivedTaskList = map;
+    }
+
+    private void setArchivedEventList(TreeMap<Integer, CalendarEntry> map) {
+        this.archivedEventList = map;
+    }
 
     @Override
     public List<CalendarEntry> getTaskList() {
@@ -286,7 +300,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
         TreeMap<Integer, CalendarEntry> copyTaskList = new TreeMap<>();
         copyTaskList.putAll(this.taskList);
         filterByName(copyTaskList, toSearch);
@@ -300,7 +314,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findArchivedByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
         result.setTaskList(this.archivedTaskList);
         result.setEventList(this.archivedEventList);
         return result.findByName(toSearch);
@@ -308,7 +322,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findAllByName(String toSearch) {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
 
         TreeMap<Integer, CalendarEntry> combinedTask = new TreeMap<>(taskList);
         combinedTask.putAll(archivedTaskList);
@@ -323,7 +337,7 @@ public class CalendarListImpl implements CalendarList {
 
     @Override
     public CalendarList findToday() {
-        CalendarListResult result = new CalendarListResult();
+        CalendarListImpl result = new CalendarListImpl();
 
         Map<Integer, CalendarEntry> todayTasks = taskList.entrySet().stream()
                 .filter(e -> e.getValue().isProperty(CalendarProperty.TODAY))
