@@ -28,15 +28,15 @@ public class ParserImplTest {
     public void parseAddFloating() throws Exception {
         //Partition: Floating tasks
         parser.parse("add project meeting");
-        verify(cmdFactory).addFloatingTask("project meeting");
+        verify(cmdFactory).addGenericTask("project meeting");
 
         //Boundary: No command
         parser.parse("water plants");
-        verify(cmdFactory).addFloatingTask("water plants");
+        verify(cmdFactory).addGenericTask("water plants");
 
         //Boundary: Name with special characters
         parser.parse("abc > < ! @ > #");
-        verify(cmdFactory).addFloatingTask("abc > < ! @ > #");
+        verify(cmdFactory).addGenericTask("abc > < ! @ > #");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ParserImplTest {
 
         //Boundary: Invalid end date
         parser.parse("drop by supermarket");
-        verify(cmdFactory).addFloatingTask("drop by supermarket");
+        verify(cmdFactory).addGenericTask("drop by supermarket");
 
         //Boundary: 2 date times
         parser.parse("drop by 7/11 by tomorrow 2pm");
@@ -75,7 +75,7 @@ public class ParserImplTest {
 
         //Boundary: Invalid durations
         parser.parse("check every single thing");
-        verify(cmdFactory).addFloatingTask("check every single thing");
+        verify(cmdFactory).addGenericTask("check every single thing");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ParserImplTest {
 
         //Boundary: Invalid date time
         parser.parse("meeting from 2pm to hello");
-        verify(cmdFactory).addFloatingTask("meeting from 2pm to hello");
+        verify(cmdFactory).addGenericTask("meeting from 2pm to hello");
 
         //Boundary: Missing to
         parser.parse("some talk from 22/4/16 10am");

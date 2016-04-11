@@ -7,7 +7,7 @@ import java.time.Period;
 //@@author A0091173J
 public class CommandFactoryImpl implements CommandFactory {
     @Override
-    public CommandObject addFloatingTask(String name) {
+    public CommandObject addGenericTask(String name) {
         return new AddCommand(name);
     }
 
