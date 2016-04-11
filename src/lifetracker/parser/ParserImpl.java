@@ -123,7 +123,7 @@ public class ParserImpl implements Parser {
         CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 ADD_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
 
-        Map<CommandOptions, String> commandBodySectionsMap = bodyParser.parseCommandBody(addCommandBody);
+        Map<CommandOptions, String> commandBodySectionsMap = bodyParser.parseCommandSection(addCommandBody);
 
         Parameters params = AddParameterParser.getInstance().parseCommandMap(commandBodySectionsMap);
 
@@ -153,7 +153,7 @@ public class ParserImpl implements Parser {
         CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 EDIT_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
 
-        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);
+        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandSection(editCommandSection);
 
         Parameters params = EditParameterParser.getInstance().parseCommandMap(editSectionMap);
 
@@ -171,7 +171,7 @@ public class ParserImpl implements Parser {
         CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 EDITONE_OPTIONS_WITH_VERIFICATIONS, CommandOptions.NAME);
 
-        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);
+        Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandSection(editCommandSection);
 
         Parameters params = EditOneParametersParser.getInstance().parseCommandMap(editSectionMap);
 
