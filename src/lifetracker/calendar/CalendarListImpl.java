@@ -44,14 +44,6 @@ public class CalendarListImpl implements CalendarList {
         this.eventList = map;
     }
 
-    private void setArchivedTaskList(TreeMap<Integer, CalendarEntry> map) {
-        this.archivedTaskList = map;
-    }
-
-    private void setArchivedEventList(TreeMap<Integer, CalendarEntry> map) {
-        this.archivedEventList = map;
-    }
-
     @Override
     public List<CalendarEntry> getTaskList() {
         List<CalendarEntry> active = taskList.values().stream()
