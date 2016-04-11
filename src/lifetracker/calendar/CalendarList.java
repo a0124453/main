@@ -397,7 +397,7 @@ public interface CalendarList {
     CalendarEntry get(int id);
 
     /**
-     * Creates and returns a copy of the {@code CalendarListResult} object with
+     * Creates and returns a copy of the {@code CalendarListImpl} object with
      * {@code taskList} and {@code eventList} filtered to contain only entries
      * with descriptions containing the desired text. Allows room for minor
      * typographical errors.
@@ -411,7 +411,7 @@ public interface CalendarList {
     CalendarList findByName(String toSearch);
 
     /**
-     * Creates and returns a {@code CalendarListResult} object with
+     * Creates and returns a {@code CalendarListImpl} object with
      * {@code taskList} and {@code eventList} set as the archived lists of the
      * main {@code CalendarList}, filtered to contain only entries with
      * descriptions containing the desired text. Allows room for minor
@@ -425,7 +425,7 @@ public interface CalendarList {
     CalendarList findArchivedByName(String toSearch);
 
     /**
-     * Creates and returns a {@code CalendarListResult} object with
+     * Creates and returns a {@code CalendarListImpl} object with
      * {@code taskList} and {@code eventList} containing all entries (active or
      * archived) whose descriptions contain the desired text. Allows room for
      * minor typographical errors.
@@ -438,7 +438,7 @@ public interface CalendarList {
     CalendarList findAllByName(String toSearch);
 
     /**
-     * Creates and returns a {@code CalendarListResult} object with
+     * Creates and returns a {@code CalendarListImpl} object with
      * {@code taskList} and {@code eventList} containing only active tasks that
      * are due on the same day, active events that start on the same day, and
      * active events that are ongoing at the time when the method is called.
