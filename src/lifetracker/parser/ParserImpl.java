@@ -5,9 +5,9 @@ import lifetracker.command.CommandObject;
 import lifetracker.parser.datetime.DateTimeParser;
 import lifetracker.parser.datetime.DurationParser;
 import lifetracker.parser.syntax.AddParameterParser;
-import lifetracker.parser.syntax.CommandBodyParser;
+import lifetracker.parser.syntax.CommandSectionParser;
 import lifetracker.parser.syntax.CommandOptions;
-import lifetracker.parser.syntax.CommandSectionsParser;
+import lifetracker.parser.syntax.FullCommandParser;
 import lifetracker.parser.syntax.EditOneParametersParser;
 import lifetracker.parser.syntax.EditParameterParser;
 import lifetracker.parser.syntax.Parameters;
@@ -42,7 +42,7 @@ public class ParserImpl implements Parser {
             = new HashMap<>(EDITONE_OPTIONS_WITH_VERIFICATIONS);
 
     static {
-        ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.EVERY, DURATION_PARSER::isDurationString);
+        ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.EVERY, DURATION_PARSER::isDuration);
         ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.UNTIL, DATE_TIME_PARSER::isDateTime);
         ADD_OPTIONS_VERIFICATIONS.put(CommandOptions.FOR, StringUtils::isNumeric);
     }
@@ -77,13 +77,13 @@ public class ParserImpl implements Parser {
 
     private final Map<String, Function<List<String>, CommandObject>> commands = new HashMap<>();
 
-    private final CommandSectionsParser cmdParser;
+    private final FullCommandParser cmdParser;
 
     private final CommandFactory commandObjectFactory;
 
     public ParserImpl(CommandFactory commandFactory) {
         populateCommand();
-        cmdParser = new CommandSectionsParser(commands.keySet(), defaultCommand);
+        cmdParser = new FullCommandParser(commands.keySet(), defaultCommand);
         commandObjectFactory = commandFactory;
     }
 
@@ -120,7 +120,7 @@ public class ParserImpl implements Parser {
     private CommandObject processAdd(List<String> commandBody) {
         String addCommandBody = restoreCommandSections(commandBody);
 
-        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+        CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 ADD_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
 
         Map<CommandOptions, String> commandBodySectionsMap = bodyParser.parseCommandBody(addCommandBody);
@@ -150,7 +150,7 @@ public class ParserImpl implements Parser {
 
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+        CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 EDIT_OPTIONS_VERIFICATIONS, CommandOptions.NAME);
 
         Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);
@@ -168,7 +168,7 @@ public class ParserImpl implements Parser {
         int id = getIDFromList(commandBody);
         String editCommandSection = restoreCommandSections(commandBody.subList(1, commandBody.size()));
 
-        CommandBodyParser<CommandOptions> bodyParser = new CommandBodyParser<>(KEYWORD_TO_ENUM_MAP,
+        CommandSectionParser<CommandOptions> bodyParser = new CommandSectionParser<>(KEYWORD_TO_ENUM_MAP,
                 EDITONE_OPTIONS_WITH_VERIFICATIONS, CommandOptions.NAME);
 
         Map<CommandOptions, String> editSectionMap = bodyParser.parseCommandBody(editCommandSection);

@@ -1,6 +1,5 @@
 package lifetracker.parser.syntax;
 
-import lifetracker.parser.syntax.CommandSectionsParser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CommandSectionsParserTest {
+public class FullCommandParserTest {
 
     private Set<String> commands = new HashSet<>();
 
@@ -17,7 +16,7 @@ public class CommandSectionsParserTest {
 
     private String fullCommandSeparator = "| ";
 
-    private CommandSectionsParser cmdParser = new CommandSectionsParser(commands, defaultCommand);
+    private FullCommandParser cmdParser = new FullCommandParser(commands, defaultCommand);
 
     @Test
     public void testParseFullCommand() throws Exception {

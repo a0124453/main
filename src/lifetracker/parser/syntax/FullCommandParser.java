@@ -14,14 +14,12 @@ import java.util.regex.Pattern;
  * separate the command body into sections defined by keywords, such as "from".
  *
  */
-public class CommandSectionsParser {
-
-    private static final String COMMAND_BODY_SEPARATOR = " ";
+public class FullCommandParser {
 
     private final Set<String> commands;
     private final String defaultCommand;
 
-    public CommandSectionsParser(Set<String> commands, String defaultCommand) {
+    public FullCommandParser(Set<String> commands, String defaultCommand) {
         this.commands = commands;
         this.defaultCommand = defaultCommand;
     }

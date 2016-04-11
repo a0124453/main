@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 //@@author A0091173J
-public class CommandBodyParserTest {
+public class CommandSectionParserTest {
 
     private enum Options{
         NAME, THREE, EMPTY, EMPTY2, ANYTHING
@@ -19,7 +19,7 @@ public class CommandBodyParserTest {
 
     private Map<Options, Predicate<String>> keyWordVerification = new HashMap<>();
 
-    private CommandBodyParser<Options> cmdParser = new CommandBodyParser<>(keywordToEnumMap, keyWordVerification, Options.NAME);
+    private CommandSectionParser<Options> cmdParser = new CommandSectionParser<>(keywordToEnumMap, keyWordVerification, Options.NAME);
 
     @Test
     public void testParseCommandBody() throws Exception {

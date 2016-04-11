@@ -24,7 +24,7 @@ public class DurationParser {
         parserMap.put("day", Period::ofDays);
     }
 
-    public boolean isDurationString(String durationString) {
+    public boolean isDuration(String durationString) {
         try {
             parse(durationString);
         } catch (IllegalArgumentException ex) {
