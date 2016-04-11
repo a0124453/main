@@ -30,6 +30,7 @@ public class RecurringTask extends DeadlineTask {
             throw new IllegalArgumentException(MESSAGE_ERROR_NEGATIVE_LIMIT);
         }
         this.occurrenceLimit = limit;
+        SERIAL_TYPE_IDENTIFIER = "RecurringTask";
     }
 
     public RecurringTask(String name, LocalDateTime deadline, Period period, LocalDate limit) {
@@ -40,6 +41,7 @@ public class RecurringTask extends DeadlineTask {
         this.period = period;
         this.dateLimit = limit;
         this.occurrenceLimit = DATE_LIMIT_CONST;
+        SERIAL_TYPE_IDENTIFIER = "RecurringTask";
     }
 
     public RecurringTask(RecurringTask entry) {
@@ -47,6 +49,7 @@ public class RecurringTask extends DeadlineTask {
         this.period = entry.period;
         this.occurrenceLimit = entry.occurrenceLimit;
         this.dateLimit = entry.dateLimit;
+        SERIAL_TYPE_IDENTIFIER = "RecurringTask";
     }
 
     @Override

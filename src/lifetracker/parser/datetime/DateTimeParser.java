@@ -21,14 +21,13 @@ import java.util.Set;
  * A parser that parses DateTime strings.
  * <p>
  * This class uses natty to parse date and time strings. After parsing, the
- * datetimes are adjusted accordingly to the rules below.
+ * datetimes are adjusted accordingly based on the method's defaults.
  * <p>
- * Single DateTime:
- * <ul>
- * <li>If original string did not specify time, time is set to 2359
- * <li>If original string did not specify date, date is set to the next date
- * where the DateTime is in the future.
- * </ul>
+ * Refer to the method descriptions themselves.
+ *
+ * @see #parseSingleDateTime(String)
+ * @see #parseDateTimeAsIs(String)
+ * @see #parseDoubleDateTime(String, String)
  */
 public class DateTimeParser {
     private static final String EMPTY_DATE_DEFAULT_STRING = "today";
@@ -50,12 +49,34 @@ public class DateTimeParser {
     private DateTimeParser() {
     }
 
+    /**
+     * Determines is a String can be parsed as a DateTime.
+     * <p>
+     * Note that empty Strings are replaced with defaults in this class and are thus considered valid Strings.
+     *
+     * @param dateTimeString The String to test
+     * @return If the String can be parsed by this class as a date time
+     */
     public boolean isDateTime(String dateTimeString) {
         assert dateTimeString != null;
 
         return dateTimeString.isEmpty() || nattyParser.parse(dateTimeString).size() == 1;
     }
 
+    /**
+     * Parses a single date time string.
+     * <p>
+     * It is then adjusted to the rules as specified below:
+     * <p>
+     * <ul>
+     * <li>If original string did not specify time, time is set to 2359
+     * <li>If original string did not specify date, date is set to the next date
+     * where the DateTime is in the future.
+     * </ul>
+     *
+     * @param dateTimeString The date time string
+     * @return The result from parsing the string
+     */
     public LocalDateTime parseSingleDateTime(String dateTimeString) {
         assert isDateTime(dateTimeString);
 
@@ -68,6 +89,22 @@ public class DateTimeParser {
         return adjustSingleDateToDefault(parsedDateTimeObj, parsedDateGroup.getParseLocations().keySet());
     }
 
+    /**
+     * Parses two datetime Strings with one as a start date and one as an end date.
+     * <p>
+     * The dates are first adjusted to defaults, then to each other, as the rules below:
+     * <p>
+     * <ul>
+     * <li>If end time is missing, the end DateTime defaults to one hour after start if they are on the same day, or to
+     * the same time if they are on different days.
+     * <li>If end date is missing, it defaults to the first date where start DateTime is before end DateTime.
+     * <li>//TODO continue
+     * </ul>
+     *
+     * @param startString
+     * @param endString
+     * @return
+     */
     public List<LocalDateTime> parseDoubleDateTime(String startString, String endString) {
         assert isDateTime(startString);
         assert isDateTime(endString);

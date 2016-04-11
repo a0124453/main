@@ -18,6 +18,7 @@ public class Event extends DeadlineTask {
     public Event(Event entry) {
         super(entry);
         this.startDateTime = entry.startDateTime;
+        SERIAL_TYPE_IDENTIFIER = "Event";
     }
 
     @Override
