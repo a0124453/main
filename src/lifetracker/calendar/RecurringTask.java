@@ -1,12 +1,19 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 //@@author A0108473E
+
+/**
+ * 
+ * Represents a recurring task. The task can be defined to recur up to a
+ * specified number of occurrences, or up to a specified date.
+ *
+ */
 public class RecurringTask extends DeadlineTask {
     protected static final int INF_LIMIT_CONST = -1;
     protected static final int DATE_LIMIT_CONST = -2;
@@ -56,13 +63,13 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         switch (property) {
-            case DATE_LIMIT:
+            case DATE_LIMIT :
                 if (occurrenceLimit == DATE_LIMIT_CONST) {
                     return this.dateLimit.atStartOfDay();
                 } else {
                     return null;
                 }
-            default:
+            default :
                 return super.getDateTime(property);
         }
     }
@@ -70,7 +77,7 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
-            case DATE_LIMIT:
+            case DATE_LIMIT :
                 occurrenceLimit = DATE_LIMIT_CONST;
                 if (dateTime.toLocalDate().isBefore(this.getDateTime(CalendarProperty.END).toLocalDate())) {
                     throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
@@ -79,12 +86,12 @@ public class RecurringTask extends DeadlineTask {
                     this.occurrenceLimit = DATE_LIMIT_CONST;
                 }
                 break;
-            case END:
+            case END :
                 if (occurrenceLimit == DATE_LIMIT_CONST && this.dateLimit.isBefore(dateTime.toLocalDate())) {
                     throw new IllegalArgumentException(MESSAGE_ERROR_INVALID_LIMIT_DATE);
                 }
                 // Fallthrough
-            default:
+            default :
                 super.setDateTime(property, dateTime);
         }
     }
@@ -102,9 +109,9 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public int getIntegerProperty(CalendarProperty property) {
         switch (property) {
-            case OCCURRENCE_LIMIT:
+            case OCCURRENCE_LIMIT :
                 return occurrenceLimit;
-            default:
+            default :
                 return super.getIntegerProperty(property);
         }
     }
@@ -112,15 +119,15 @@ public class RecurringTask extends DeadlineTask {
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-            case RECURRING:
+            case RECURRING :
                 return true;
-            case DATE_LIMITED:
+            case DATE_LIMITED :
                 return occurrenceLimit == DATE_LIMIT_CONST;
-            case OCCURRENCE_LIMITED:
+            case OCCURRENCE_LIMITED :
                 return occurrenceLimit > 0;
-            case ACTIVE:
+            case ACTIVE :
                 return true;
-            default:
+            default :
                 return super.isProperty(property);
         }
     }

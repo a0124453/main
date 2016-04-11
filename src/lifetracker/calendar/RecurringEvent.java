@@ -1,12 +1,19 @@
 package lifetracker.calendar;
 
-import lifetracker.calendar.visitor.EntryVisitor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
+import lifetracker.calendar.visitor.EntryVisitor;
+
 //@@author A0108473E
+
+/**
+ * 
+ * Represents a recurring event. The event can be defined to recur up to a
+ * specified number of occurrences, or up to a specified date.
+ *
+ */
 public class RecurringEvent extends RecurringTask {
 
     private LocalDateTime startDateTime;
@@ -41,40 +48,40 @@ public class RecurringEvent extends RecurringTask {
     @Override
     public LocalDateTime getDateTime(CalendarProperty property) {
         switch (property) {
-        case START :
-            return this.startDateTime;
-        default :
-            return super.getDateTime(property);
+            case START :
+                return this.startDateTime;
+            default :
+                return super.getDateTime(property);
         }
     }
 
     @Override
     public void setDateTime(CalendarProperty property, LocalDateTime dateTime) {
         switch (property) {
-        case START :
-            // end date is always valid
-            CalendarEntry.checkStartBeforeEnd(dateTime, this.getDateTime(CalendarProperty.END));
-            this.startDateTime = dateTime;
-            break;
-        default :
-            super.setDateTime(property, dateTime);
-            break;
+            case START :
+                // end date is always valid
+                CalendarEntry.checkStartBeforeEnd(dateTime, this.getDateTime(CalendarProperty.END));
+                this.startDateTime = dateTime;
+                break;
+            default :
+                super.setDateTime(property, dateTime);
+                break;
         }
     }
 
     @Override
     public boolean isProperty(CalendarProperty property) {
         switch (property) {
-        case ONGOING :
-            boolean hasStarted = LocalDateTime.now().isAfter(startDateTime);
-            boolean isOver = isProperty(CalendarProperty.OVER);
-            return hasStarted && !isOver;
-        case TODAY :
-            boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
-            boolean isOngoing = isProperty(CalendarProperty.ONGOING);
-            return startsToday || isOngoing;
-        default :
-            return super.isProperty(property);
+            case ONGOING :
+                boolean hasStarted = LocalDateTime.now().isAfter(startDateTime);
+                boolean isOver = isProperty(CalendarProperty.OVER);
+                return hasStarted && !isOver;
+            case TODAY :
+                boolean startsToday = (LocalDate.now().equals(startDateTime.toLocalDate()));
+                boolean isOngoing = isProperty(CalendarProperty.ONGOING);
+                return startsToday || isOngoing;
+            default :
+                return super.isProperty(property);
         }
     }
 
