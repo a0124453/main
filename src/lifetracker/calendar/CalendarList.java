@@ -582,6 +582,18 @@ public interface CalendarList {
      */
     CalendarEntry update(CalendarEntry newEntry);
 
+    /**
+     * Marks an entry with ID number {@code id}. Uses a {@code MarkVisitor} to
+     * mark the entry.
+     * 
+     * @see lifetracker.calendar.visitor.MarkVisitor
+     * 
+     * @param id
+     *            The ID number of the entry to be marked.
+     * 
+     * @return A pair of entries, one of which is the old entry before marking,
+     *         and the other an updated one.
+     */
     OldNewEntryPair mark(int id);
 
     /**
