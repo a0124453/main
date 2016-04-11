@@ -6,13 +6,24 @@ import java.util.Map;
 import java.util.function.Function;
 
 //@@author A0091173J
+
+/**
+ * This Singleton class parses duration Strings into {@code Period} objects.
+ * <p>
+ * Examples of duration Strings are "1 week", "year", "3 days".
+ */
 public class DurationParser {
     private static DurationParser ourInstance = new DurationParser();
     private static final String FORMAT_ERROR = "Invalid duration format!";
     private final String DURATION_PATTERN = "(\\d+\\s+)?\\w+";
     private final String TERM_SEPARATOR_PATTERN = "\\s+";
     private Map<String, Function<Integer, Period>> parserMap = new HashMap<>();
-    
+
+    /**
+     * Gets the instance of this Singleton class.
+     *
+     * @return The instance of this class
+     */
     public static DurationParser getInstance() {
         return ourInstance;
     }
@@ -24,6 +35,12 @@ public class DurationParser {
         parserMap.put("day", Period::ofDays);
     }
 
+    /**
+     * Detects if the String provided is a duration.
+     *
+     * @param durationString The String to check
+     * @return {@code true} if the String is a duration
+     */
     public boolean isDuration(String durationString) {
         try {
             parse(durationString);
@@ -33,6 +50,13 @@ public class DurationParser {
         return true;
     }
 
+    /**
+     * Parses the String into a {@code Period}
+     *
+     * @param durationString The duration string to parse
+     * @return The {@code Period} object
+     * @see Period
+     */
     public Period parse(String durationString) {
 
         if (!isValidFormat(durationString)) {
